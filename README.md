@@ -4,7 +4,7 @@
 
 Spectral Nexus helps telecom professionals identify broadband deployment opportunities across US counties by combining coverage gap analysis, grant program tracking, scoring, and interactive mapping.
 
-**Target users:** Infrastructure companies (Boldyn Networks, NTT DATA), ISPs, grant writers, telecom consultants.
+**Target users:** Infrastructure companies (AT&T, Verizon, 5G private network system integrators, Accenture, NTT DATA), ISPs, grant writers, telecom consultants.
 
 ---
 
