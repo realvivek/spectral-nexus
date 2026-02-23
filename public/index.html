@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spectral Nexus — Telecom Infrastructure Intelligence</title>
+    <meta name="description" content="Broadband deployment opportunity analysis across US counties. Scoring, mapping, grant tracking, and insights for telecom infrastructure professionals.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- App CSS -->
+    <link rel="stylesheet" href="src/css/style.css">
+</head>
+<body>
+
+    <!-- ═══ HEADER ═══ -->
+    <header class="header">
+        <div class="logo-area">
+            <svg class="logo-mark" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="16" cy="16" r="14" stroke="url(#grad)" stroke-width="2" fill="none" opacity="0.3"/>
+                <circle cx="16" cy="16" r="8" stroke="url(#grad)" stroke-width="2" fill="none" opacity="0.6"/>
+                <circle cx="16" cy="16" r="3" fill="url(#grad)"/>
+                <line x1="16" y1="2" x2="16" y2="6" stroke="#06d6a0" stroke-width="1.5" opacity="0.5"/>
+                <line x1="16" y1="26" x2="16" y2="30" stroke="#38bdf8" stroke-width="1.5" opacity="0.5"/>
+                <line x1="2" y1="16" x2="6" y2="16" stroke="#06d6a0" stroke-width="1.5" opacity="0.5"/>
+                <line x1="26" y1="16" x2="30" y2="16" stroke="#38bdf8" stroke-width="1.5" opacity="0.5"/>
+                <defs><linearGradient id="grad" x1="0" y1="0" x2="32" y2="32"><stop stop-color="#06d6a0"/><stop offset="1" stop-color="#38bdf8"/></linearGradient></defs>
+            </svg>
+            <span class="logo-text">Spectral Nexus</span>
+            <span class="logo-tag">Telecom Intelligence</span>
+        </div>
+        <div class="header-controls">
+            <span class="header-version">v0.2.0</span>
+        </div>
+    </header>
+
+    <!-- ═══ KPI BAR ═══ -->
+    <div id="kpi-bar"></div>
+
+    <!-- ═══ MAIN LAYOUT ═══ -->
+    <div class="main-layout">
+
+        <!-- Map Panel -->
+        <div class="map-panel">
+            <div id="map-container"></div>
+
+            <div class="map-controls">
+                <div class="map-control-group">
+                    <label>Choropleth Metric</label>
+                    <select id="metric-select">
+                        <option value="opportunityScore">Opportunity Score</option>
+                        <option value="unservedPct">Unserved %</option>
+                        <option value="coverageGap">Coverage Gap</option>
+                        <option value="medianIncome">Median Income</option>
+                        <option value="populationDensity">Pop. Density</option>
+                        <option value="fiberAvailPct">Fiber Availability</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="map-legend">
+                <div class="legend-title">Opportunity Score</div>
+                <div class="legend-scale">
+                    <span style="background:#06d6a0"></span>
+                    <span style="background:#0bc49a"></span>
+                    <span style="background:#10b294"></span>
+                    <span style="background:#15a08e"></span>
+                    <span style="background:#38bdf8"></span>
+                    <span style="background:#5298c8"></span>
+                    <span style="background:#6b7298"></span>
+                    <span style="background:#845c78"></span>
+                    <span style="background:#fbbf24"></span>
+                    <span style="background:#ef4444"></span>
+                </div>
+                <div class="legend-labels"><span>High</span><span>Low</span></div>
+            </div>
+
+            <div id="map-tooltip"></div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="right-panel">
+
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <label>State</label>
+                    <select id="filter-state"><option value="all">All States</option></select>
+                </div>
+                <div class="filter-group">
+                    <label>Score ≥</label>
+                    <input type="range" id="filter-score" min="0" max="100" value="0" step="5">
+                    <span id="score-label">Min Score: 0</span>
+                </div>
+                <button id="btn-reset" class="btn-reset">Reset</button>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="table">Table</button>
+                <button class="tab-btn" data-tab="charts">Charts</button>
+                <button class="tab-btn" data-tab="insights">Insights</button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <div id="panel-table" class="tab-panel active">
+                    <div id="table-container"></div>
+                </div>
+
+                <div id="panel-charts" class="tab-panel">
+                    <div class="chart-box chart-scatter-wrap"><canvas id="chart-scatter"></canvas></div>
+                    <div class="chart-box chart-bar-wrap"><canvas id="chart-bar"></canvas></div>
+                    <div class="chart-box chart-hist-wrap"><canvas id="chart-hist"></canvas></div>
+                </div>
+
+                <div id="panel-insights" class="tab-panel">
+                    <div id="insights-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ METHODOLOGY MODAL ═══ -->
+    <div id="methodology-modal" class="methodology-modal">
+        <div class="methodology-content">
+            <button id="methodology-close" class="methodology-close">✕</button>
+            <h2>Scoring Methodology</h2>
+            <h3>Opportunity Score (0-100)</h3>
+            <p>Each county receives a composite score based on six weighted factors:</p>
+            <ul>
+                <li><strong>Coverage Gap (25%)</strong> — % of BSLs that are underserved or unserved</li>
+                <li><strong>Unserved % (20%)</strong> — % of BSLs with zero qualifying broadband</li>
+                <li><strong>Funding Availability (20%)</strong> — BEAD status × unserved concentration</li>
+                <li><strong>Income Need (15%)</strong> — Lower income = higher grant eligibility</li>
+                <li><strong>Population Density (10%)</strong> — Sweet spot: 50-200/sq mi (buildable, not saturated)</li>
+                <li><strong>5G Readiness (10%)</strong> — Tower density, fiber backhaul, spectrum availability</li>
+            </ul>
+            <h3>Data Sources</h3>
+            <ul>
+                <li><strong>Demographics:</strong> US Census ACS 5-Year Estimates</li>
+                <li><strong>BSL / Coverage:</strong> FCC Broadband Data Collection (BDC)</li>
+                <li><strong>Funding:</strong> NTIA BEAD Dashboard, FCC Auction 904 (RDOF)</li>
+                <li><strong>Infrastructure:</strong> FCC ASR (tower locations)</li>
+            </ul>
+            <h3>Disclaimer</h3>
+            <p>This is a demonstration tool. Telecom metrics (BSLs, coverage, fiber, towers) use realistic simulated data for the current 200-county dataset. As we integrate real FCC BDC bulk data, mock values will be replaced with verified figures. Scoring methodology is transparent and open to feedback.</p>
+        </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">⟡ Demo dataset · Telecom metrics simulated · Not investment advice</div>
+
+    <!-- ═══ SCRIPTS ═══ -->
+    <!-- Leaflet -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <!-- App (order matters) -->
+    <script src="src/js/config.js"></script>
+    <script src="src/js/data.js"></script>
+    <script src="src/js/data-grants.js"></script>
+    <script src="src/js/data-awards.js"></script>
+    <script src="src/js/scoring.js"></script>
+    <script src="src/js/kpi.js"></script>
+    <script src="src/js/map.js"></script>
+    <script src="src/js/table.js"></script>
+    <script src="src/js/charts.js"></script>
+    <script src="src/js/insights.js"></script>
+    <script src="src/js/app.js"></script>
+
+</body>
+</html>
