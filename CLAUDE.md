@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**Spectral Nexus** is a Broadband Funding Intelligence dashboard for Private 5G business executives. It visualizes broadband coverage gaps, BEAD funding opportunities, CBRS spectrum zones, and smart city programs across all 3,100+ US counties.
+**Spectral Nexus** is a Broadband Funding Intelligence dashboard for telecom professionals and system integrators. It visualizes broadband coverage gaps, BEAD funding opportunities, CBRS spectrum zones, smart city programs, RDOF defaults, and competitive landscape across all 3,100+ US counties.
 
 - **Live URL**: https://realvivek.github.io/spectral-nexus/
 - **Hosting**: GitHub Pages (static site, no build step)
@@ -37,10 +37,11 @@ src/
     map.js            ← Leaflet map, county circles, popups
     layers.js         ← Toggleable map overlays (CBRS, fiber, etc.)
     executive.js      ← CSV export, sales report panel
-    onboarding.js     ← First-visit tutorial modal
+    onboarding.js     ← Help modal & tutorial
     table.js          ← Sortable county data table
     charts.js         ← Chart.js scatter/bar/histogram
     insights.js       ← Curated insights panel
+    funding.js        ← Funding Intel: grants guide, competitive landscape, scoring
     app.js            ← Main controller, init chain, filters, tabs
 
 scripts/
@@ -60,7 +61,7 @@ Scripts in `public/index.html` load in this exact order — **order matters**:
 5. `data-grants.js`, `data-awards.js`, `data-layers.js`, `data-smartcities.js`
 6. `scoring.js` — Reads `SN.data` and `SN.config`
 7. `kpi.js`, `map.js`, `layers.js`, `executive.js`, `onboarding.js`
-8. `table.js`, `charts.js`, `insights.js`
+8. `table.js`, `charts.js`, `insights.js`, `funding.js`
 9. `app.js` — **Must be last** (orchestrates all modules)
 
 If you add a new module, it must be added to `index.html` in the correct position AND follow the `window.SN = window.SN || {}; SN.moduleName = { ... }` pattern.
@@ -82,6 +83,7 @@ SN.app.init()
   ├── SN.table.render()                       ← (try/catch)
   ├── SN.charts.render()                      ← (try/catch)
   ├── SN.insights.render()                    ← (try/catch)
+  ├── SN.funding.init()                      ← Funding Intel (try/catch)
   ├── bindEvents()
   └── switchTab('table')
 ```
