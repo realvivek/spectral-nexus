@@ -54,8 +54,10 @@ body {
     height: 100vh;
     opacity: 0;
     transition: opacity 0.5s ease;
+    animation: force-visible 0s 3s forwards;
 }
-body.loaded { opacity: 1; }
+@keyframes force-visible { to { opacity: 1; } }
+body.loaded { opacity: 1; animation: none; }
 
 ::selection { background: rgba(6,214,160,0.3); color: #fff; }
 ::-webkit-scrollbar { width: 6px; height: 6px; }
