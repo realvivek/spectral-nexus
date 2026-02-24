@@ -156,26 +156,35 @@ SN.map = {
 
         // Get decision makers for this county
         var contactHtml = '';
-        if (SN.decisionMakers) {
-            var contacts = SN.decisionMakers.getForCounty(county);
-            if (contacts.length > 0) {
-                var shown = contacts.slice(0, 3);
-                contactHtml = '<div class="popup-contacts">' +
-                    '<div class="popup-contacts-title">Key Decision Makers</div>';
-                shown.forEach(function(c) {
-                    contactHtml += '<div class="popup-contact-row">' +
-                        '<span class="popup-contact-type">' + c.type + '</span>' +
-                        '<span class="popup-contact-name">' + c.name + '</span>' +
-                        '<span class="popup-contact-detail">' + c.title + '</span>';
-                    if (c.email) contactHtml += '<span class="popup-contact-info">' + c.email + '</span>';
-                    if (c.phone) contactHtml += '<span class="popup-contact-info">' + c.phone + '</span>';
-                    contactHtml += '</div>';
-                });
-                if (contacts.length > 3) {
-                    contactHtml += '<div class="popup-contacts-more">+ ' + (contacts.length - 3) + ' more in Funding Intel tab</div>';
+        var contacts = [];
+        if (SN.data.stateDecisionMakers && SN.data.stateDecisionMakers[county.state]) {
+            var dir = SN.data.stateDecisionMakers[county.state];
+            contacts.push({ type: 'State Broadband Director', name: dir.name, title: dir.title, email: dir.email, phone: dir.phone });
+        }
+        if (SN.data.coopDecisionMakers) {
+            SN.data.coopDecisionMakers.forEach(function(coop) {
+                if (coop.state === county.state) {
+                    contacts.push({ type: 'Electric Co-op', name: coop.name, title: coop.contact, email: null, phone: coop.phone });
                 }
+            });
+        }
+        if (contacts.length > 0) {
+            var shown = contacts.slice(0, 3);
+            contactHtml = '<div class="popup-contacts">' +
+                '<div class="popup-contacts-title">Key Decision Makers</div>';
+            shown.forEach(function(c) {
+                contactHtml += '<div class="popup-contact-row">' +
+                    '<span class="popup-contact-type">' + c.type + '</span>' +
+                    '<span class="popup-contact-name">' + c.name + '</span>' +
+                    '<span class="popup-contact-detail">' + c.title + '</span>';
+                if (c.email) contactHtml += '<span class="popup-contact-info">' + c.email + '</span>';
+                if (c.phone) contactHtml += '<span class="popup-contact-info">' + c.phone + '</span>';
                 contactHtml += '</div>';
+            });
+            if (contacts.length > 3) {
+                contactHtml += '<div class="popup-contacts-more">+ ' + (contacts.length - 3) + ' more in Funding Intel tab</div>';
             }
+            contactHtml += '</div>';
         }
 
         const html = `
