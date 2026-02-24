@@ -6,7 +6,7 @@
 window.SN = window.SN || {};
 
 SN.config = {
-    version: '0.3.0',
+    version: '0.4.0',
     buildDate: '2026-02-24',
 
     /* ─── Active States — all 50 states + DC ─── */
