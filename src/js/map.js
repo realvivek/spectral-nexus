@@ -203,6 +203,7 @@ SN.map = {
                         <span class="popup-metric-lbl">Poverty Rate</span>
                     </div>
                 </div>
+                <button class="btn-add-to-report" onclick="SN.executive.addToReport('county', '${county.fips}')">+ Add to Sales Report</button>
             </div>
         `;
 
