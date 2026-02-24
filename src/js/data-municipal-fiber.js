@@ -89,14 +89,14 @@ SN.data.municipalFiber = [
     // ── UTOPIA Fiber Network (Utah) ──────────────────────
 
     {
-        name: "UTOPIA Fiber", city: "Multiple (11 cities)", state: "UT", county: "Multiple",
+        name: "UTOPIA Fiber", city: "Multiple (20 cities)", state: "UT", county: "Multiple",
         lat: 40.6461, lng: -111.4980,
-        fiberMiles: 3500, homesPassed: 150000, subscribers: 45000, marketShare: 30,
+        fiberMiles: 4387, homesPassed: 200000, subscribers: 70000, marketShare: 35,
         maxSpeed: "10 Gbps", operator: "UTOPIA (Utah Telecommunication Open Infrastructure Agency)",
         darkFiberAvailable: true, yearDeployed: 2004, yearExpanded: 2024,
-        investmentTotal: 400000000, fundingSources: ["Municipal Bonds", "Macquarie Capital PPP", "City Pledges"],
-        description: "Open-access fiber network serving 11 Utah cities: Brigham City, Centerville, Layton, Lindon, Midvale, Murray, Orem, Payson, Perry, Tremonton, West Valley City. Multiple ISPs compete on the same fiber infrastructure. Macquarie Capital PPP since 2008.",
-        services: ["Open-Access Fiber (10 Gbps)", "Multiple ISP Choice", "Business Fiber", "Dark Fiber", "Smart City Infrastructure"]
+        investmentTotal: 500000000, fundingSources: ["Municipal Bonds", "Macquarie Capital PPP", "City Pledges", "Subscriber Revenue"],
+        description: "Largest multi-city open-access fiber network in the US. 4,387 miles across 20 Utah cities with 70,000+ subscribers (20% YoY growth). 19 ISPs compete on the same fiber. Self-funded by subscriber revenue since 2009. Nearly $500M in community broadband projects built. Doubled subscriber base since 2020.",
+        services: ["Open-Access Fiber (10 Gbps)", "Multiple ISP Choice (19 ISPs)", "Business Fiber (100 Gbps)", "Smart City Infrastructure"]
     },
 
     // ── Electric Utility Fiber ───────────────────────────
@@ -203,6 +203,72 @@ SN.data.municipalFiber = [
         investmentTotal: 38000000, fundingSources: ["Revenue Bonds", "Town Budget"],
         description: "Fast-growing Wake County suburb deploying municipal fiber to combat cable monopoly. 40% market share in first 3 years. Expanding to full town coverage.",
         services: ["Residential Fiber (2 Gbps)", "Business Fiber"]
+    },
+
+    // ── Major New Builds & Dark Fiber Leaders ────────────
+
+    {
+        name: "KUB Fiber", city: "Knoxville", state: "TN", county: "Knox",
+        lat: 35.9606, lng: -83.9207,
+        fiberMiles: 1100, homesPassed: 50000, subscribers: 55000, marketShare: 26,
+        maxSpeed: "10 Gbps", operator: "Knoxville Utilities Board (KUB)",
+        darkFiberAvailable: false, yearDeployed: 2022, yearExpanded: 2025,
+        investmentTotal: 702000000, fundingSources: ["KUB Revenue Bonds", "Utility Revenue"],
+        description: "On track to become the largest municipal fiber network in the US. $702M build serving 210,000 households across 688 sq mi (Knox, Grainger, Union, Sevier counties). Phase 1 complete with 1,100+ miles. 7-10 year full build-out.",
+        services: ["Residential Fiber (10 Gbps)", "Business Fiber", "Smart Grid"]
+    },
+    {
+        name: "Palo Alto Fiber", city: "Palo Alto", state: "CA", county: "Santa Clara",
+        lat: 37.4419, lng: -122.1430,
+        fiberMiles: 50, homesPassed: 6500, subscribers: 0, marketShare: 0,
+        maxSpeed: "500 Mbps", operator: "City of Palo Alto Utilities",
+        darkFiberAvailable: true, yearDeployed: 1996, yearExpanded: 2024,
+        investmentTotal: 102000000, fundingSources: ["City Enterprise Fund", "Revenue Bonds"],
+        description: "Silicon Valley's birthplace deploying $102M residential FTTH after 28 years of business-only dark fiber leasing. Phase 1 (6,500 homes) launching March 2026 at $75/mo. Dark fiber for businesses since 1996.",
+        services: ["Business Dark Fiber Leasing", "Residential Fiber (launching 2026)", "Enterprise Ethernet"]
+    },
+    {
+        name: "Riverside Dark Fiber", city: "Riverside", state: "CA", county: "Riverside",
+        lat: 33.9533, lng: -117.3962,
+        fiberMiles: 120, homesPassed: 0, subscribers: 0, marketShare: 0,
+        maxSpeed: "N/A (dark fiber)", operator: "Riverside Public Utilities",
+        darkFiberAvailable: true, yearDeployed: 2018, yearExpanded: 2024,
+        investmentTotal: 15000000, fundingSources: ["Riverside Public Utilities Revenue"],
+        description: "Formal dark fiber leasing program: 120 route-miles, $125/strand-mile/mo (drops to $70 with volume). Connected to SCE 5,000-mile regional network and RC3 data center. 7 on-net downtown buildings. SiFi Networks also building citywide open-access FTTH.",
+        services: ["Dark Fiber Leasing", "Lit Services (100 Mbps-10 Gbps)", "Carrier Interconnection"]
+    },
+    {
+        name: "Santa Monica CityNet", city: "Santa Monica", state: "CA", county: "Los Angeles",
+        lat: 34.0195, lng: -118.4912,
+        fiberMiles: 70, homesPassed: 5000, subscribers: 1500, marketShare: 5,
+        maxSpeed: "10 Gbps", operator: "City of Santa Monica IT Dept (CityNet)",
+        darkFiberAvailable: true, yearDeployed: 1998, yearExpanded: 2023,
+        investmentTotal: 5000000, fundingSources: ["City IT Budget", "Dig-Once Savings"],
+        description: "Rare municipal fiber NOT run by a utility — operated by IT department. Incremental 'dig once' expansion since 1998. Initial $530K investment saved $700K/year in leased lines. 50% of fiber remains unlit. 1 Gbps to affordable housing at $69/mo.",
+        services: ["Business Dark Fiber", "Lit Services (100 Mbps-10 Gbps)", "Affordable Housing Broadband", "Public Wi-Fi"]
+    },
+    {
+        name: "Kitsap PUD Fiber", city: "Kitsap County", state: "WA", county: "Kitsap",
+        lat: 47.6477, lng: -122.6321,
+        fiberMiles: 900, homesPassed: 30000, subscribers: 12000, marketShare: 15,
+        maxSpeed: "1 Gbps", operator: "Kitsap Public Utility District (KPUD)",
+        darkFiberAvailable: false, yearDeployed: 2000, yearExpanded: 2025,
+        investmentTotal: 50000000, fundingSources: ["KPUD Revenue", "ARPA Funding ($6.6M)"],
+        description: "Open-access model: KPUD builds fiber, multiple ISPs deliver service. 900+ miles of fiber operating 20+ years. 21 new distribution nodes coming online early 2026. $6.6M ARPA funding for expansion.",
+        services: ["Open-Access Fiber", "Multiple ISP Choice", "Business Fiber"]
+    },
+
+    // ── Cooperative Fiber ────────────────────────────────
+
+    {
+        name: "RS Fiber Cooperative", city: "Renville-Sibley Counties", state: "MN", county: "Renville",
+        lat: 44.6558, lng: -94.9727,
+        fiberMiles: 1700, homesPassed: 7000, subscribers: 4500, marketShare: 65,
+        maxSpeed: "1 Gbps", operator: "RS Fiber Cooperative",
+        darkFiberAvailable: false, yearDeployed: 2016, yearExpanded: 2024,
+        investmentTotal: 13700000, fundingSources: ["GO Tax Abatement Bonds", "USDA ReConnect", "Member Equity"],
+        description: "First US cooperative formed specifically for broadband. 10 cities + 17 townships formed Joint Powers Agreement. $13.7M GO Tax Abatement Bond. National model for cooperative fiber in rural communities.",
+        services: ["Residential Fiber (1 Gbps)", "Business Fiber", "Agricultural IoT"]
     }
 ];
 
@@ -277,5 +343,60 @@ SN.data.private5GDeployments = [
         useCases: ["IoT Startup Development", "Smart Traffic Research", "Air Quality Monitoring", "Edge Computing"],
         contractYear: 2022, goLiveYear: 2023,
         note: "$2M EDA grant. Smart Futures Lab private 5G for IoT startups."
+    },
+    {
+        city: "Dublin", state: "OH", lat: 40.0992, lng: -83.1141,
+        networkType: "Private LTE / CBRS", spectrum: "CBRS (3.5 GHz)",
+        coverage: "Outdoor", areaSqMiles: 2, phase: "Operational",
+        operator: "City of Dublin", ranVendor: "Fujitsu",
+        coreNetwork: "Fujitsu Software-Defined 5G", sasProvider: "Federated Wireless",
+        backhaul: "Dublink fiber broadband", investmentM: 3,
+        useCases: ["Smart Parking", "Security Surveillance", "Smart Utilities", "E-Health Services", "COVID Compliance Monitoring"],
+        contractYear: 2020, goLiveYear: 2020,
+        note: "Connected Dublin smart city initiative. Fujitsu CBRS with BBUs on utility poles. Also operates Dublink fiber broadband."
+    },
+    {
+        city: "Glendale", state: "AZ", lat: 33.5387, lng: -112.1860,
+        networkType: "Private 5G / CBRS", spectrum: "CBRS n48 (3.5 GHz)",
+        coverage: "Outdoor", areaSqMiles: 3, phase: "Pilot",
+        operator: "City of Glendale", ranVendor: "Celona",
+        coreNetwork: "Celona 5G LAN", sasProvider: "Google SAS",
+        backhaul: "City fiber", investmentM: 2,
+        useCases: ["HD Video Surveillance", "Traffic Monitoring", "Telehealth", "Smart Kiosks", "Remote Utility Control"],
+        contractYear: 2023, goLiveYear: 2023,
+        note: "Celona 5G LAN pilot for smart city apps. State Farm Stadium also has separate CBRS deployment."
+    },
+    {
+        city: "Shreveport", state: "LA", lat: 32.5252, lng: -93.7502,
+        networkType: "Private LTE / CBRS + DeWi", spectrum: "CBRS (3.5 GHz)",
+        coverage: "Indoor + Outdoor", areaSqMiles: 1, phase: "Pilot",
+        operator: "City of Shreveport IT", ranVendor: "Pollen Mobile",
+        coreNetwork: "Decentralized Wireless (DeWi)", sasProvider: "N/A",
+        backhaul: "Library fiber connections", investmentM: 1,
+        useCases: ["Universal Digital Access", "Library Public Broadband", "Digital Divide Bridging"],
+        contractYear: 2023, goLiveYear: 2023,
+        note: "Unique DeWi approach using Pollen Mobile + CBRS at 5 library sites. 40% of city lacks broadband. CTO Keith Hanson leads initiative."
+    },
+    {
+        city: "Syracuse", state: "NY", lat: 43.0481, lng: -76.1474,
+        networkType: "CBRS FWA + Fiber", spectrum: "CBRS (3.5 GHz)",
+        coverage: "Outdoor", areaSqMiles: 5, phase: "Operational",
+        operator: "City of Syracuse (Surge Link)", ranVendor: "CBN Syracuse Municipal LLC",
+        coreNetwork: "CBRS FWA", sasProvider: "N/A",
+        backhaul: "20 miles city-owned fiber", investmentM: 14,
+        useCases: ["Digital Divide Broadband (8,700+ homes)", "Low-Income Household Service ($14.99/mo)", "School Connectivity"],
+        contractYear: 2023, goLiveYear: 2023,
+        note: "Surge Link: 10 FWA hubs on 20 mi city fiber. $3.5M federal + $10.8M ConnectALL grant. Targets 13,000+ locations in 5 poorest neighborhoods."
+    },
+    {
+        city: "Peachtree Corners", state: "GA", lat: 33.9701, lng: -84.2215,
+        networkType: "5G Living Lab + C-V2X", spectrum: "Licensed 5G (T-Mobile) + C-V2X",
+        coverage: "Outdoor", areaSqMiles: 1, phase: "Operational",
+        operator: "City of Peachtree Corners (Curiosity Lab)", ranVendor: "T-Mobile",
+        coreNetwork: "T-Mobile 5G + Cisco edge", sasProvider: "N/A (licensed spectrum)",
+        backhaul: "Fiber", investmentM: 5,
+        useCases: ["Autonomous Vehicle Testing (3-mile track)", "C-V2X Vehicle-to-Infrastructure", "Smart Traffic Signals", "IoT Central Control Room", "Environmental Monitoring"],
+        contractYear: 2019, goLiveYear: 2019,
+        note: "America's first real-world smart city living lab. 5G-enabled 3-mile AV track in 500-acre tech park. Won IEEE Smart Cities Jury Award 2022."
     }
 ];
