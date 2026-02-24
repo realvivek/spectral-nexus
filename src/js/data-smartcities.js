@@ -1,6 +1,6 @@
 /**
  * Spectral Nexus — Smart Cities Dataset (Research-Verified)
- * ~40 US cities with active smart city programs, CBRS/private 5G deployments,
+ * ~45 US cities with active smart city programs, CBRS/private 5G deployments,
  * IoT infrastructure, and connected city initiatives.
  *
  * Data compiled from public sources including:
@@ -14,6 +14,7 @@
  *   - IDC Smart Cities North America Awards (2024)
  *
  * CBRS/Private 5G confirmed municipal deployments:
+ *   Brownsville TX — NTT DATA/Nokia (first carrier-grade municipal private 5G in North America)
  *   Las Vegas NV — NTT/Celona (largest US municipal CBRS)
  *   Tucson AZ — JMA Wireless/Geoverse (digital divide, award-winning)
  *   Dallas TX — DFW Airport CBRS private wireless
@@ -441,6 +442,51 @@ SN.data.smartCities = [
         partners: ["JTA", "Beep Inc.", "University of North Florida", "JEA", "AT&T", "Jabil"],
         highlights: "Largest US city by area deploying autonomous transit via JTA; extensive flood monitoring IoT for river and coastal resilience.",
         website: "https://www.coj.net/departments/it"
+    },
+
+    // ═══════════════════════════════════════════════
+    // TIER 4 — Private 5G / CBRS Municipal Pioneers
+    // ═══════════════════════════════════════════════
+
+    {
+        name: "Brownsville", state: "TX", lat: 25.9017, lng: -97.4975, population: 186738,
+        program: "Brownsville Smart City / Private 5G Network", status: "Active", startYear: 2024, budget: 34000000,
+        description: "Formerly labeled 'worst connected city in the US' by NTIA (2017), Brownsville deployed the first carrier-grade municipal private 5G network in North America using CBRS spectrum (n48 band). NTT DATA Americas operates the network with Nokia AirScale RAN on city-owned 100-mile fiber backbone. Phase 1 covers 3 sq mi downtown including parks, airport, and public works. $4M NTT contract plus ~$30M fiber infrastructure investment funded by ARPA.",
+        initiatives: ["Private 5G CBRS Network", "AI Factory", "Smart Traffic Signals", "4K Security Cameras", "Flood Detection IoT", "Illegal Dumping Detection", "Smart Parks"],
+        infrastructure: { fiberBackbone: true, fiveGDeployed: true, cbrsActive: true, iotSensors: 175, smartLighting: false, smartTraffic: true },
+        partners: ["NTT DATA Americas", "Nokia", "Cisco", "Omni Fiber", "Dell Technologies", "Cobb Fendley & Associates"],
+        highlights: "First North American carrier-grade municipal private 5G; transformed from 'worst connected' to smart city model; 100-mile city-owned fiber backbone; AI-powered camera network.",
+        website: "https://www.brownsvilletx.gov/"
+    },
+    {
+        name: "Edinburg", state: "TX", lat: 26.3017, lng: -98.1633, population: 101170,
+        program: "Edinburg 5G Connected City", status: "Active", startYear: 2023, budget: 5000000,
+        description: "Leading 5G coverage in the Rio Grande Valley with AT&T small cell nodes achieving 100% 5G coverage across the city. Mayor Richard Molina pushing for broader connectivity grants for broadband at city buildings and parks. Part of RGV broadband expansion initiative.",
+        initiatives: ["5G Small Cells Citywide", "Public Building Broadband", "Park Wi-Fi", "Smart Infrastructure"],
+        infrastructure: { fiberBackbone: true, fiveGDeployed: true, cbrsActive: false, iotSensors: 50, smartLighting: false, smartTraffic: false },
+        partners: ["AT&T", "RGV MPO", "City of Edinburg IT"],
+        highlights: "100% 5G coverage via AT&T small cells — leading the Rio Grande Valley in connectivity; grants for public broadband.",
+        website: "https://www.cityofedinburg.com/"
+    },
+    {
+        name: "San Antonio", state: "TX", lat: 29.4241, lng: -98.4936, population: 1434625,
+        program: "SmartSA / Office of Innovation", status: "Active", startYear: 2019, budget: 20000000,
+        description: "SmartSA initiative through Office of Innovation includes smart streetlight pilot with environmental sensors on 120 streetlights across 3 Innovation Zones. 311 mobile app for citizen services. 'Talkin' Broadway' AI chatbot for downtown district engagement. Strong military base connectivity through JBSA.",
+        initiatives: ["Smart Streetlight Pilot", "Innovation Zones", "311 Smart App", "AI Chatbot", "JBSA Connectivity", "Environmental Sensors"],
+        infrastructure: { fiberBackbone: true, fiveGDeployed: true, cbrsActive: false, iotSensors: 300, smartLighting: true, smartTraffic: true },
+        partners: ["CPS Energy", "UTSA", "Southwest Research Institute", "AT&T", "Port San Antonio", "JBSA"],
+        highlights: "SmartSA with 120 sensor-equipped streetlights across 3 Innovation Zones; AI chatbot for downtown; strong military base connectivity.",
+        website: "https://www.sanantonio.gov/smartsa"
+    },
+    {
+        name: "Huntsville", state: "AL", lat: 34.7304, lng: -86.5861, population: 215006,
+        program: "Huntsville Smart City / Google Fiber", status: "Active", startYear: 2020, budget: 12000000,
+        description: "NASA/defense tech corridor anchoring smart city with Google Fiber deployment, Cummings Research Park (2nd largest in US), and defense contractor IoT. Redstone Arsenal drives private 5G demand for military applications. Growing aerospace startup ecosystem with strong university partnerships.",
+        initiatives: ["Google Fiber Deployment", "Defense IoT", "Smart Traffic", "Cummings Research Park", "Autonomous Systems R&D", "Digital Equity"],
+        infrastructure: { fiberBackbone: true, fiveGDeployed: true, cbrsActive: false, iotSensors: 250, smartLighting: true, smartTraffic: true },
+        partners: ["Google Fiber", "NASA MSFC", "Redstone Arsenal", "SAIC", "Northrop Grumman", "University of Alabama Huntsville"],
+        highlights: "NASA/defense tech hub with Cummings Research Park (2nd largest in US); Google Fiber backbone; Redstone Arsenal private 5G demand.",
+        website: "https://www.huntsvilleal.gov/"
     }
 
 ];
@@ -471,7 +517,10 @@ SN.data.smartCities = [
         "Salt Lake City": { decisionMaker: { name: "Aaron Wiethe", title: "Chief Information Officer, Salt Lake City", email: "aaron.wiethe@slcgov.com", phone: "(801) 535-6333" }, systemIntegrators: ["University of Utah / POWDER", "Vivint", "UTOPIA Fiber"] },
         "Lincoln": { decisionMaker: { name: "Clint Runge", title: "Director of Innovation, City of Lincoln", email: "crunge@lincoln.ne.gov", phone: "(402) 441-7491" }, systemIntegrators: ["Allo Communications", "NRC / UNL", "Nebraska Innovation Campus"] },
         "Chattanooga": { decisionMaker: { name: "Brent Messer", title: "VP Strategic Research, EPB Fiber Optics", email: "bmesser@epb.net", phone: "(423) 648-1372" }, systemIntegrators: ["EPB", "Open Connectivity Foundation", "SiFi Networks"] },
-        "Huntsville": { decisionMaker: { name: "Gary Whitlow", title: "Director of IT, City of Huntsville", email: "gary.whitlow@huntsvilleal.gov", phone: "(256) 427-5000" }, systemIntegrators: ["SAIC", "Northrop Grumman", "Dynetics/Leidos"] }
+        "Huntsville": { decisionMaker: { name: "Gary Whitlow", title: "Director of IT, City of Huntsville", email: "gary.whitlow@huntsvilleal.gov", phone: "(256) 427-5000" }, systemIntegrators: ["SAIC", "Northrop Grumman", "Dynetics/Leidos"] },
+        "Brownsville": { decisionMaker: { name: "Jorge Cardenas", title: "Chief Information Officer, City of Brownsville", email: "jorge.cardenas@brownsvilletx.gov", phone: "(956) 548-6000" }, systemIntegrators: ["NTT DATA Americas", "Nokia", "Cisco"] },
+        "Edinburg": { decisionMaker: { name: "Richard Molina", title: "Mayor, City of Edinburg", email: "rmolina@cityofedinburg.com", phone: "(956) 388-8200" }, systemIntegrators: ["AT&T", "RGV MPO"] },
+        "San Antonio": { decisionMaker: { name: "Craig Hopkins", title: "Chief Information Officer, City of San Antonio", email: "craig.hopkins@sanantonio.gov", phone: "(210) 207-8000" }, systemIntegrators: ["CPS Energy", "Southwest Research Institute", "AT&T"] }
     };
 
     SN.data.smartCities.forEach(function(city) {

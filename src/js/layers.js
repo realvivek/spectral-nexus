@@ -39,6 +39,13 @@ SN.layers = {
                 { id: 'smartcities',label: 'Smart City Programs',      icon: 'SC', color: '#38bdf8', defaultOn: false },
                 { id: 'rdof',       label: 'RDOF Default Zones',       icon: 'RD', color: '#f97316', defaultOn: false }
             ]
+        },
+        {
+            name: 'Municipal Networks',
+            layers: [
+                { id: 'munifiber',  label: 'Municipal Fiber Networks', icon: 'MF', color: '#22d3ee', defaultOn: false },
+                { id: 'priv5g',     label: 'Private 5G Deployments',   icon: 'P5', color: '#c084fc', defaultOn: false }
+            ]
         }
     ],
 
@@ -78,6 +85,8 @@ SN.layers = {
         this.buildGrantsLayer();
         this.buildSmartCitiesLayer();
         this.buildRDOFLayer();
+        this.buildMuniFiberLayer();
+        this.buildPrivate5GLayer();
         this.renderTogglePanel();
 
         // Sync integrated legend with current choropleth metric
@@ -345,6 +354,115 @@ SN.layers = {
 
             circle.bindPopup(popupHtml, { className: 'sn-popup', maxWidth: 340 });
             circle.addTo(group);
+        });
+    },
+
+    /**
+     * Build Municipal Fiber Network markers.
+     */
+    buildMuniFiberLayer() {
+        var group = this.groups.munifiber;
+        if (!SN.data.municipalFiber) return;
+
+        SN.data.municipalFiber.forEach(function(net) {
+            var radius = Math.max(6, Math.min(16, Math.sqrt(net.fiberMiles / 100) * 4));
+            var color = net.darkFiberAvailable ? '#22d3ee' : '#67e8f9';
+
+            var marker = L.circleMarker([net.lat, net.lng], {
+                radius: radius,
+                fillColor: color,
+                fillOpacity: 0.8,
+                color: '#fff',
+                weight: 2,
+                opacity: 0.9
+            });
+
+            var fmtInvestment = net.investmentTotal >= 1e9 ? '$' + (net.investmentTotal / 1e9).toFixed(1) + 'B' :
+                                net.investmentTotal >= 1e6 ? '$' + (net.investmentTotal / 1e6).toFixed(0) + 'M' :
+                                '$' + (net.investmentTotal / 1e3).toFixed(0) + 'K';
+
+            var popupHtml = '<div class="layer-popup munifiber-popup">' +
+                '<div class="layer-popup-header">' +
+                    '<span class="layer-popup-icon" style="background:#22d3ee">MF</span>' +
+                    '<div>' +
+                        '<h4>' + net.name + '</h4>' +
+                        '<span class="layer-popup-tier">' + net.city + ', ' + net.state + ' · ' + net.operator + '</span>' +
+                    '</div>' +
+                '</div>' +
+                '<p class="layer-popup-desc">' + net.description + '</p>' +
+                '<div class="layer-popup-grid">' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + net.fiberMiles.toLocaleString() + '</span><span class="stat-lbl">Fiber Miles</span></div>' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + (net.homesPassed / 1000).toFixed(0) + 'K</span><span class="stat-lbl">Homes Passed</span></div>' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + net.marketShare + '%</span><span class="stat-lbl">Market Share</span></div>' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + fmtInvestment + '</span><span class="stat-lbl">Investment</span></div>' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + net.maxSpeed + '</span><span class="stat-lbl">Max Speed</span></div>' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + (net.darkFiberAvailable ? 'Yes' : 'No') + '</span><span class="stat-lbl">Dark Fiber</span></div>' +
+                '</div>' +
+                '<div class="layer-popup-infra">' +
+                    '<strong>Services:</strong> ' + net.services.join(' · ') +
+                '</div>' +
+                '<div class="layer-popup-infra">' +
+                    '<strong>Funding:</strong> ' + net.fundingSources.join(', ') +
+                '</div>' +
+                (net.darkFiberAvailable ? '<p class="layer-popup-opp">Dark fiber available for leasing — potential private 5G backhaul.</p>' : '') +
+                '<button class="btn-add-to-report" onclick="SN.executive.addToReport(\'munifiber\', \'' + net.name.replace(/'/g, "\\'") + '\')">+ Add to Sales Report</button>' +
+            '</div>';
+
+            marker.bindPopup(popupHtml, { className: 'sn-popup', maxWidth: 380, minWidth: 280 });
+            marker.addTo(group);
+        });
+    },
+
+    /**
+     * Build Private 5G Deployment markers.
+     */
+    buildPrivate5GLayer() {
+        var group = this.groups.priv5g;
+        if (!SN.data.private5GDeployments) return;
+
+        SN.data.private5GDeployments.forEach(function(dep) {
+            var radius = Math.max(8, Math.min(18, dep.areaSqMiles * 2));
+            var color = dep.coverage === 'Indoor + Outdoor' ? '#c084fc' :
+                        dep.coverage === 'Outdoor' ? '#a855f7' : '#7c3aed';
+
+            var marker = L.circleMarker([dep.lat, dep.lng], {
+                radius: radius,
+                fillColor: color,
+                fillOpacity: 0.85,
+                color: '#fff',
+                weight: 2.5,
+                opacity: 0.95
+            });
+
+            var popupHtml = '<div class="layer-popup priv5g-popup">' +
+                '<div class="layer-popup-header">' +
+                    '<span class="layer-popup-icon" style="background:#c084fc">P5</span>' +
+                    '<div>' +
+                        '<h4>' + dep.city + ', ' + dep.state + '</h4>' +
+                        '<span class="layer-popup-tier">' + dep.networkType + ' · ' + dep.phase + '</span>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="layer-popup-grid">' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + dep.spectrum + '</span><span class="stat-lbl">Spectrum</span></div>' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + dep.coverage + '</span><span class="stat-lbl">Coverage Type</span></div>' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + dep.areaSqMiles + ' sq mi</span><span class="stat-lbl">Coverage Area</span></div>' +
+                    '<div class="layer-popup-stat"><span class="stat-val">$' + dep.investmentM + 'M</span><span class="stat-lbl">Investment</span></div>' +
+                '</div>' +
+                '<div class="layer-popup-infra">' +
+                    '<strong>Operator:</strong> ' + dep.operator + '<br>' +
+                    '<strong>RAN Vendor:</strong> ' + dep.ranVendor + '<br>' +
+                    '<strong>Core Network:</strong> ' + dep.coreNetwork + '<br>' +
+                    '<strong>Backhaul:</strong> ' + dep.backhaul +
+                '</div>' +
+                '<div class="layer-popup-initiatives">' +
+                    '<strong>Use Cases:</strong> ' + dep.useCases.join(', ') +
+                '</div>' +
+                '<p class="layer-popup-note">' + dep.note + '</p>' +
+                '<button class="btn-add-to-report" onclick="SN.executive.addToReport(\'priv5g\', \'' + dep.city.replace(/'/g, "\\'") + ', ' + dep.state + '\')">+ Add to Sales Report</button>' +
+            '</div>';
+
+            marker.bindPopup(popupHtml, { className: 'sn-popup', maxWidth: 380, minWidth: 300 });
+            marker.addTo(group);
         });
     },
 
