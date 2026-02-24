@@ -15,21 +15,28 @@ SN.state = {
 SN.app = {
 
     init() {
-        SN.scoring.computeAll();
-        SN.map.init();
-        SN.layers.init();
-        SN.executive.init();
-        SN.onboarding.init();
+        // Always make page visible and bind core UI first
+        document.body.classList.add('loaded');
+
+        // Bind executive and onboarding buttons early so they work
+        // even if map/scoring fails
+        try { SN.executive.init(); } catch(e) { console.error('Executive init failed:', e); }
+        try { SN.onboarding.init(); } catch(e) { console.error('Onboarding init failed:', e); }
+
+        // Scoring, map, layers — wrap each so one failure doesn't block others
+        try { SN.scoring.computeAll(); } catch(e) { console.error('Scoring failed:', e); }
+        try { SN.map.init(); } catch(e) { console.error('Map init failed:', e); }
+        try { SN.layers.init(); } catch(e) { console.error('Layers init failed:', e); }
+
         this.buildFilters();
         var all = this.getFilteredData();
-        SN.kpi.render(all);
-        SN.table.render(all);
-        SN.charts.render(all);
-        SN.insights.render(all);
-        SN.insights.update(all);
+        try { SN.kpi.render(all); } catch(e) { console.error('KPI render failed:', e); }
+        try { SN.table.render(all); } catch(e) { console.error('Table render failed:', e); }
+        try { SN.charts.render(all); } catch(e) { console.error('Charts render failed:', e); }
+        try { SN.insights.render(all); } catch(e) { console.error('Insights render failed:', e); }
+        try { SN.insights.update(all); } catch(e) { console.error('Insights update failed:', e); }
         this.bindEvents();
         this.switchTab('table');
-        document.body.classList.add('loaded');
         console.log('%c⟡ Spectral Nexus v' + SN.config.version + ' — ' + SN.data.counties.length + ' counties + ' + (SN.data.smartCities ? SN.data.smartCities.length : 0) + ' smart cities loaded', 'color:#06d6a0;font-weight:bold;font-size:14px');
     },
 
