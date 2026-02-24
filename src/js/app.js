@@ -9,12 +9,20 @@ SN.state = {
     selectedCounty: null,
     filters: { state: 'all', minScore: 0 },
     choroplethMetric: 'opportunityScore',
-    activeTab: 'table'
+    activeTab: 'table',
+    theme: 'dark'
 };
 
 SN.app = {
 
     init() {
+        // Restore saved theme before making visible
+        var savedTheme = localStorage.getItem('sn-theme');
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-mode');
+            SN.state.theme = 'light';
+        }
+
         // Always make page visible and bind core UI first
         document.body.classList.add('loaded');
 
@@ -76,6 +84,15 @@ SN.app = {
 
         var resetBtn = document.getElementById('btn-reset');
         if (resetBtn) resetBtn.addEventListener('click', function() { self.resetFilters(); });
+
+        var themeBtn = document.getElementById('btn-theme');
+        if (themeBtn) {
+            // Update button label to match current theme
+            if (SN.state.theme === 'light') {
+                themeBtn.innerHTML = '<span class="theme-toggle-icon">&#9728;</span> Light';
+            }
+            themeBtn.addEventListener('click', function() { self.toggleTheme(); });
+        }
 
         var methClose = document.getElementById('methodology-close');
         if (methClose) methClose.addEventListener('click', function() { self.hideMethodology(); });
@@ -149,6 +166,39 @@ SN.app = {
     hideMethodology() {
         var modal = document.getElementById('methodology-modal');
         if (modal) modal.classList.remove('open');
+    },
+
+    toggleTheme() {
+        var isLight = document.body.classList.toggle('light-mode');
+        SN.state.theme = isLight ? 'light' : 'dark';
+        localStorage.setItem('sn-theme', SN.state.theme);
+
+        // Update toggle button
+        var btn = document.getElementById('btn-theme');
+        if (btn) {
+            btn.innerHTML = isLight
+                ? '<span class="theme-toggle-icon">&#9728;</span> Light'
+                : '<span class="theme-toggle-icon">&#9790;</span> Dark';
+        }
+
+        // Swap map tiles
+        try {
+            var map = SN.map.leafletMap;
+            var cfg = SN.config.map;
+            if (map && SN.map.tileLayer) {
+                map.removeLayer(SN.map.tileLayer);
+                SN.map.tileLayer = L.tileLayer(
+                    isLight ? cfg.tileUrlLight : cfg.tileUrl,
+                    { attribution: cfg.tileAttribution, subdomains: 'abcd', maxZoom: 19 }
+                ).addTo(map);
+            }
+        } catch(e) { console.error('Tile swap failed:', e); }
+
+        // Re-render charts with new color scheme
+        try {
+            var filtered = this.getFilteredData();
+            SN.charts.render(filtered);
+        } catch(e) { console.error('Chart re-render failed:', e); }
     }
 };
 

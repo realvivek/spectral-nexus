@@ -11,10 +11,24 @@ SN.charts = {
     barChart: null,
     histChart: null,
 
-    /* Chart.js global dark theme */
+    /* Theme-aware color palette */
+    _colors() {
+        var light = document.body.classList.contains('light-mode');
+        return {
+            text:       light ? '#4a5568' : '#94a3b8',
+            textBold:   light ? '#1a202c' : '#f1f5f9',
+            grid:       light ? 'rgba(0,0,0,0.08)' : 'rgba(30,41,59,0.6)',
+            border:     light ? 'rgba(0,0,0,0.12)' : 'rgba(30,41,59,0.8)',
+            tooltipBg:  light ? '#ffffff' : '#1e293b',
+            tooltipBdr: light ? '#d1d5db' : '#334155'
+        };
+    },
+
+    /* Chart.js global theme */
     applyTheme() {
-        Chart.defaults.color = '#94a3b8';
-        Chart.defaults.borderColor = 'rgba(30, 41, 59, 0.8)';
+        var c = this._colors();
+        Chart.defaults.color = c.text;
+        Chart.defaults.borderColor = c.border;
         Chart.defaults.font.family = "'DM Sans', sans-serif";
         Chart.defaults.font.size = 11;
         Chart.defaults.plugins.legend.labels.usePointStyle = true;
@@ -38,6 +52,7 @@ SN.charts = {
         const ctx = document.getElementById('chart-scatter');
         if (!ctx) return;
         if (this.scatterChart) this.scatterChart.destroy();
+        var c = this._colors();
 
         const data = counties.map(c => ({
             x: Math.min(c.populationDensity, 3000),
@@ -75,15 +90,15 @@ SN.charts = {
                     title: {
                         display: true,
                         text: 'Population Density vs Coverage Gap',
-                        color: '#f1f5f9',
+                        color: c.textBold,
                         font: { size: 13, weight: '600' },
                         padding: { bottom: 12 }
                     },
                     tooltip: {
-                        backgroundColor: '#1e293b',
-                        titleColor: '#f1f5f9',
-                        bodyColor: '#94a3b8',
-                        borderColor: '#334155',
+                        backgroundColor: c.tooltipBg,
+                        titleColor: c.textBold,
+                        bodyColor: c.text,
+                        borderColor: c.tooltipBdr,
                         borderWidth: 1,
                         padding: 10,
                         callbacks: {
@@ -101,14 +116,14 @@ SN.charts = {
                 },
                 scales: {
                     x: {
-                        title: { display: true, text: 'Population Density (per sq mi)', color: '#64748b' },
-                        grid: { color: 'rgba(30,41,59,0.6)' },
-                        ticks: { color: '#64748b' }
+                        title: { display: true, text: 'Population Density (per sq mi)', color: c.text },
+                        grid: { color: c.grid },
+                        ticks: { color: c.text }
                     },
                     y: {
-                        title: { display: true, text: 'Coverage Gap (%)', color: '#64748b' },
-                        grid: { color: 'rgba(30,41,59,0.6)' },
-                        ticks: { color: '#64748b' }
+                        title: { display: true, text: 'Coverage Gap (%)', color: c.text },
+                        grid: { color: c.grid },
+                        ticks: { color: c.text }
                     }
                 }
             }
@@ -122,6 +137,7 @@ SN.charts = {
         const ctx = document.getElementById('chart-bar');
         if (!ctx) return;
         if (this.barChart) this.barChart.destroy();
+        var c = this._colors();
 
         const top10 = [...counties]
             .sort((a, b) => b.opportunityScore - a.opportunityScore)
@@ -160,27 +176,27 @@ SN.charts = {
                     title: {
                         display: true,
                         text: 'Top 10 Counties by Opportunity Score',
-                        color: '#f1f5f9',
+                        color: c.textBold,
                         font: { size: 13, weight: '600' },
                         padding: { bottom: 12 }
                     },
                     tooltip: {
-                        backgroundColor: '#1e293b',
-                        titleColor: '#f1f5f9',
-                        bodyColor: '#94a3b8',
-                        borderColor: '#334155',
+                        backgroundColor: c.tooltipBg,
+                        titleColor: c.textBold,
+                        bodyColor: c.text,
+                        borderColor: c.tooltipBdr,
                         borderWidth: 1
                     }
                 },
                 scales: {
                     x: {
                         min: 0, max: 100,
-                        grid: { color: 'rgba(30,41,59,0.6)' },
-                        ticks: { color: '#64748b' }
+                        grid: { color: c.grid },
+                        ticks: { color: c.text }
                     },
                     y: {
                         grid: { display: false },
-                        ticks: { color: '#94a3b8', font: { size: 11 } }
+                        ticks: { color: c.text, font: { size: 11 } }
                     }
                 }
             }
@@ -194,6 +210,7 @@ SN.charts = {
         const ctx = document.getElementById('chart-hist');
         if (!ctx) return;
         if (this.histChart) this.histChart.destroy();
+        var c = this._colors();
 
         // Bucket into 10-point bins
         const bins = Array(10).fill(0);
@@ -225,28 +242,28 @@ SN.charts = {
                     title: {
                         display: true,
                         text: 'Score Distribution',
-                        color: '#f1f5f9',
+                        color: c.textBold,
                         font: { size: 13, weight: '600' },
                         padding: { bottom: 12 }
                     },
                     tooltip: {
-                        backgroundColor: '#1e293b',
-                        titleColor: '#f1f5f9',
-                        bodyColor: '#94a3b8',
-                        borderColor: '#334155',
+                        backgroundColor: c.tooltipBg,
+                        titleColor: c.textBold,
+                        bodyColor: c.text,
+                        borderColor: c.tooltipBdr,
                         borderWidth: 1
                     }
                 },
                 scales: {
                     x: {
-                        title: { display: true, text: 'Opportunity Score Range', color: '#64748b' },
+                        title: { display: true, text: 'Opportunity Score Range', color: c.text },
                         grid: { display: false },
-                        ticks: { color: '#64748b' }
+                        ticks: { color: c.text }
                     },
                     y: {
-                        title: { display: true, text: 'Number of Counties', color: '#64748b' },
-                        grid: { color: 'rgba(30,41,59,0.6)' },
-                        ticks: { color: '#64748b', stepSize: 5 }
+                        title: { display: true, text: 'Number of Counties', color: c.text },
+                        grid: { color: c.grid },
+                        ticks: { color: c.text, stepSize: 5 }
                     }
                 }
             }
