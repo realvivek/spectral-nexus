@@ -266,6 +266,31 @@ SN.map = {
                 layer.setStyle({ fillColor: color });
             }
         });
+        this.updateLegend(metric);
+    },
+
+    /**
+     * Update the map legend to reflect the active choropleth metric.
+     */
+    updateLegend(metric) {
+        var title = document.getElementById('legend-title');
+        var labels = document.getElementById('legend-labels');
+        var hint = document.getElementById('legend-hint');
+        if (!title || !labels) return;
+
+        var info = {
+            opportunityScore: { title: 'Opportunity Score', left: '100 (Best)', mid: '50', right: '0 (Low)', hint: 'Circle size = population · Color = score' },
+            unservedPct:      { title: 'Unserved %', left: '50%+ (Critical)', mid: '25%', right: '0% (Served)', hint: 'Higher % = more BEAD-eligible locations' },
+            coverageGap:      { title: 'Coverage Gap', left: '60%+ (Severe)', mid: '30%', right: '0% (Full)', hint: 'Gap between claimed and actual coverage' },
+            medianIncome:     { title: 'Median Income (inverted)', left: 'Low Income', mid: '$60K', right: 'High Income', hint: 'Lower income = higher grant eligibility' },
+            populationDensity:{ title: 'Population Density', left: 'High Density', mid: 'Moderate', right: 'Sparse', hint: 'Sweet spot: 50-200/sq mi' },
+            fiberAvailPct:    { title: 'Fiber Availability (inverted)', left: 'Low Fiber', mid: '50%', right: 'High Fiber', hint: 'Low fiber = more build opportunity' }
+        };
+
+        var m = info[metric] || info.opportunityScore;
+        title.textContent = m.title;
+        labels.innerHTML = '<span>' + m.left + '</span><span>' + m.mid + '</span><span>' + m.right + '</span>';
+        if (hint) hint.textContent = m.hint;
     },
 
     /**
