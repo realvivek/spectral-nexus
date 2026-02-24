@@ -35,7 +35,7 @@
             <span class="logo-tag">Telecom Intelligence</span>
         </div>
         <div class="header-controls">
-            <span class="header-version">v0.2.0</span>
+            <span class="header-version">v0.3.0</span>
         </div>
     </header>
 
@@ -134,27 +134,27 @@
             <h3>Opportunity Score (0-100)</h3>
             <p>Each county receives a composite score based on six weighted factors:</p>
             <ul>
-                <li><strong>Coverage Gap (25%)</strong> — % of BSLs that are underserved or unserved</li>
-                <li><strong>Unserved % (20%)</strong> — % of BSLs with zero qualifying broadband</li>
-                <li><strong>Funding Availability (20%)</strong> — BEAD status × unserved concentration</li>
-                <li><strong>Income Need (15%)</strong> — Lower income = higher grant eligibility</li>
+                <li><strong>Coverage Gap (25%)</strong> — % of BSLs underserved or unserved (sqrt-scaled to spread real-data distribution)</li>
+                <li><strong>Unserved % (20%)</strong> — % of BSLs below 25/3 Mbps (sqrt-scaled)</li>
+                <li><strong>Funding Eligibility (20%)</strong> — BEAD approval status × unserved BSL concentration</li>
+                <li><strong>Income Need (15%)</strong> — Lower median income = higher grant eligibility (continuous scale)</li>
                 <li><strong>Population Density (10%)</strong> — Sweet spot: 50-200/sq mi (buildable, not saturated)</li>
-                <li><strong>5G Readiness (10%)</strong> — Tower density, fiber backhaul, spectrum availability</li>
+                <li><strong>Infrastructure Readiness (10%)</strong> — Provider count, fiber penetration, density factor</li>
             </ul>
             <h3>Data Sources</h3>
             <ul>
-                <li><strong>Demographics:</strong> US Census ACS 5-Year Estimates</li>
-                <li><strong>BSL / Coverage:</strong> FCC Broadband Data Collection (BDC)</li>
-                <li><strong>Funding:</strong> NTIA BEAD Dashboard, FCC Auction 904 (RDOF)</li>
-                <li><strong>Infrastructure:</strong> FCC ASR (tower locations)</li>
+                <li><strong>BSL / Coverage:</strong> FCC Broadband Data Collection (BDC) via ArcGIS Living Atlas — real county-level data for all 3,100+ counties</li>
+                <li><strong>Demographics:</strong> US Census ACS 5-Year Estimates (2022) — population, income, poverty</li>
+                <li><strong>Geography:</strong> Census TIGERweb — county land area and coordinates</li>
+                <li><strong>Funding:</strong> NTIA BEAD Allocations (June 2023) — $42.45B across all states</li>
             </ul>
             <h3>Disclaimer</h3>
-            <p>This is a demonstration tool. Telecom metrics (BSLs, coverage, fiber, towers) use realistic simulated data for the current 200-county dataset. As we integrate real FCC BDC bulk data, mock values will be replaced with verified figures. Scoring methodology is transparent and open to feedback.</p>
+            <p>BSL data sourced from FCC BDC. Provider counts, 5G readiness, and funding estimates are derived metrics. Scoring methodology is transparent and open to feedback. This tool is for informational purposes — not investment advice.</p>
         </div>
     </div>
 
     <!-- Disclaimer -->
-    <div class="disclaimer">⟡ Demo dataset · Telecom metrics simulated · Not investment advice</div>
+    <div class="disclaimer">⟡ Real FCC BDC data · 3,100+ counties · Not investment advice</div>
 
     <!-- ═══ SCRIPTS ═══ -->
     <!-- Leaflet -->
