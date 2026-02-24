@@ -59,11 +59,38 @@ body {
 @keyframes force-visible { to { opacity: 1; } }
 body.loaded { opacity: 1; animation: none; }
 
+/* ── Light Mode Theme ── */
+body.light-mode {
+    --bg-primary: #f5f7fa;
+    --bg-surface: #ffffff;
+    --bg-elevated: #edf0f5;
+    --bg-card: #ffffff;
+    --bg-overlay: rgba(245, 247, 250, 0.95);
+
+    --text-primary: #1a202c;
+    --text-secondary: #4a5568;
+    --text-muted: #8895a7;
+
+    --border: rgba(0,0,0,0.08);
+    --border-hover: rgba(0,0,0,0.16);
+    --border-active: rgba(6,180,140,0.5);
+
+    --accent: #059b77;
+    --accent-glow: rgba(5,155,119,0.12);
+    --accent-blue: #2196d4;
+    --accent-warm: #d9a000;
+    --accent-hot: #dc2626;
+    --accent-orange: #e56800;
+    --accent-purple: #7c5cc4;
+}
+
 ::selection { background: rgba(6,214,160,0.3); color: #fff; }
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
 ::-webkit-scrollbar-thumb { background: #2a3548; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #3a4a60; }
+body.light-mode ::-webkit-scrollbar-thumb { background: #c1c8d0; }
+body.light-mode ::-webkit-scrollbar-thumb:hover { background: #a8b0ba; }
 
 /* ═══════════════════════════════════════════════ */
 /* HEADER                                          */
@@ -1160,7 +1187,7 @@ body.loaded { opacity: 1; animation: none; }
 .layer-toggle {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     padding: 6px 4px;
     cursor: pointer;
     font-size: 0.78rem;
@@ -1178,6 +1205,7 @@ body.loaded { opacity: 1; animation: none; }
     font-size: 0.76rem;
     white-space: nowrap;
     font-weight: 500;
+    line-height: 14px;
 }
 
 .layer-toggle input[type="checkbox"] {
@@ -2708,4 +2736,126 @@ body.loaded { opacity: 1; animation: none; }
     font-size: 0.64rem;
     color: var(--accent-blue);
     font-family: var(--font-mono);
+}
+
+/* ═══════════════════════════════════════════════ */
+/* LIGHT MODE OVERRIDES (hardcoded dark values)    */
+/* ═══════════════════════════════════════════════ */
+
+/* Theme toggle button */
+.theme-toggle {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-weight: 500;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.theme-toggle:hover {
+    border-color: var(--border-hover);
+    color: var(--text-primary);
+}
+.theme-toggle-icon { font-size: 0.9rem; }
+
+body.light-mode .logo-text {
+    background: linear-gradient(135deg, #059b77, #2196d4);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+body.light-mode .kpi-card:hover {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+body.light-mode #map-tooltip {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+body.light-mode .sn-table tbody tr:hover {
+    background: rgba(5,155,119,0.06);
+}
+
+body.light-mode .sn-table tbody tr.row-selected {
+    background: rgba(5,155,119,0.1);
+}
+
+body.light-mode .insight-item:hover {
+    background: rgba(5,155,119,0.06);
+}
+
+body.light-mode .methodology-content {
+    box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+}
+
+body.light-mode .sn-popup .leaflet-popup-content-wrapper {
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    background: var(--bg-card);
+}
+
+body.light-mode .sn-popup-inactive .leaflet-popup-content-wrapper {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+body.light-mode .onboarding-overlay {
+    background: rgba(255, 255, 255, 0.75);
+}
+
+body.light-mode .onboarding-card {
+    box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+}
+
+body.light-mode .report-panel {
+    box-shadow: -4px 0 24px rgba(0,0,0,0.1);
+}
+
+body.light-mode .exec-toast {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+body.light-mode .popup-contact-row {
+    border-bottom-color: rgba(0,0,0,0.06);
+}
+
+body.light-mode .layer-popup-contact {
+    background: rgba(33,150,212,0.06);
+}
+
+body.light-mode .funding-hero {
+    background: linear-gradient(135deg, rgba(5,155,119,0.06), rgba(33,150,212,0.06));
+}
+
+body.light-mode .insight-urgency {
+    background: linear-gradient(135deg, rgba(217,160,0,0.06), rgba(5,155,119,0.03));
+}
+
+body.light-mode .onb-icon {
+    background: linear-gradient(135deg, rgba(5,155,119,0.1), rgba(33,150,212,0.1));
+    border-color: rgba(5,155,119,0.2);
+}
+
+body.light-mode .wf-mockup-map {
+    background: #dce3ea;
+}
+
+body.light-mode .header-btn-accent {
+    border-color: rgba(5,155,119,0.3);
+}
+
+body.light-mode .header-btn-accent:hover {
+    background: rgba(5,155,119,0.08);
+}
+
+body.light-mode .header-btn-warm {
+    border-color: rgba(217,160,0,0.3);
+}
+
+body.light-mode .header-btn-warm:hover {
+    background: rgba(217,160,0,0.08);
 }
