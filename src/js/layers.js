@@ -30,7 +30,6 @@ SN.layers = {
         {
             name: 'Infrastructure',
             layers: [
-                { id: 'fiber',      label: 'Fiber Backbone Routes',    icon: 'FB', color: '#06d6a0', defaultOn: false },
                 { id: 'grants',     label: 'Fiber Grant Areas',        icon: '$F', color: '#fbbf24', defaultOn: false }
             ]
         },
@@ -75,7 +74,7 @@ SN.layers = {
 
         this.buildCBRSLayer();
         this.buildCellularLayer();
-        this.buildFiberLayer();
+
         this.buildGrantsLayer();
         this.buildSmartCitiesLayer();
         this.buildRDOFLayer();
@@ -175,37 +174,6 @@ SN.layers = {
 
             circle.bindPopup(popupHtml, { className: 'sn-popup', maxWidth: 300 });
             circle.addTo(group);
-        });
-    },
-
-    /**
-     * Build fiber backbone route polylines.
-     */
-    buildFiberLayer() {
-        var group = this.groups.fiber;
-        if (!SN.data.fiberRoutes) return;
-
-        SN.data.fiberRoutes.forEach(function(route) {
-            var polyline = L.polyline(route.points, {
-                color: '#06d6a0',
-                weight: 2.5,
-                opacity: 0.6,
-                dashArray: route.status === 'Active' ? null : '8,6'
-            });
-
-            var popupHtml = '<div class="layer-popup fiber-popup">' +
-                '<div class="layer-popup-header">' +
-                    '<span class="layer-popup-icon" style="background:#06d6a0">FB</span>' +
-                    '<div>' +
-                        '<h4>' + route.name + '</h4>' +
-                        '<span class="layer-popup-tier">' + route.owner + ' · ' + route.capacity + '</span>' +
-                    '</div>' +
-                '</div>' +
-                '<p class="layer-popup-note">Existing backbone. Private 5G can connect to this fiber for backhaul.</p>' +
-            '</div>';
-
-            polyline.bindPopup(popupHtml, { className: 'sn-popup', maxWidth: 280 });
-            polyline.addTo(group);
         });
     },
 
