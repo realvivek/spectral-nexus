@@ -160,11 +160,13 @@ SN.kpi = {
                         SN.app.switchTab('funding');
                         break;
                     case 'filterBead':
-                        document.getElementById('filter-score').value = 40;
-                        SN.state.filters.minScore = 40;
-                        SN.app.updateScoreLabel(40);
-                        SN.app.onFilterChange();
-                        SN.app.switchTab('insights');
+                        // Navigate to table showing BEAD-ready counties sorted by unserved %
+                        SN.app.switchTab('table');
+                        if (SN.table) {
+                            SN.table.sortCol = 'unservedPct';
+                            SN.table.sortDir = 'desc';
+                            SN.table.render(SN.app.getFilteredData());
+                        }
                         break;
                     case 'flyToTop':
                         var fips = card.dataset.fips;

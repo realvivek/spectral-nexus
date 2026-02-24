@@ -343,6 +343,15 @@ body.loaded { opacity: 1; animation: none; }
     font-family: var(--font-mono);
 }
 
+.legend-hint {
+    font-size: 0.58rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+    font-style: italic;
+    text-align: center;
+    opacity: 0.8;
+}
+
 /* ── Right Panel ── */
 .right-panel {
     width: 520px;

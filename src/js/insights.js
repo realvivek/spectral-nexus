@@ -17,6 +17,7 @@ SN.insights = {
 
         container.innerHTML = `
             ${this.renderBeadUrgency(counties)}
+            ${this.renderScoringOverview(counties)}
             ${this.renderTopTargets(counties)}
             ${this.renderQuickWinPlaybook(counties)}
             ${this.renderCoopPartnerships(counties)}
@@ -302,14 +303,58 @@ SN.insights = {
         `;
     },
 
+    /**
+     * Scoring Overview — brief explanation of how scores work.
+     */
+    renderScoringOverview(counties) {
+        var w = SN.config.weights;
+        var factors = [
+            { name: 'Coverage Gap', weight: w.coverageGap, color: '#ef4444' },
+            { name: 'Unserved %', weight: w.unservedPct, color: '#f97316' },
+            { name: 'Funding Eligibility', weight: w.funding, color: '#fbbf24' },
+            { name: 'Income Need', weight: w.incomeNeed, color: '#a78bfa' },
+            { name: 'Pop. Density', weight: w.popDensity, color: '#38bdf8' },
+            { name: 'Infra. Readiness', weight: w.readiness5g, color: '#06d6a0' }
+        ];
+
+        var barHtml = factors.map(function(f) {
+            var pct = Math.round(f.weight * 100);
+            return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">' +
+                '<span style="min-width:110px;font-size:0.72rem;color:var(--text-secondary)">' + f.name + '</span>' +
+                '<div style="flex:1;height:6px;background:var(--bg-primary);border-radius:3px;overflow:hidden">' +
+                    '<div style="height:100%;width:' + pct + '%;background:' + f.color + ';border-radius:3px"></div>' +
+                '</div>' +
+                '<span style="min-width:30px;font-size:0.68rem;font-family:var(--font-mono);color:' + f.color + ';text-align:right">' + pct + '%</span>' +
+            '</div>';
+        }).join('');
+
+        var avgScore = counties.length ? Math.round(counties.reduce(function(s, c) { return s + c.opportunityScore; }, 0) / counties.length) : 0;
+        var maxScore = counties.length ? Math.max.apply(null, counties.map(function(c) { return c.opportunityScore; })) : 0;
+        var aboveThreshold = counties.filter(function(c) { return c.opportunityScore >= 60; }).length;
+
+        return '<div class="insight-section insight-blue">' +
+            '<h3 class="insight-title">Opportunity Score Overview</h3>' +
+            '<p class="insight-context">Each county scores 0-100 based on 6 weighted factors. Use the score to prioritize markets — higher score = bigger broadband investment opportunity.</p>' +
+            '<div class="insight-urgency-grid">' +
+                '<div class="insight-urgency-stat"><span class="urgency-val">' + avgScore + '</span><span class="urgency-lbl">Avg Score</span></div>' +
+                '<div class="insight-urgency-stat"><span class="urgency-val">' + maxScore + '</span><span class="urgency-lbl">Top Score</span></div>' +
+                '<div class="insight-urgency-stat"><span class="urgency-val">' + aboveThreshold + '</span><span class="urgency-lbl">Score 60+</span></div>' +
+            '</div>' +
+            '<div style="margin-top:12px">' + barHtml + '</div>' +
+            '<div class="insight-action-box">' +
+                '<strong>How to use:</strong> Select "Opportunity Score" in the map\'s Choropleth Metric dropdown. Green = highest opportunity. ' +
+                'Use the Score filter slider to hide low-value counties. ' +
+                'For the full scoring formula and example breakdown, go to <strong>Funding Intel → Scoring</strong> tab.' +
+            '</div>' +
+        '</div>';
+    },
+
     renderMethodologyLink() {
-        return `
-            <div class="insight-methodology">
-                <button id="btn-methodology" class="btn-methodology" onclick="SN.app.showMethodology()">
-                    View Scoring Methodology & Data Sources
-                </button>
-            </div>
-        `;
+        return '<div class="insight-methodology">' +
+            '<button class="btn-methodology" onclick="SN.funding.activeSection=\'scoring\';SN.app.switchTab(\'funding\');">' +
+                'View Full Scoring Methodology & Data Sources →' +
+            '</button>' +
+        '</div>';
     },
 
     /**

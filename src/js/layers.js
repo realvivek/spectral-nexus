@@ -12,13 +12,12 @@ SN.layers = {
     groups: {},
     visible: {},
 
-    /* Layer definitions — organized into 4 categories */
+    /* Layer definitions — organized into categories */
     categories: [
         {
             name: 'Base Layers',
             layers: [
-                { id: 'counties',   label: 'County Markers',          icon: '●',  color: '#06d6a0', defaultOn: true },
-                { id: 'basemap',    label: 'Dark Basemap',             icon: 'BM', color: '#536179', defaultOn: true }
+                { id: 'counties',   label: 'County Markers',          icon: '●',  color: '#06d6a0', defaultOn: true }
             ]
         },
         {
@@ -62,8 +61,8 @@ SN.layers = {
 
         var allDefs = this._allDefs();
         allDefs.forEach(function(def) {
-            // Skip special layers — counties and basemap are handled differently
-            if (def.id === 'counties' || def.id === 'basemap') {
+            // Skip counties — handled differently (not a standard layer group)
+            if (def.id === 'counties') {
                 SN.layers.visible[def.id] = def.defaultOn;
                 return;
             }
@@ -386,7 +385,7 @@ SN.layers = {
         var anyOverlayOn = false;
         var allDefs = this._allDefs();
         allDefs.forEach(function(d) {
-            if (d.id !== 'counties' && d.id !== 'basemap' && SN.layers.visible[d.id]) anyOverlayOn = true;
+            if (d.id !== 'counties' && SN.layers.visible[d.id]) anyOverlayOn = true;
         });
 
         var html = '<div class="layer-panel-header">' +
@@ -424,7 +423,7 @@ SN.layers = {
                 var turnOn = toggleAllBtn.textContent === 'Show All';
                 var allDefs = SN.layers._allDefs();
                 allDefs.forEach(function(def) {
-                    if (def.id !== 'counties' && def.id !== 'basemap') {
+                    if (def.id !== 'counties') {
                         SN.layers.toggleLayer(def.id, turnOn);
                     }
                 });
@@ -450,17 +449,6 @@ SN.layers = {
                     map.removeLayer(SN.map.countyLayer);
                 }
             }
-            return;
-        }
-
-        // Special handling for basemap tiles
-        if (layerId === 'basemap') {
-            this.visible.basemap = show;
-            map.eachLayer(function(layer) {
-                if (layer instanceof L.TileLayer) {
-                    layer.setOpacity(show ? 1 : 0);
-                }
-            });
             return;
         }
 
