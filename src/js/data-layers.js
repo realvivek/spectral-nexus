@@ -113,18 +113,6 @@ SN.data.cellularGaps = [
 /* ═══════════════════════════════════════════════════════════
  * Fiber Infrastructure & Grant Opportunities
  * ═══════════════════════════════════════════════════════════ */
-SN.data.fiberRoutes = [
-    // Major existing backbone corridors
-    { name: "Northeast Corridor", points: [[40.71,-74.01],[40.01,-75.13],[39.95,-75.17],[38.91,-77.04],[42.36,-71.06]], type: "backbone", owner: "Multiple", capacity: "400G+", status: "Active" },
-    { name: "Southeast Corridor", points: [[38.91,-77.04],[36.85,-75.98],[35.23,-80.84],[33.75,-84.39],[30.33,-81.66]], type: "backbone", owner: "Multiple", capacity: "400G+", status: "Active" },
-    { name: "Midwest Backbone", points: [[41.88,-87.63],[42.33,-83.05],[39.96,-83.00],[39.10,-84.51],[38.25,-85.76]], type: "backbone", owner: "Multiple", capacity: "200G+", status: "Active" },
-    { name: "Texas Triangle", points: [[29.76,-95.37],[30.27,-97.74],[32.78,-96.80],[29.42,-98.49],[29.76,-95.37]], type: "backbone", owner: "Multiple", capacity: "400G+", status: "Active" },
-    { name: "Pacific Coast", points: [[47.61,-122.33],[45.52,-122.68],[37.77,-122.42],[34.05,-118.24],[32.72,-117.16]], type: "backbone", owner: "Multiple", capacity: "400G+", status: "Active" },
-    { name: "Mountain West", points: [[47.61,-122.33],[46.87,-113.99],[43.62,-116.21],[40.76,-111.89],[39.74,-104.99]], type: "backbone", owner: "CenturyLink/Lumen", capacity: "200G+", status: "Active" },
-    { name: "I-70 Corridor", points: [[39.74,-104.99],[39.10,-94.58],[38.63,-90.20],[39.77,-86.16],[39.96,-83.00]], type: "backbone", owner: "Multiple", capacity: "200G+", status: "Active" },
-    { name: "Gulf Coast", points: [[29.76,-95.37],[30.46,-91.19],[30.45,-88.90],[30.41,-87.22],[30.33,-81.66]], type: "backbone", owner: "Multiple", capacity: "100G+", status: "Active" }
-];
-
 SN.data.fiberGrants = [
     // Active/upcoming fiber build grants — SALES OPPORTUNITIES for layering private 5G
     { name: "WV Broadband Expansion", state: "WV", lat: 38.5, lng: -80.5, amount: 1210000000, type: "BEAD", status: "Awarded", miles: 4200, homesPassed: 185000, startDate: "2025-Q3", note: "Largest BEAD award. Major build-out." },
