@@ -175,3 +175,30 @@ After EVERY change:
 - **Don't change script order carelessly** — `config.js` before `data.js` before `scoring.js` before `app.js`
 - **Don't add `import`/`export` statements** — This is a no-build static site, use the `SN` namespace
 - **Check relative paths from `public/index.html`** — CSS/JS paths use `../src/` because HTML is in `public/`
+
+## PR Creation & GitHub Access
+
+This environment has **NO GitHub API access** (no `gh` CLI, no `GITHUB_TOKEN`). Follow this workflow:
+
+1. **Check branch status** — ensure all changes are committed and pushed (`git status` should show "nothing to commit, working tree clean" and "up to date with origin/...")
+2. **Do NOT attempt `gh` CLI or API authentication** — it will fail. Do not spend time trying to authenticate or install tools.
+3. **Provide the compare URL** for manual PR creation:
+   ```
+   https://github.com/realvivek/spectral-nexus/compare/main...<branch-name>
+   ```
+4. **Tell the user** to create the PR manually, or note that the orchestration system may auto-create it.
+5. **Time limit**: Spend at most 2 minutes on PR creation attempts. If it doesn't work, move on.
+
+### Post-Push Verification
+
+After pushing, **verify the deployed site actually works**:
+
+1. Fetch the deployed URL: `https://realvivek.github.io/spectral-nexus/`
+2. Confirm the page renders (not blank/white)
+3. Confirm styles load (dark theme visible)
+4. Confirm interactive elements work (buttons, map, tabs, layer toggles)
+5. **Don't just check that files exist** — confirm the app works end-to-end
+
+## Important: No Claude Session Links
+
+**NEVER include Claude session/prompt URLs (e.g., `https://claude.ai/code/session_...`) in any commits, PRs, documentation, comments, or code files.** These are internal development tool links and must not appear in the repository.
