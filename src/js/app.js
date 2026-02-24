@@ -35,6 +35,7 @@ SN.app = {
         try { SN.charts.render(all); } catch(e) { console.error('Charts render failed:', e); }
         try { SN.insights.render(all); } catch(e) { console.error('Insights render failed:', e); }
         try { SN.insights.update(all); } catch(e) { console.error('Insights update failed:', e); }
+        try { SN.funding.init(); } catch(e) { console.error('Funding init failed:', e); }
         this.bindEvents();
         this.switchTab('table');
         console.log('%c⟡ Spectral Nexus v' + SN.config.version + ' — ' + SN.data.counties.length + ' counties + ' + (SN.data.smartCities ? SN.data.smartCities.length : 0) + ' smart cities loaded', 'color:#06d6a0;font-weight:bold;font-size:14px');
@@ -96,6 +97,7 @@ SN.app = {
         if (SN.state.activeTab === 'table') SN.table.update(filtered);
         if (SN.state.activeTab === 'charts') SN.charts.update(filtered);
         if (SN.state.activeTab === 'insights') SN.insights.update(filtered);
+        if (SN.state.activeTab === 'funding') SN.funding.update();
     },
 
     getFilteredData() {
@@ -119,6 +121,7 @@ SN.app = {
         if (tab === 'table') SN.table.update(filtered);
         if (tab === 'charts') SN.charts.update(filtered);
         if (tab === 'insights') SN.insights.update(filtered);
+        if (tab === 'funding') SN.funding.update();
     },
 
     updateScoreLabel(val) {
