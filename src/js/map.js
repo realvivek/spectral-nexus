@@ -162,7 +162,12 @@ SN.map = {
                 </div>
                 <div class="popup-score" style="color:${scoreColor}">
                     <span class="popup-score-num">${county.opportunityScore}</span>
-                    <span class="popup-score-label">Opportunity Score</span>
+                    <span class="popup-score-label">Funding Opportunity Score</span>
+                </div>
+                <div class="popup-funding">
+                    Est. Funding: <strong>${SN.kpi.fmt(county.fundingEstimate, 'currency')}</strong>
+                    · BEAD State Alloc: <strong>${SN.kpi.fmt(county.beadStateAllocation, 'currency')}</strong>
+                    · Status: <strong>${county.beadStatus}</strong>
                 </div>
                 <div class="popup-grid">
                     <div class="popup-metric">
@@ -186,21 +191,17 @@ SN.map = {
                         <span class="popup-metric-lbl">Fiber Avail.</span>
                     </div>
                     <div class="popup-metric">
-                        <span class="popup-metric-val">${county.readiness5g}</span>
-                        <span class="popup-metric-lbl">5G Readiness</span>
-                    </div>
-                    <div class="popup-metric">
                         <span class="popup-metric-val">${county.towerCount}</span>
-                        <span class="popup-metric-lbl">Cell Towers</span>
+                        <span class="popup-metric-lbl">Providers</span>
                     </div>
                     <div class="popup-metric">
-                        <span class="popup-metric-val">${county.beadStatus}</span>
-                        <span class="popup-metric-lbl">BEAD Status</span>
+                        <span class="popup-metric-val">${county.unservedBSLs.toLocaleString()}</span>
+                        <span class="popup-metric-lbl">Unserved BSLs</span>
                     </div>
-                </div>
-                <div class="popup-funding">
-                    Est. Funding: <strong>${SN.kpi.fmt(county.fundingEstimate, 'currency')}</strong>
-                    · BEAD State Alloc: <strong>${SN.kpi.fmt(county.beadStateAllocation, 'currency')}</strong>
+                    <div class="popup-metric">
+                        <span class="popup-metric-val">${(county.povertyRate * 100).toFixed(1)}%</span>
+                        <span class="popup-metric-lbl">Poverty Rate</span>
+                    </div>
                 </div>
             </div>
         `;
