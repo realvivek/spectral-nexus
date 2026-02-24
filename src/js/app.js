@@ -17,8 +17,11 @@ SN.app = {
     init() {
         SN.scoring.computeAll();
         SN.map.init();
+        SN.layers.init();
+        SN.executive.init();
+        SN.onboarding.init();
         this.buildFilters();
-        const all = this.getFilteredData();
+        var all = this.getFilteredData();
         SN.kpi.render(all);
         SN.table.render(all);
         SN.charts.render(all);
@@ -27,7 +30,7 @@ SN.app = {
         this.bindEvents();
         this.switchTab('table');
         document.body.classList.add('loaded');
-        console.log('%c⟡ Spectral Nexus v' + SN.config.version + ' — ' + SN.data.counties.length + ' counties loaded', 'color:#06d6a0;font-weight:bold;font-size:14px');
+        console.log('%c⟡ Spectral Nexus v' + SN.config.version + ' — ' + SN.data.counties.length + ' counties + ' + (SN.data.smartCities ? SN.data.smartCities.length : 0) + ' smart cities loaded', 'color:#06d6a0;font-weight:bold;font-size:14px');
     },
 
     buildFilters() {

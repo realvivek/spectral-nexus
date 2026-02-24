@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spectral Nexus — Broadband Funding Intelligence</title>
-    <meta name="description" content="Where is the money, who is eligible, and what is the competitive landscape? Broadband funding analysis across all 3,100+ US counties with FCC BDC data, BEAD tracking, and grant eligibility scoring.">
+    <meta name="description" content="Private 5G & broadband funding intelligence for executives. CBRS zones, smart cities, fiber grants, cellular coverage gaps across all 3,100+ US counties.">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,10 +32,15 @@
                 <defs><linearGradient id="grad" x1="0" y1="0" x2="32" y2="32"><stop stop-color="#06d6a0"/><stop offset="1" stop-color="#38bdf8"/></linearGradient></defs>
             </svg>
             <span class="logo-text">Spectral Nexus</span>
-            <span class="logo-tag">Broadband Funding Intelligence</span>
+            <span class="logo-tag">Private 5G & Broadband Intelligence</span>
         </div>
         <div class="header-controls">
-            <span class="header-version">v0.3.0</span>
+            <button id="btn-help" class="header-btn" title="How to use this dashboard">? Guide</button>
+            <button id="btn-export-csv" class="header-btn header-btn-accent" title="Export filtered data to CSV">Export CSV</button>
+            <button id="btn-open-report" class="header-btn header-btn-warm" title="View your sales report">
+                Sales Report <span id="report-badge" class="report-badge" style="display:none">0</span>
+            </button>
+            <span class="header-version">v0.4.0</span>
         </div>
     </header>
 
@@ -61,6 +66,8 @@
                         <option value="fiberAvailPct">Fiber Availability</option>
                     </select>
                 </div>
+                <!-- Layer Toggles -->
+                <div class="map-control-group" id="layer-toggles"></div>
             </div>
 
             <div class="map-legend">
@@ -126,6 +133,30 @@
         </div>
     </div>
 
+    <!-- ═══ SALES REPORT PANEL ═══ -->
+    <div id="report-panel" class="report-panel">
+        <div class="report-panel-inner">
+            <div class="report-header">
+                <h2>Sales Intelligence Report</h2>
+                <button id="report-close" class="report-close">✕</button>
+            </div>
+            <div class="report-actions">
+                <button id="btn-send-report" class="report-action-btn report-send">Email to Sales Team</button>
+                <button id="btn-export-report" class="report-action-btn report-export">Export HTML Report</button>
+                <button id="btn-clear-report" class="report-action-btn report-clear">Clear All</button>
+            </div>
+            <div id="report-items" class="report-items"></div>
+        </div>
+    </div>
+
+    <!-- ═══ ONBOARDING MODAL ═══ -->
+    <div id="onboarding-modal" class="onboarding-modal">
+        <div class="onboarding-overlay"></div>
+        <div class="onboarding-card">
+            <div id="onboarding-content"></div>
+        </div>
+    </div>
+
     <!-- ═══ METHODOLOGY MODAL ═══ -->
     <div id="methodology-modal" class="methodology-modal">
         <div class="methodology-content">
@@ -147,14 +178,16 @@
                 <li><strong>Demographics:</strong> US Census ACS 5-Year Estimates (2022) — population, income, poverty</li>
                 <li><strong>Geography:</strong> Census TIGERweb — county land area and coordinates</li>
                 <li><strong>Funding:</strong> NTIA BEAD Allocations (June 2023) — $42.45B across all states</li>
+                <li><strong>CBRS:</strong> FCC ULS Database — PAL license counts and incumbent exclusion zones</li>
+                <li><strong>Smart Cities:</strong> Smart Cities Council, city government reports, public press releases</li>
             </ul>
             <h3>Disclaimer</h3>
-            <p>BSL data sourced from FCC BDC. Provider counts, 5G readiness, and funding estimates are derived metrics. Scoring methodology is transparent and open to feedback. This tool is for informational purposes — not investment advice.</p>
+            <p>BSL data sourced from FCC BDC. Provider counts, 5G readiness, and funding estimates are derived metrics. CBRS data from FCC ULS license database. Smart city data from public government sources. This tool is for informational purposes — not investment advice.</p>
         </div>
     </div>
 
     <!-- Disclaimer -->
-    <div class="disclaimer">⟡ Real FCC BDC data · 3,100+ counties · Not investment advice</div>
+    <div class="disclaimer">Real FCC BDC data · 3,100+ counties · CBRS spectrum · Smart Cities · Not investment advice</div>
 
     <!-- ═══ SCRIPTS ═══ -->
     <!-- Leaflet -->
@@ -167,9 +200,14 @@
     <script src="../src/js/data.js"></script>
     <script src="../src/js/data-grants.js"></script>
     <script src="../src/js/data-awards.js"></script>
+    <script src="../src/js/data-layers.js"></script>
+    <script src="../src/js/data-smartcities.js"></script>
     <script src="../src/js/scoring.js"></script>
     <script src="../src/js/kpi.js"></script>
     <script src="../src/js/map.js"></script>
+    <script src="../src/js/layers.js"></script>
+    <script src="../src/js/executive.js"></script>
+    <script src="../src/js/onboarding.js"></script>
     <script src="../src/js/table.js"></script>
     <script src="../src/js/charts.js"></script>
     <script src="../src/js/insights.js"></script>
