@@ -1174,20 +1174,6 @@ body.loaded { opacity: 1; animation: none; }
     background: rgba(255,255,255,0.03);
 }
 
-.layer-toggle-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 20px;
-    border-radius: 4px;
-    font-size: 0.6rem;
-    font-weight: 800;
-    font-family: var(--font-mono);
-    color: #fff;
-    flex-shrink: 0;
-}
-
 .layer-toggle-label {
     font-size: 0.76rem;
     white-space: nowrap;

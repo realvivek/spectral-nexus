@@ -373,7 +373,6 @@ SN.layers = {
                 var checked = SN.layers.visible[def.id] ? 'checked' : '';
                 html += '<label class="layer-toggle" data-layer="' + def.id + '">' +
                     '<input type="checkbox" ' + checked + ' data-layer-id="' + def.id + '">' +
-                    '<span class="layer-toggle-icon" style="background:' + def.color + '">' + def.icon + '</span>' +
                     '<span class="layer-toggle-label">' + def.label + '</span>' +
                 '</label>';
             });
