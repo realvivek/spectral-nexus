@@ -57,7 +57,9 @@ SN.data.cbrsZones = [
     { name: "Louisville KY", lat: 38.2527, lng: -85.7585, radius: 22, tier: "Tier 3", palLicenses: 35, gaaAvailable: true, incumbentExclusion: false, demandIndex: 55, enterprises: 900, industrialParks: 8, ports: 0, campuses: 6, note: "UPS hub. Logistics/warehouse demand." },
     { name: "Tucson AZ", lat: 32.2226, lng: -110.9747, radius: 20, tier: "Tier 3", palLicenses: 28, gaaAvailable: true, incumbentExclusion: false, demandIndex: 50, enterprises: 700, industrialParks: 6, ports: 0, campuses: 8, note: "Raytheon/defense manufacturing." },
     { name: "Honolulu", lat: 21.3069, lng: -157.8583, radius: 18, tier: "Tier 3", palLicenses: 32, gaaAvailable: true, incumbentExclusion: true, demandIndex: 52, enterprises: 800, industrialParks: 4, ports: 1, campuses: 6, note: "Heavy Navy exclusion. Tourism/port." },
-    { name: "Huntsville AL", lat: 34.7304, lng: -86.5861, radius: 18, tier: "Tier 3", palLicenses: 30, gaaAvailable: true, incumbentExclusion: false, demandIndex: 65, enterprises: 700, industrialParks: 8, ports: 0, campuses: 6, note: "NASA/defense tech corridor." }
+    { name: "Huntsville AL", lat: 34.7304, lng: -86.5861, radius: 18, tier: "Tier 3", palLicenses: 30, gaaAvailable: true, incumbentExclusion: false, demandIndex: 65, enterprises: 700, industrialParks: 8, ports: 0, campuses: 6, note: "NASA/defense tech corridor." },
+    { name: "Brownsville TX", lat: 25.9017, lng: -97.4975, radius: 12, tier: "Tier 3", palLicenses: 18, gaaAvailable: true, incumbentExclusion: false, demandIndex: 55, enterprises: 400, industrialParks: 4, ports: 1, campuses: 3, note: "First carrier-grade municipal private 5G. NTT DATA/Nokia on CBRS n48." },
+    { name: "San Antonio TX", lat: 29.4241, lng: -98.4936, radius: 30, tier: "Tier 2", palLicenses: 65, gaaAvailable: true, incumbentExclusion: false, demandIndex: 72, enterprises: 2200, industrialParks: 14, ports: 0, campuses: 12, note: "Military base connectivity. SmartSA Innovation Zones." }
 ];
 
 /* ═══════════════════════════════════════════════════════════
