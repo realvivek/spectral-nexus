@@ -76,11 +76,9 @@ SN.insights = {
 
             // Get state director if available
             var directorInfo = '';
-            if (SN.decisionMakers) {
-                var director = SN.decisionMakers.getStateDirector(c.state);
-                if (director) {
-                    directorInfo = '<span class="insight-contact-hint">Contact: ' + director.name + ' (' + director.agency + ')</span>';
-                }
+            if (SN.data.stateDecisionMakers && SN.data.stateDecisionMakers[c.state]) {
+                var director = SN.data.stateDecisionMakers[c.state];
+                directorInfo = '<span class="insight-contact-hint">Contact: ' + director.name + ' (' + director.agency + ')</span>';
             }
 
             return '<div class="insight-item" data-fips="' + c.fips + '">' +
