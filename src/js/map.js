@@ -8,6 +8,7 @@ window.SN = window.SN || {};
 SN.map = {
 
     leafletMap: null,
+    tileLayer: null,
     countyLayer: null,
     selectedLayer: null,
     countyLookup: {},  // fips → layer
@@ -27,8 +28,9 @@ SN.map = {
             attributionControl: false
         });
 
-        // Dark basemap
-        L.tileLayer(cfg.tileUrl, {
+        // Basemap tiles (use light tiles if light mode is active)
+        var isLight = document.body.classList.contains('light-mode');
+        this.tileLayer = L.tileLayer(isLight ? cfg.tileUrlLight : cfg.tileUrl, {
             attribution: cfg.tileAttribution,
             subdomains: 'abcd',
             maxZoom: 19
