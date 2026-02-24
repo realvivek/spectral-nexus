@@ -33,6 +33,7 @@ src/
     data-layers.js    ← CBRS zones, cellular gaps, fiber routes
     data-smartcities.js ← Smart city programs
     data-decision-makers.js ← State broadband directors, co-ops, tribal contacts
+    data-municipal-fiber.js ← Municipal fiber networks, dark fiber, private 5G deployments
     scoring.js        ← Opportunity score computation (0-100)
     kpi.js            ← Actionable KPI bar with click-through navigation
     map.js            ← Leaflet map, county circles, popups with decision makers
@@ -61,10 +62,11 @@ Scripts in `public/index.html` load in this exact order — **order matters**:
 4. `data.js` — County dataset
 5. `data-grants.js`, `data-awards.js`, `data-layers.js`, `data-smartcities.js`
 6. `data-decision-makers.js` — State directors, co-ops, tribal contacts
-7. `scoring.js` — Reads `SN.data` and `SN.config`
-8. `kpi.js`, `map.js`, `layers.js`, `executive.js`, `onboarding.js`
-9. `table.js`, `charts.js`, `insights.js`, `funding.js`
-10. `app.js` — **Must be last** (orchestrates all modules)
+7. `data-municipal-fiber.js` — Municipal fiber networks, private 5G deployments
+8. `scoring.js` — Reads `SN.data` and `SN.config`
+9. `kpi.js`, `map.js`, `layers.js`, `executive.js`, `onboarding.js`
+10. `table.js`, `charts.js`, `insights.js`, `funding.js`
+11. `app.js` — **Must be last** (orchestrates all modules)
 
 If you add a new module, it must be added to `index.html` in the correct position AND follow the `window.SN = window.SN || {}; SN.moduleName = { ... }` pattern.
 
@@ -141,6 +143,8 @@ The page starts invisible (`body { opacity: 0 }`) and becomes visible via:
 | CBRS zones | FCC ULS license database | `data-layers.js` |
 | Smart cities | Public government reports | `data-smartcities.js` |
 | Fiber grants | NTIA/USDA grant records | `data-grants.js` |
+| Municipal fiber | City/utility reports, MuniNetworks.org | `data-municipal-fiber.js` |
+| Private 5G | FCC CBRS records, OnGo Alliance, vendor PRs | `data-municipal-fiber.js` |
 
 ## Known Constraints
 
@@ -189,15 +193,32 @@ This environment has **NO GitHub API access** (no `gh` CLI, no `GITHUB_TOKEN`). 
 4. **Tell the user** to create the PR manually, or note that the orchestration system may auto-create it.
 5. **Time limit**: Spend at most 2 minutes on PR creation attempts. If it doesn't work, move on.
 
-### Post-Push Verification
+## After Every Feature / Before Any PR
 
-After pushing, **verify the deployed site actually works**:
+### Deployment Verification (Required)
 
-1. Fetch the deployed URL: `https://realvivek.github.io/spectral-nexus/`
-2. Confirm the page renders (not blank/white)
-3. Confirm styles load (dark theme visible)
-4. Confirm interactive elements work (buttons, map, tabs, layer toggles)
-5. **Don't just check that files exist** — confirm the app works end-to-end
+After pushing changes, always verify the live site works:
+
+1. **Fetch the deployed page** and check:
+   - Does the page render (not blank/invisible)?
+   - Do interactive elements (buttons, modals, toggles) respond?
+   - Are JS files loading (check for 404s)?
+   - Are CSS styles applied (not unstyled/gray)?
+2. **Trace the initialization path**:
+   - If module A must succeed before module B can init, what happens when A fails?
+   - Are event handlers attached regardless of unrelated module failures?
+   - Is the page visible even if JavaScript completely fails?
+3. **Check for silent failure patterns**:
+   - CSS that hides content until JS acts (`opacity:0`, `display:none`)
+   - Init chains with no error isolation
+   - CDN dependencies that block local code when unavailable
+
+### GitHub Pages Specific
+
+- Ensure `.nojekyll` exists if not using Jekyll
+- Verify relative paths (`../src/`) resolve correctly from the HTML location
+- Confirm all referenced files exist on the deployed branch (not just the feature branch)
+- The live site URL is: `https://realvivek.github.io/spectral-nexus/public/index.html`
 
 ## Important: No Claude Session Links
 
