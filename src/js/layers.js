@@ -1,6 +1,7 @@
 /**
  * Spectral Nexus — Map Layers Module
- * Manages toggleable overlay layers: CBRS, Cellular Gaps, Fiber, Grants, Smart Cities.
+ * Manages toggleable overlay layers: CBRS, Cellular Gaps, Fiber, Grants, Smart Cities, RDOF Defaults.
+ * Organized into categories with larger, clearer toggle buttons.
  */
 
 window.SN = window.SN || {};
@@ -11,14 +12,39 @@ SN.layers = {
     groups: {},
     visible: {},
 
-    /* Layer definitions */
-    layerDefs: [
-        { id: 'cbrs',       label: 'CBRS / Private 5G Zones', icon: '5G', color: '#a78bfa', defaultOn: false },
-        { id: 'cellular',   label: 'Cellular Coverage Gaps',   icon: 'RF', color: '#ef4444', defaultOn: false },
-        { id: 'fiber',      label: 'Fiber Backbone Routes',    icon: 'FB', color: '#06d6a0', defaultOn: false },
-        { id: 'grants',     label: 'Fiber Grant Build-outs',   icon: '$F', color: '#fbbf24', defaultOn: false },
-        { id: 'smartcities',label: 'Smart Cities',             icon: 'SC', color: '#38bdf8', defaultOn: false }
+    /* Layer definitions — organized into categories */
+    categories: [
+        {
+            name: 'Spectrum & Coverage',
+            layers: [
+                { id: 'cbrs',       label: 'CBRS / Private 5G',       icon: '5G', color: '#a78bfa', defaultOn: false },
+                { id: 'cellular',   label: 'Cellular Gaps',            icon: 'RF', color: '#ef4444', defaultOn: false }
+            ]
+        },
+        {
+            name: 'Infrastructure',
+            layers: [
+                { id: 'fiber',      label: 'Fiber Routes',             icon: 'FB', color: '#06d6a0', defaultOn: false },
+                { id: 'grants',     label: 'Fiber Grants',             icon: '$F', color: '#fbbf24', defaultOn: false }
+            ]
+        },
+        {
+            name: 'Programs & Funding',
+            layers: [
+                { id: 'smartcities',label: 'Smart Cities',             icon: 'SC', color: '#38bdf8', defaultOn: false },
+                { id: 'rdof',       label: 'RDOF Defaults',            icon: 'RD', color: '#f97316', defaultOn: false }
+            ]
+        }
     ],
+
+    /* Flat list for internal use */
+    _allDefs: function() {
+        var defs = [];
+        this.categories.forEach(function(cat) {
+            cat.layers.forEach(function(l) { defs.push(l); });
+        });
+        return defs;
+    },
 
     /**
      * Initialize all layers and build toggle panel.
@@ -27,7 +53,8 @@ SN.layers = {
         var map = SN.map.leafletMap;
         if (!map) return;
 
-        this.layerDefs.forEach(function(def) {
+        var allDefs = this._allDefs();
+        allDefs.forEach(function(def) {
             SN.layers.groups[def.id] = L.layerGroup();
             SN.layers.visible[def.id] = def.defaultOn;
             if (def.defaultOn) {
@@ -40,6 +67,7 @@ SN.layers = {
         this.buildFiberLayer();
         this.buildGrantsLayer();
         this.buildSmartCitiesLayer();
+        this.buildRDOFLayer();
         this.renderTogglePanel();
     },
 
@@ -211,7 +239,7 @@ SN.layers = {
     },
 
     /**
-     * Build Smart Cities markers.
+     * Build Smart Cities markers — includes decision maker contacts and SI info.
      */
     buildSmartCitiesLayer() {
         var group = this.groups.smartcities;
@@ -242,6 +270,25 @@ SN.layers = {
             if (city.infrastructure.smartLighting) infraList.push('Smart Lighting');
             if (city.infrastructure.iotSensors) infraList.push(city.infrastructure.iotSensors.toLocaleString() + ' IoT Sensors');
 
+            // Decision maker & SI info
+            var contactHtml = '';
+            if (city.decisionMaker) {
+                contactHtml += '<div class="layer-popup-contact">' +
+                    '<strong>Key Decision Maker:</strong><br>' +
+                    '<span class="contact-name">' + city.decisionMaker.name + '</span>' +
+                    '<span class="contact-title">' + city.decisionMaker.title + '</span>';
+                if (city.decisionMaker.email) contactHtml += '<span class="contact-info">' + city.decisionMaker.email + '</span>';
+                if (city.decisionMaker.phone) contactHtml += '<span class="contact-info">' + city.decisionMaker.phone + '</span>';
+                contactHtml += '</div>';
+            }
+
+            var siHtml = '';
+            if (city.systemIntegrators && city.systemIntegrators.length) {
+                siHtml = '<div class="layer-popup-si">' +
+                    '<strong>System Integrators:</strong> ' + city.systemIntegrators.join(', ') +
+                '</div>';
+            }
+
             var popupHtml = '<div class="layer-popup smartcity-popup">' +
                 '<div class="layer-popup-header">' +
                     '<span class="layer-popup-icon" style="background:' + statusColor + '">SC</span>' +
@@ -264,31 +311,89 @@ SN.layers = {
                     '<strong>Initiatives:</strong> ' + city.initiatives.join(', ') +
                 '</div>' +
                 (city.partners.length ? '<div class="layer-popup-partners"><strong>Partners:</strong> ' + city.partners.join(', ') + '</div>' : '') +
+                contactHtml +
+                siHtml +
                 '<div class="layer-popup-highlight">' + city.highlights + '</div>' +
                 '<button class="btn-add-to-report" onclick="SN.executive.addToReport(\'smartcity\', \'' + city.name.replace(/'/g, "\\'") + ', ' + city.state + '\')">+ Add to Sales Report</button>' +
             '</div>';
 
-            marker.bindPopup(popupHtml, { className: 'sn-popup', maxWidth: 380, minWidth: 300 });
+            marker.bindPopup(popupHtml, { className: 'sn-popup', maxWidth: 400, minWidth: 300 });
             marker.addTo(group);
         });
     },
 
     /**
-     * Render the layer toggle panel on the map.
+     * Build RDOF Default Areas markers.
+     * Shows areas where RDOF winners defaulted — creating new funding opportunities.
+     */
+    buildRDOFLayer() {
+        var group = this.groups.rdof;
+        if (!SN.data.rdofDefaultAreas) return;
+
+        SN.data.rdofDefaultAreas.forEach(function(area) {
+            var circle = L.circle([area.lat, area.lng], {
+                radius: area.radius || 30000,
+                fillColor: '#f97316',
+                fillOpacity: 0.15,
+                color: '#f97316',
+                weight: 1.5,
+                opacity: 0.5,
+                dashArray: '6,4'
+            });
+
+            var fmtAmt = area.defaultedAmount >= 1e9 ? '$' + (area.defaultedAmount / 1e9).toFixed(1) + 'B' : '$' + (area.defaultedAmount / 1e6).toFixed(0) + 'M';
+            var popupHtml = '<div class="layer-popup rdof-popup">' +
+                '<div class="layer-popup-header">' +
+                    '<span class="layer-popup-icon" style="background:#f97316">RD</span>' +
+                    '<div>' +
+                        '<h4>' + area.region + '</h4>' +
+                        '<span class="layer-popup-tier">RDOF Default · ' + area.originalAwardee + '</span>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="layer-popup-grid">' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + fmtAmt + '</span><span class="stat-lbl">Defaulted Amount</span></div>' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + area.defaultedLocations.toLocaleString() + '</span><span class="stat-lbl">Unserved Locations</span></div>' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + area.defaultYear + '</span><span class="stat-lbl">Default Year</span></div>' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + area.newFundingStatus + '</span><span class="stat-lbl">Refunding Status</span></div>' +
+                '</div>' +
+                '<p class="layer-popup-note">' + area.note + '</p>' +
+                '<p class="layer-popup-opp">Opportunity: These locations need a new provider. BEAD or future programs may fund buildout here.</p>' +
+                '<button class="btn-add-to-report" onclick="SN.executive.addToReport(\'rdof\', \'' + area.region.replace(/'/g, "\\'") + '\')">+ Add to Sales Report</button>' +
+            '</div>';
+
+            circle.bindPopup(popupHtml, { className: 'sn-popup', maxWidth: 340 });
+            circle.addTo(group);
+        });
+    },
+
+    /**
+     * Render the categorized layer toggle panel on the map.
      */
     renderTogglePanel() {
         var panel = document.getElementById('layer-toggles');
         if (!panel) return;
 
-        var html = '<label class="layer-panel-title">Map Layers</label>';
+        var anyOn = false;
+        var allDefs = this._allDefs();
+        allDefs.forEach(function(d) { if (SN.layers.visible[d.id]) anyOn = true; });
 
-        this.layerDefs.forEach(function(def) {
-            var checked = SN.layers.visible[def.id] ? 'checked' : '';
-            html += '<label class="layer-toggle" data-layer="' + def.id + '">' +
-                '<input type="checkbox" ' + checked + ' data-layer-id="' + def.id + '">' +
-                '<span class="layer-toggle-icon" style="background:' + def.color + '">' + def.icon + '</span>' +
-                '<span class="layer-toggle-label">' + def.label + '</span>' +
-            '</label>';
+        var html = '<div class="layer-panel-header">' +
+            '<span class="layer-panel-title">Map Layers</span>' +
+            '<button class="layer-toggle-all" id="btn-toggle-all-layers">' + (anyOn ? 'Clear All' : 'Show All') + '</button>' +
+        '</div>';
+
+        this.categories.forEach(function(cat) {
+            html += '<div class="layer-category">';
+            html += '<span class="layer-category-name">' + cat.name + '</span>';
+            cat.layers.forEach(function(def) {
+                var checked = SN.layers.visible[def.id] ? 'checked' : '';
+                html += '<label class="layer-toggle" data-layer="' + def.id + '">' +
+                    '<input type="checkbox" ' + checked + ' data-layer-id="' + def.id + '">' +
+                    '<span class="layer-toggle-icon" style="background:' + def.color + '">' + def.icon + '</span>' +
+                    '<span class="layer-toggle-label">' + def.label + '</span>' +
+                '</label>';
+            });
+            html += '</div>';
         });
 
         panel.innerHTML = html;
@@ -299,6 +404,19 @@ SN.layers = {
                 SN.layers.toggleLayer(cb.dataset.layerId, cb.checked);
             });
         });
+
+        // Bind Show All / Clear All
+        var toggleAllBtn = document.getElementById('btn-toggle-all-layers');
+        if (toggleAllBtn) {
+            toggleAllBtn.addEventListener('click', function() {
+                var turnOn = toggleAllBtn.textContent === 'Show All';
+                var allDefs = SN.layers._allDefs();
+                allDefs.forEach(function(def) {
+                    SN.layers.toggleLayer(def.id, turnOn);
+                });
+                SN.layers.renderTogglePanel();
+            });
+        }
     },
 
     /**

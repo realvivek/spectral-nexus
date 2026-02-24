@@ -80,6 +80,13 @@ SN.executive = {
                 item.detail = city.program + ' · ' + fmtBudget + ' budget · ' + city.status;
                 item.note = city.highlights;
             }
+        } else if (type === 'rdof') {
+            var rdofArea = SN.data.rdofDefaultAreas ? SN.data.rdofDefaultAreas.find(function(a) { return a.region === name; }) : null;
+            if (rdofArea) {
+                var fmtDefault = rdofArea.defaultedAmount >= 1e9 ? '$' + (rdofArea.defaultedAmount / 1e9).toFixed(1) + 'B' : '$' + (rdofArea.defaultedAmount / 1e6).toFixed(0) + 'M';
+                item.detail = fmtDefault + ' defaulted · ' + rdofArea.defaultedLocations.toLocaleString() + ' locations · ' + rdofArea.originalAwardee;
+                item.note = rdofArea.note;
+            }
         } else if (type === 'county') {
             var county = SN.data.counties.find(function(c) { return c.fips === name; });
             if (county) {
@@ -91,6 +98,11 @@ SN.executive = {
 
         this.reportItems.push(item);
         this.updateBadge();
+        // Re-render if panel is currently open
+        var panel = document.getElementById('report-panel');
+        if (panel && panel.classList.contains('open')) {
+            this.renderReportPanel();
+        }
         this.showToast('Added to report: ' + item.name);
     },
 

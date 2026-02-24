@@ -1,10 +1,10 @@
 # Spectral Nexus
 
-**Telecom Infrastructure Opportunity Intelligence**
+**Broadband Funding Intelligence**
 
-Spectral Nexus helps telecom professionals identify broadband deployment opportunities across US counties by combining coverage gap analysis, grant program tracking, scoring, and interactive mapping.
+Spectral Nexus helps telecom professionals identify broadband deployment opportunities across 3,100+ US counties by combining real FCC BDC data, BEAD funding tracking, CBRS spectrum intelligence, competitive landscape analysis, and interactive mapping.
 
-**Target users:** Infrastructure companies (AT&T, Verizon, 5G private network system integrators, Accenture, NTT DATA), ISPs, grant writers, telecom consultants.
+**Target users:** System integrators, ISPs, fiber infrastructure companies, grant writers, telecom consultants.
 
 ---
 
@@ -18,21 +18,25 @@ spectral-nexus/
 ├── src/
 │   ├── js/
 │   │   ├── config.js        ← Scoring weights, BEAD status, map settings
-│   │   ├── data.js          ← 200 counties across 10 states (mock BSL data)
+│   │   ├── data.js          ← 3,143 counties (real FCC BDC + Census data)
 │   │   ├── data-grants.js   ← 12 federal + 20 state + 2 regional grant programs
 │   │   ├── data-awards.js   ← RDOF results, defaults, past awards
+│   │   ├── data-layers.js   ← CBRS zones, cellular gaps, fiber routes, RDOF defaults
+│   │   ├── data-smartcities.js ← 40+ smart city programs with contacts
 │   │   ├── scoring.js       ← Opportunity score engine (0-100)
 │   │   ├── kpi.js           ← Top-bar summary metrics
 │   │   ├── map.js           ← Leaflet choropleth map
+│   │   ├── layers.js        ← Toggleable map overlays (6 layers, categorized)
+│   │   ├── executive.js     ← CSV export, sales report panel
+│   │   ├── onboarding.js    ← Help modal & tutorial
 │   │   ├── table.js         ← Sortable/filterable county table
 │   │   ├── charts.js        ← Chart.js scatter, bar, histogram
-│   │   ├── insights.js      ← AI-style insights, BEAD tracker
+│   │   ├── insights.js      ← Curated insights & BEAD tracker
+│   │   ├── funding.js       ← Funding Intel: grants guide, competitive landscape, scoring
 │   │   └── app.js           ← Main controller, filters, routing
 │   │
-│   ├── css/
-│   │   └── style.css        ← Dark spectral theme (Bloomberg meets Stripe)
-│   │
-│   └── assets/              ← Logo SVGs, icons, images
+│   └── css/
+│       └── style.css        ← Dark spectral theme (Bloomberg meets Stripe)
 │
 ├── data/
 │   ├── federal/             ← FCC BDC downloads, BEAD allocations, E-Rate
@@ -42,10 +46,10 @@ spectral-nexus/
 ├── scripts/                 ← ETL scripts, data processing, CSV parsers
 │
 ├── docs/
-│   ├── SPECTRAL_NEXUS_PROJECT_DOC.md      ← Living project doc (goals, arch, decisions)
-│   └── SPECTRAL_NEXUS_V03_STRATEGY.md     ← v0.3.0 strategy (features, research, moat)
+│   ├── SPECTRAL_NEXUS_PROJECT_DOC.md      ← Living project doc
+│   └── SPECTRAL_NEXUS_V03_STRATEGY.md     ← Strategy & roadmap
 │
-├── COWORK_PROMPT.md         ← Paste this into Cowork for context on first session
+├── CLAUDE.md                ← Claude Code context (auto-loaded per session)
 └── README.md                ← You are here
 ```
 
@@ -54,9 +58,10 @@ spectral-nexus/
 ## Quick Start
 
 1. Open `public/index.html` in a browser (no build step needed)
-2. The app loads 200 counties, computes scores, renders map + table + charts
+2. The app loads 3,143 counties, computes scores, renders map + table + charts
 3. Use filters (state, min score) and choropleth metric selector
 4. Click counties on map or table rows for detail popups
+5. Toggle map layers: CBRS, Cellular Gaps, Fiber Routes, Fiber Grants, Smart Cities, RDOF Defaults
 
 **Dependencies (loaded via CDN):**
 - Leaflet 1.9.4 (mapping)
@@ -65,45 +70,30 @@ spectral-nexus/
 
 ---
 
-## Current Version: v0.2.0
+## Current Version: v0.5.0
 
-**What's working:**
-- 200 counties across 10 states (TX, LA, GA, VA, MT, IA, SC, CA, OH, NM)
-- Composite opportunity scoring (6 weighted factors, 0-100)
-- Interactive Leaflet map with choropleth + popups
-- Sortable table with inline bars
-- Chart.js scatter, top-10 bar, score histogram
-- Insights panel with Top Opportunities, Most Underserved, Quick Wins, ROI, Emerging
-- BEAD Program Tracker (state-level)
-- Grant program database (12 federal, 20+ state, 2 regional)
-- RDOF defaults tracking (summary + major defaulters)
+### What's working:
+- **3,143 US counties** with real FCC BDC + Census data
+- **Composite opportunity scoring** (6 weighted factors, 0-100)
+- **Interactive Leaflet map** with choropleth, popups, and 6 toggleable overlay layers
+- **Sortable table** with inline bars and row-click map navigation
+- **Charts** — scatter, top-10 bar, score histogram
+- **Insights panel** — Top Opportunities, Quick Wins, ROI, Underserved, Emerging, BEAD Tracker
+- **Funding Intel tab** — Grant pursuit guide, competitive landscape, past winners, scoring methodology
+- **RDOF Defaults layer** — Shows $3.3B in defaulted areas on the map
+- **Smart City contacts** — Decision makers, system integrators, and infrastructure details
+- **Sales Report** — Add items from map popups, export HTML report
+- **Help tutorial** — 5-step guided onboarding with example workflow
+- **Map layers** — Categorized into Spectrum & Coverage, Infrastructure, Programs & Funding
+- **Grant database** — 12 federal, 20+ state, 2 regional programs with status tracking
 
-**What's mock data (to be replaced with real FCC data):**
-- BSL counts (totalBSLs, served, underserved, unserved)
-- Fiber availability percentages
-- Tower counts and density
-- 5G readiness scores
-- E-Rate funding estimates
-- Funding estimates per county
-
-**Real data:**
-- Demographics (population, density, income, poverty) — Census ACS
-- BEAD status and allocations — NTIA
-- Lat/lng centroids — Census TIGER
-
----
-
-## v0.3.0 Roadmap (see docs/ for full strategy)
-
-Priority features:
-1. Replace mock BSL data with real FCC BDC bulk downloads
-2. RDOF default mapping at county level (CBG → county crosswalk)
-3. Grant Stacking Calculator (which programs apply per county)
-4. Fundability Score (new scoring dimension)
-5. PDF export for investment memos
-6. Time-series score snapshots (start accumulating history)
-
-See `docs/SPECTRAL_NEXUS_V03_STRATEGY.md` for complete plan with 23 features.
+### Data sources:
+- FCC Broadband Data Collection (BDC) — BSL coverage for all 3,143 counties
+- US Census ACS 5-Year (2022) — demographics
+- NTIA BEAD Allocations — $42.45B across all states
+- FCC ULS — CBRS PAL license database
+- FCC Auction 904 — RDOF results and defaults
+- City government reports — smart city programs
 
 ---
 
@@ -111,32 +101,24 @@ See `docs/SPECTRAL_NEXUS_V03_STRATEGY.md` for complete plan with 23 features.
 
 Pure vanilla JS — no framework, no build step. All modules attach to `window.SN` namespace.
 
-**Load order (matters):**
+**Script load order (critical):**
 1. `config.js` — constants and weights
-2. `data.js` — county dataset
+2. `data.js` — 3,143 county records
 3. `data-grants.js` — grant programs
 4. `data-awards.js` — RDOF/past awards
-5. `scoring.js` — score computation
-6. `kpi.js` — summary metrics
-7. `map.js` — Leaflet map
-8. `table.js` — data table
-9. `charts.js` — Chart.js charts
-10. `insights.js` — insights panel
-11. `app.js` — controller (boots on DOMContentLoaded)
-
----
-
-## Data Sources
-
-| Source | What We Get | URL |
-|--------|------------|-----|
-| FCC BDC | BSL coverage data | broadbandmap.fcc.gov |
-| FCC Auction 904 | RDOF results + defaults | fcc.gov/auction/904 |
-| FCC Funding Map | All federal broadband awards | fundingmap.fcc.gov |
-| NTIA BEAD | State approvals + allocations | broadbandusa.ntia.gov |
-| Census ACS | Demographics | data.census.gov |
-| USAC | E-Rate, RHC, High-Cost data | opendata.usac.org |
-| State offices | State grant programs (10 states) | See docs/ |
+5. `data-layers.js` — CBRS, cellular, fiber, RDOF defaults
+6. `data-smartcities.js` — smart city programs + contacts
+7. `scoring.js` — score computation
+8. `kpi.js` — summary metrics
+9. `map.js` — Leaflet map
+10. `layers.js` — map overlays (6 layer types)
+11. `executive.js` — export/reports
+12. `onboarding.js` — help modal
+13. `table.js` — data table
+14. `charts.js` — Chart.js charts
+15. `insights.js` — insights panel
+16. `funding.js` — funding intel tab
+17. `app.js` — controller (boots on DOMContentLoaded)
 
 ---
 
