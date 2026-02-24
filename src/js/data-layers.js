@@ -152,3 +152,34 @@ SN.data.fiberGrants = [
     { name: "Chattanooga Expansion", state: "TN", lat: 35.05, lng: -85.31, amount: 152000000, type: "Municipal", status: "Active", miles: 850, homesPassed: 95000, startDate: "2024-Q1", note: "EPB 25 Gbps upgrade. Model city." },
     { name: "Wilson NC Municipal Fiber", state: "NC", lat: 35.72, lng: -77.92, amount: 28000000, type: "Municipal", status: "Active", miles: 380, homesPassed: 32000, startDate: "2023-Q2", note: "Greenlight municipal model." }
 ];
+
+/* ═══════════════════════════════════════════════════════════
+ * RDOF Default Areas
+ * Areas where RDOF auction winners defaulted, creating new funding opportunities.
+ * Sources: FCC Auction 904 default summaries, Benton Institute analysis (Feb 2025).
+ * These represent ~$3.3B in defaulted awards across ~1.9M locations.
+ * ═══════════════════════════════════════════════════════════ */
+SN.data.rdofDefaultAreas = [
+    // LTD Broadband defaults — $1.32B across 15 states (Rejected Aug 2022)
+    { region: "Minnesota LTD Default", lat: 46.5, lng: -94.5, radius: 60000, originalAwardee: "LTD Broadband", defaultedAmount: 280000000, defaultedLocations: 112000, defaultYear: 2022, newFundingStatus: "BEAD eligible", note: "LTD lacked financial/technical ability. 528K total locations across 15 states." },
+    { region: "Wisconsin LTD Default", lat: 44.8, lng: -89.8, radius: 50000, originalAwardee: "LTD Broadband", defaultedAmount: 185000000, defaultedLocations: 74000, defaultYear: 2022, newFundingStatus: "BEAD eligible", note: "LTD rejected by FCC. These locations now eligible for BEAD subgrants." },
+    { region: "Iowa LTD Default", lat: 42.0, lng: -93.5, radius: 45000, originalAwardee: "LTD Broadband", defaultedAmount: 120000000, defaultedLocations: 48000, defaultYear: 2022, newFundingStatus: "BEAD eligible", note: "Rural Iowa locations reverted to unserved status." },
+    { region: "Nebraska LTD Default", lat: 41.5, lng: -99.8, radius: 55000, originalAwardee: "LTD Broadband", defaultedAmount: 95000000, defaultedLocations: 38000, defaultYear: 2022, newFundingStatus: "BEAD eligible", note: "Western Nebraska ranching communities." },
+    { region: "Indiana LTD Default", lat: 40.3, lng: -86.3, radius: 40000, originalAwardee: "LTD Broadband", defaultedAmount: 110000000, defaultedLocations: 44000, defaultYear: 2022, newFundingStatus: "BEAD eligible", note: "Southern Indiana rural areas." },
+
+    // SpaceX/Starlink defaults — $885.5M across 35 states (Rejected Aug 2022)
+    { region: "Virginia Starlink Default", lat: 37.5, lng: -79.0, radius: 50000, originalAwardee: "SpaceX (Starlink)", defaultedAmount: 45000000, defaultedLocations: 32000, defaultYear: 2022, newFundingStatus: "BEAD eligible", note: "Starlink speeds insufficient (67/8 vs 100/20 Mbps required). Appalachian region." },
+    { region: "Georgia Starlink Default", lat: 32.8, lng: -83.0, radius: 45000, originalAwardee: "SpaceX (Starlink)", defaultedAmount: 38000000, defaultedLocations: 27000, defaultYear: 2022, newFundingStatus: "BEAD eligible", note: "Rural Georgia locations now open to fiber providers." },
+    { region: "Texas Starlink Default", lat: 31.5, lng: -97.5, radius: 65000, originalAwardee: "SpaceX (Starlink)", defaultedAmount: 62000000, defaultedLocations: 44000, defaultYear: 2022, newFundingStatus: "BEAD eligible", note: "Central/West Texas rural communities." },
+    { region: "California Starlink Default", lat: 38.5, lng: -121.0, radius: 55000, originalAwardee: "SpaceX (Starlink)", defaultedAmount: 52000000, defaultedLocations: 37000, defaultYear: 2022, newFundingStatus: "BEAD eligible", note: "Central Valley and northern CA rural areas." },
+    { region: "Montana Starlink Default", lat: 47.0, lng: -110.5, radius: 60000, originalAwardee: "SpaceX (Starlink)", defaultedAmount: 35000000, defaultedLocations: 25000, defaultYear: 2022, newFundingStatus: "BEAD eligible", note: "Vast ranching territory with no fixed broadband." },
+
+    // CenturyLink/Lumen partial defaults — $262M, 41K of 77K locations
+    { region: "Ohio Lumen Default", lat: 40.5, lng: -82.5, radius: 40000, originalAwardee: "CenturyLink/Lumen", defaultedAmount: 52000000, defaultedLocations: 8200, defaultYear: 2024, newFundingStatus: "BEAD eligible", note: "53% of Lumen locations defaulted. Post-authorization failure." },
+    { region: "Louisiana Lumen Default", lat: 31.0, lng: -92.0, radius: 45000, originalAwardee: "CenturyLink/Lumen", defaultedAmount: 48000000, defaultedLocations: 7500, defaultYear: 2024, newFundingStatus: "BEAD eligible", note: "Rural parishes affected by Lumen pullback." },
+    { region: "South Carolina Lumen Default", lat: 34.0, lng: -81.0, radius: 35000, originalAwardee: "CenturyLink/Lumen", defaultedAmount: 38000000, defaultedLocations: 6000, defaultYear: 2024, newFundingStatus: "BEAD eligible", note: "Midlands and Upstate communities." },
+
+    // Other major defaults
+    { region: "Missouri Mercury Wireless Default", lat: 38.5, lng: -92.0, radius: 50000, originalAwardee: "Mercury Wireless", defaultedAmount: 85000000, defaultedLocations: 122645, defaultYear: 2023, newFundingStatus: "BEAD eligible", note: "Mercury could not complete FWA buildout. Locations reverted." },
+    { region: "Kansas Connect Everyone Default", lat: 38.5, lng: -98.5, radius: 55000, originalAwardee: "Connect Everyone", defaultedAmount: 72000000, defaultedLocations: 108506, defaultYear: 2023, newFundingStatus: "BEAD eligible", note: "Connect Everyone failed to build. Major Kansas opportunity." }
+];

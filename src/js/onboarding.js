@@ -13,54 +13,63 @@ SN.onboarding = {
     steps: [
         {
             title: 'Welcome to Broadband Funding Intelligence',
-            content: 'This platform helps <strong>Private 5G business executives</strong> identify the best deployment opportunities across 3,100+ US counties.' +
-                '<br><br>Powered by real FCC BDC data, BEAD funding allocations, and CBRS spectrum intelligence.',
+            content: 'Spectral Nexus helps <strong>telecom professionals</strong> identify the best broadband deployment and funding opportunities across 3,100+ US counties.' +
+                '<br><br>Powered by real FCC BDC data, $42.45B in BEAD funding allocations, CBRS spectrum zones, smart city programs, and RDOF default tracking.',
             icon: 'SN'
         },
         {
             title: 'The Map — Your Command Center',
-            content: '<strong>Choropleth counties</strong> — Each dot is a county, colored by the selected metric (Opportunity Score by default). Bigger dots = larger population.' +
+            content: '<strong>Each dot is a county</strong>, colored by the selected metric (Opportunity Score by default). Bigger dots = larger population.' +
                 '<br><br><strong>Click any county</strong> to see detailed broadband, funding, and demographic data.' +
-                '<br><br><strong>Change metric</strong> using the dropdown in the top-left corner of the map.',
+                '<br><br><strong>Change metric</strong> using the "Choropleth Metric" dropdown in the top-left corner of the map.' +
+                '<br><br><em>Example: Select "Unserved %" to see where the greatest coverage gaps are.</em>',
             icon: 'MAP'
         },
         {
-            title: 'Map Layers — Toggle Overlays',
-            content: 'Use the <strong>Map Layers</strong> panel on the left to toggle data overlays:' +
+            title: 'Map Layers — Toggle Data Overlays',
+            content: 'The <strong>Map Layers</strong> panel (left side) has organized toggle buttons in 3 categories:' +
                 '<br><br>' +
-                '<span style="color:#a78bfa"><strong>5G — CBRS / Private 5G Zones</strong></span><br>PAL license areas, enterprise demand index, and incumbent exclusion zones.' +
+                '<strong>Spectrum & Coverage</strong>' +
+                '<br><span style="color:#a78bfa">5G — CBRS/Private 5G Zones</span> · <span style="color:#ef4444">RF — Cellular Gaps</span>' +
                 '<br><br>' +
-                '<span style="color:#ef4444"><strong>RF — Cellular Coverage Gaps</strong></span><br>Areas with no/poor public carrier coverage — perfect for private network sales.' +
+                '<strong>Infrastructure</strong>' +
+                '<br><span style="color:#06d6a0">FB — Fiber Routes</span> · <span style="color:#fbbf24">$F — Fiber Grants</span>' +
                 '<br><br>' +
-                '<span style="color:#06d6a0"><strong>FB — Fiber Backbone Routes</strong></span><br>Existing fiber corridors for backhaul connection.' +
-                '<br><br>' +
-                '<span style="color:#fbbf24"><strong>$F — Fiber Grant Build-outs</strong></span><br>Active BEAD grants — new fiber being built. Layer private 5G on top.' +
-                '<br><br>' +
-                '<span style="color:#38bdf8"><strong>SC — Smart Cities</strong></span><br>Cities with active smart city programs, budgets, and infrastructure details.',
+                '<strong>Programs & Funding</strong>' +
+                '<br><span style="color:#38bdf8">SC — Smart Cities</span> · <span style="color:#f97316">RD — RDOF Defaults</span>' +
+                '<br><br>Use "Show All" to see everything, or toggle individual layers. Click any overlay for details.',
             icon: 'LYR'
         },
         {
-            title: 'Filters, Table & Insights',
-            content: '<strong>Right panel</strong> has three tabs:' +
+            title: 'Right Panel — Data, Charts, Insights & Funding Intel',
+            content: 'The <strong>right panel</strong> has four tabs:' +
                 '<br><br>' +
                 '<strong>Table</strong> — Sortable data for all counties. Click any row to fly to it on the map.' +
                 '<br><br>' +
                 '<strong>Charts</strong> — Visual analytics: scatter plots, top counties, score distribution.' +
                 '<br><br>' +
-                '<strong>Insights</strong> — Curated findings: top funding opportunities, quick wins, best ROI, BEAD tracker.' +
+                '<strong>Insights</strong> — Top opportunities, quick wins, best ROI, underserved areas, and BEAD tracker.' +
                 '<br><br>' +
-                'Use <strong>State filter</strong> and <strong>Score slider</strong> to narrow your view.',
+                '<strong>Funding Intel</strong> — Grant pursuit guide, past winners, competitive landscape, and scoring methodology.' +
+                '<br><br>' +
+                'Use <strong>State filter</strong> and <strong>Score slider</strong> at the top to narrow your view.',
             icon: 'TBL'
         },
         {
-            title: 'Executive Actions — Build Your Sales Pipeline',
-            content: 'This platform is built for action:' +
+            title: 'Example Workflow — Finding Your Next Opportunity',
+            content: 'Here\'s how a telecom professional uses Spectral Nexus:' +
                 '<br><br>' +
-                '<strong>Export CSV</strong> — Download filtered county data for your CRM or analysis.' +
+                '<strong>Step 1:</strong> Filter by your target state (e.g., Texas) using the State dropdown.' +
                 '<br><br>' +
-                '<strong>Sales Report</strong> — Click "Add to Sales Report" on any map popup to collect targets. Export as a formatted HTML report or email to your sales team.' +
+                '<strong>Step 2:</strong> Set Score slider to 50+ to focus on high-opportunity counties.' +
                 '<br><br>' +
-                '<strong>Think like this:</strong> Find counties with high broadband gaps → check if BEAD fiber is coming → overlay private 5G on that new infrastructure → target nearby enterprises.',
+                '<strong>Step 3:</strong> Toggle on <span style="color:#fbbf24">Fiber Grants</span> and <span style="color:#f97316">RDOF Defaults</span> layers to see where money is flowing and where it failed.' +
+                '<br><br>' +
+                '<strong>Step 4:</strong> Click a high-score county to see its funding details. Hit "Add to Sales Report" on promising areas.' +
+                '<br><br>' +
+                '<strong>Step 5:</strong> Check the <strong>Funding Intel</strong> tab for competitive landscape — who\'s already building, who defaulted, and what grants are open.' +
+                '<br><br>' +
+                '<strong>Step 6:</strong> Export your Sales Report as HTML and share with your team.',
             icon: 'ACT'
         }
     ],

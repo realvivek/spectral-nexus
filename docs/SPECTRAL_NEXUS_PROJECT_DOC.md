@@ -1,7 +1,7 @@
 # SPECTRAL NEXUS — Project Documentation
 ### Version: 0.3.0 | Last Updated: Feb 20, 2026
 ### Status: MVP v0.1.0 BUILT — Refining with Grant Tracker + Past Awards
-### Chat Continuity: Upload this file at the start of every new Claude session.
+### Context: See CLAUDE.md in repo root for development context.
 
 ---
 

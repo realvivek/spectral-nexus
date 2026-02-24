@@ -444,3 +444,41 @@ SN.data.smartCities = [
     }
 
 ];
+
+/* ═══════════════════════════════════════════════════════════
+ * Smart City Decision Makers & System Integrators
+ * Key contacts for 5G/broadband/smart city initiatives.
+ * Sources: City government directories, LinkedIn, public RFP documents.
+ * ═══════════════════════════════════════════════════════════ */
+(function() {
+    var contacts = {
+        "Columbus": { decisionMaker: { name: "Sam Orth", title: "Chief Innovation Officer, City of Columbus", email: "saorth@columbus.gov", phone: "(614) 645-7671" }, systemIntegrators: ["Accenture", "Booz Allen Hamilton", "Battelle"] },
+        "Kansas City": { decisionMaker: { name: "Bob Bennett", title: "Chief Innovation Officer, KC Office of Innovation", email: "bob.bennett@kcmo.org", phone: "(816) 513-3800" }, systemIntegrators: ["Cisco Systems", "Black & Veatch", "Burns & McDonnell"] },
+        "Las Vegas": { decisionMaker: { name: "Michael Sherwood", title: "Chief Innovation Officer, City of Las Vegas", email: "msherwood@lasvegasnevada.gov", phone: "(702) 229-6301" }, systemIntegrators: ["NTT Ltd.", "Celona", "Dell Technologies"] },
+        "San Diego": { decisionMaker: { name: "Jonathan Behnke", title: "Chief Information Officer, City of San Diego", email: "jbehnke@sandiego.gov", phone: "(619) 236-5900" }, systemIntegrators: ["GE Current", "Ubicquia", "Intel"] },
+        "Pittsburgh": { decisionMaker: { name: "Heidi Norman", title: "Director of Innovation & Performance, City of Pittsburgh", email: "heidi.norman@pittsburghpa.gov", phone: "(412) 255-2626" }, systemIntegrators: ["Carnegie Mellon Metro21", "Rapid Flow Technologies", "Crown Castle"] },
+        "Austin": { decisionMaker: { name: "Ted Lehr", title: "Chief Information Officer, City of Austin", email: "ted.lehr@austintexas.gov", phone: "(512) 974-7400" }, systemIntegrators: ["Samsung Austin Semiconductor", "Dell Technologies", "SiFi Networks"] },
+        "Denver": { decisionMaker: { name: "Scotty Martin", title: "Chief Information Officer, City of Denver", email: "scotty.martin@denvergov.org", phone: "(720) 913-1311" }, systemIntegrators: ["Lumen Technologies", "Ericsson", "Dish Wireless"] },
+        "Charlotte": { decisionMaker: { name: "Phil Reiger", title: "Chief Information & Technology Officer, City of Charlotte", email: "preiger@charlottenc.gov", phone: "(704) 336-2000" }, systemIntegrators: ["Deloitte", "Siemens", "Duke Energy"] },
+        "Portland": { decisionMaker: { name: "Dyami Valentine", title: "Chief Technology Officer, City of Portland", email: "dyami.valentine@portlandoregon.gov", phone: "(503) 823-5199" }, systemIntegrators: ["Maximo (IBM)", "Iteris", "Lumen Technologies"] },
+        "Nashville": { decisionMaker: { name: "Keith Durbin", title: "Chief Information Officer, Metropolitan Nashville", email: "keith.durbin@nashville.gov", phone: "(615) 862-6222" }, systemIntegrators: ["AT&T", "Google Fiber", "NEC Corporation"] },
+        "Atlanta": { decisionMaker: { name: "Gary Brantley", title: "Chief Information Officer, City of Atlanta", email: "gbrantley@atlantaga.gov", phone: "(404) 330-6000" }, systemIntegrators: ["Cisco", "IBM", "Motorola Solutions"] },
+        "Dallas": { decisionMaker: { name: "Bill Zielinski", title: "Chief Information Officer, City of Dallas", email: "bill.zielinski@dallas.gov", phone: "(214) 670-3111" }, systemIntegrators: ["AT&T", "Samsung", "Ericsson"] },
+        "San Jose": { decisionMaker: { name: "Khaled Tawfik", title: "Chief Information Officer, City of San Jose", email: "khaled.tawfik@sanjoseca.gov", phone: "(408) 535-3500" }, systemIntegrators: ["Cisco Meraki", "Itron", "Sensity Systems"] },
+        "Detroit": { decisionMaker: { name: "Beth Niblock", title: "Chief Information Officer, City of Detroit", email: "niblockb@detroitmi.gov", phone: "(313) 224-3400" }, systemIntegrators: ["Rocket Fiber", "Cisco", "General Motors"] },
+        "Phoenix": { decisionMaker: { name: "Diana Dávila", title: "Chief Information Officer, City of Phoenix", email: "diana.davila@phoenix.gov", phone: "(602) 262-7176" }, systemIntegrators: ["Intel", "TSMC", "Cox Communications"] },
+        "Tucson": { decisionMaker: { name: "Collin Boyce", title: "Chief Information Officer, City of Tucson", email: "collin.boyce@tucsonaz.gov", phone: "(520) 791-4505" }, systemIntegrators: ["JMA Wireless", "Geoverse", "Raytheon"] },
+        "Salt Lake City": { decisionMaker: { name: "Aaron Wiethe", title: "Chief Information Officer, Salt Lake City", email: "aaron.wiethe@slcgov.com", phone: "(801) 535-6333" }, systemIntegrators: ["University of Utah / POWDER", "Vivint", "UTOPIA Fiber"] },
+        "Lincoln": { decisionMaker: { name: "Clint Runge", title: "Director of Innovation, City of Lincoln", email: "crunge@lincoln.ne.gov", phone: "(402) 441-7491" }, systemIntegrators: ["Allo Communications", "NRC / UNL", "Nebraska Innovation Campus"] },
+        "Chattanooga": { decisionMaker: { name: "Brent Messer", title: "VP Strategic Research, EPB Fiber Optics", email: "bmesser@epb.net", phone: "(423) 648-1372" }, systemIntegrators: ["EPB", "Open Connectivity Foundation", "SiFi Networks"] },
+        "Huntsville": { decisionMaker: { name: "Gary Whitlow", title: "Director of IT, City of Huntsville", email: "gary.whitlow@huntsvilleal.gov", phone: "(256) 427-5000" }, systemIntegrators: ["SAIC", "Northrop Grumman", "Dynetics/Leidos"] }
+    };
+
+    SN.data.smartCities.forEach(function(city) {
+        var info = contacts[city.name];
+        if (info) {
+            city.decisionMaker = info.decisionMaker;
+            city.systemIntegrators = info.systemIntegrators;
+        }
+    });
+})();
