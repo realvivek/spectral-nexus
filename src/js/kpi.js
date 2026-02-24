@@ -1,6 +1,7 @@
 /**
  * Spectral Nexus — KPI Cards
- * Computes and renders the top-level summary metrics.
+ * Actionable summary metrics with click-through actions.
+ * Each card tells the user what the number means and what to do about it.
  */
 
 window.SN = window.SN || {};
@@ -19,6 +20,8 @@ SN.kpi = {
         const avgScore = counties.reduce((s, c) => s + c.opportunityScore, 0) / counties.length;
         const topCounty = counties.reduce((top, c) => c.opportunityScore > top.opportunityScore ? c : top, counties[0]);
         const totalUnservedBSLs = counties.reduce((s, c) => s + c.unservedBSLs, 0);
+        const highOppCount = counties.filter(c => c.opportunityScore >= 60).length;
+        const beadEligible = counties.filter(c => c.beadStatus === 'Approved' && c.unservedPct > 0.05).length;
 
         return {
             countiesAnalyzed: counties.length,
@@ -27,14 +30,17 @@ SN.kpi = {
             totalFunding: totalFunding,
             avgScore: avgScore,
             topCounty: topCounty,
-            totalUnservedBSLs: totalUnservedBSLs
+            totalUnservedBSLs: totalUnservedBSLs,
+            highOppCount: highOppCount,
+            beadEligible: beadEligible
         };
     },
 
     empty() {
         return {
             countiesAnalyzed: 0, totalPopulation: 0, avgUnservedPct: 0,
-            totalFunding: 0, avgScore: 0, topCounty: null, totalUnservedBSLs: 0
+            totalFunding: 0, avgScore: 0, topCounty: null, totalUnservedBSLs: 0,
+            highOppCount: 0, beadEligible: 0
         };
     },
 
@@ -59,31 +65,115 @@ SN.kpi = {
     },
 
     /**
-     * Render KPI cards into the DOM.
+     * Render actionable KPI cards into the DOM.
+     * Each card includes context on what the metric means and what the user can do.
      */
     render(counties) {
         const kpi = this.compute(counties);
         const container = document.getElementById('kpi-bar');
         if (!container) return;
 
+        const topName = kpi.topCounty ? kpi.topCounty.county.replace(' County','').replace(' Parish','') : '—';
+        const topState = kpi.topCounty ? kpi.topCounty.state : '';
+        const topFips = kpi.topCounty ? kpi.topCounty.fips : '';
+
         const cards = [
-            { label: 'Counties Analyzed', value: kpi.countiesAnalyzed, icon: '◎', cls: 'kpi-neutral' },
-            { label: 'Total Population', value: this.fmt(kpi.totalPopulation, 'compact'), icon: '⊚', cls: 'kpi-neutral' },
-            { label: 'Avg Unserved', value: this.fmt(kpi.avgUnservedPct, 'pct'), icon: '⚠', cls: kpi.avgUnservedPct > 0.2 ? 'kpi-hot' : 'kpi-warm' },
-            { label: 'Unserved Locations', value: this.fmt(kpi.totalUnservedBSLs, 'compact'), icon: '◉', cls: 'kpi-hot' },
-            { label: 'Est. Funding Available', value: this.fmt(kpi.totalFunding, 'currency'), icon: '$', cls: 'kpi-accent' },
-            { label: 'Top Scoring County', value: kpi.topCounty ? kpi.topCounty.county.replace(' County','').replace(' Parish','') : '—', sub: kpi.topCounty ? kpi.topCounty.state + ' · Score: ' + kpi.topCounty.opportunityScore : '', icon: '★', cls: 'kpi-accent' }
+            {
+                value: kpi.highOppCount,
+                label: 'High-Opportunity Counties',
+                action: 'Score 60+ — click to filter',
+                icon: '◎',
+                cls: 'kpi-accent',
+                clickAction: 'filterHighOpp'
+            },
+            {
+                value: this.fmt(kpi.totalUnservedBSLs, 'compact'),
+                label: 'Unserved Locations',
+                action: 'BEAD-eligible buildout targets',
+                icon: '◉',
+                cls: 'kpi-hot',
+                clickAction: 'showInsights'
+            },
+            {
+                value: this.fmt(kpi.totalFunding, 'currency'),
+                label: 'Available Funding',
+                action: 'View grants & BEAD allocations',
+                icon: '$',
+                cls: 'kpi-accent',
+                clickAction: 'showFunding'
+            },
+            {
+                value: kpi.beadEligible,
+                label: 'BEAD-Ready Counties',
+                action: 'Approved + >5% unserved — bid now',
+                icon: '⚡',
+                cls: 'kpi-warm',
+                clickAction: 'filterBead'
+            },
+            {
+                value: topName,
+                label: '#1 Opportunity',
+                action: topState + ' · Score ' + (kpi.topCounty ? kpi.topCounty.opportunityScore : 0) + ' — click to view',
+                icon: '★',
+                cls: 'kpi-accent',
+                clickAction: 'flyToTop',
+                fips: topFips
+            }
         ];
 
         container.innerHTML = cards.map((c, i) => `
-            <div class="kpi-card ${c.cls}" style="animation-delay: ${i * 60}ms">
+            <div class="kpi-card ${c.cls} kpi-clickable" data-action="${c.clickAction}" ${c.fips ? 'data-fips="' + c.fips + '"' : ''} style="animation-delay: ${i * 60}ms" title="${c.action}">
                 <div class="kpi-icon">${c.icon}</div>
                 <div class="kpi-content">
                     <div class="kpi-value">${c.value}</div>
                     <div class="kpi-label">${c.label}</div>
-                    ${c.sub ? `<div class="kpi-sub">${c.sub}</div>` : ''}
+                    <div class="kpi-action">${c.action}</div>
                 </div>
             </div>
         `).join('');
+
+        this.bindActions();
+    },
+
+    /**
+     * Bind click actions on KPI cards.
+     */
+    bindActions() {
+        var container = document.getElementById('kpi-bar');
+        if (!container) return;
+
+        container.querySelectorAll('.kpi-clickable').forEach(function(card) {
+            card.addEventListener('click', function() {
+                var action = card.dataset.action;
+                switch (action) {
+                    case 'filterHighOpp':
+                        document.getElementById('filter-score').value = 60;
+                        SN.state.filters.minScore = 60;
+                        SN.app.updateScoreLabel(60);
+                        SN.app.onFilterChange();
+                        SN.app.switchTab('table');
+                        break;
+                    case 'showInsights':
+                        SN.app.switchTab('insights');
+                        break;
+                    case 'showFunding':
+                        SN.app.switchTab('funding');
+                        break;
+                    case 'filterBead':
+                        // Navigate to table showing BEAD-ready counties sorted by unserved %
+                        SN.app.switchTab('table');
+                        if (SN.table) {
+                            SN.table.sortCol = 'unservedPct';
+                            SN.table.sortDir = 'desc';
+                            SN.table.render(SN.app.getFilteredData());
+                        }
+                        break;
+                    case 'flyToTop':
+                        var fips = card.dataset.fips;
+                        if (fips) SN.map.flyTo(fips);
+                        break;
+                }
+            });
+        });
     }
 };

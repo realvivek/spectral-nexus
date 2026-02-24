@@ -40,7 +40,7 @@
             <button id="btn-open-report" class="header-btn header-btn-warm" title="View your sales report">
                 Sales Report <span id="report-badge" class="report-badge" style="display:none">0</span>
             </button>
-            <span class="header-version">v0.5.0</span>
+            <span class="header-version">v0.6.0</span>
         </div>
     </header>
 
@@ -70,8 +70,8 @@
                 <div class="map-control-group" id="layer-toggles"></div>
             </div>
 
-            <div class="map-legend">
-                <div class="legend-title">Opportunity Score</div>
+            <div class="map-legend" id="map-legend">
+                <div class="legend-title" id="legend-title">Opportunity Score</div>
                 <div class="legend-scale">
                     <span style="background:#06d6a0"></span>
                     <span style="background:#0bc49a"></span>
@@ -84,7 +84,8 @@
                     <span style="background:#fbbf24"></span>
                     <span style="background:#ef4444"></span>
                 </div>
-                <div class="legend-labels"><span>High</span><span>Low</span></div>
+                <div class="legend-labels" id="legend-labels"><span>100 (Best)</span><span>50</span><span>0 (Low)</span></div>
+                <div class="legend-hint" id="legend-hint">Circle size = population · Color = score</div>
             </div>
 
             <div id="map-tooltip"></div>
@@ -207,6 +208,7 @@
     <script src="../src/js/data-awards.js"></script>
     <script src="../src/js/data-layers.js"></script>
     <script src="../src/js/data-smartcities.js"></script>
+    <script src="../src/js/data-decision-makers.js"></script>
     <script src="../src/js/scoring.js"></script>
     <script src="../src/js/kpi.js"></script>
     <script src="../src/js/map.js"></script>
