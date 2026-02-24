@@ -1,7 +1,7 @@
 /**
  * Spectral Nexus — Map Layers Module
- * Manages toggleable overlay layers: CBRS, Cellular Gaps, Fiber, Grants, Smart Cities, RDOF Defaults.
- * Organized into categories with larger, clearer toggle buttons.
+ * Manages all toggleable map layers including county circles.
+ * Organized into intuitive categories: Base, Spectrum, Infrastructure, Programs.
  */
 
 window.SN = window.SN || {};
@@ -12,27 +12,34 @@ SN.layers = {
     groups: {},
     visible: {},
 
-    /* Layer definitions — organized into categories */
+    /* Layer definitions — organized into 4 categories */
     categories: [
+        {
+            name: 'Base Layers',
+            layers: [
+                { id: 'counties',   label: 'County Markers',          icon: '●',  color: '#06d6a0', defaultOn: true },
+                { id: 'basemap',    label: 'Dark Basemap',             icon: 'BM', color: '#536179', defaultOn: true }
+            ]
+        },
         {
             name: 'Spectrum & Coverage',
             layers: [
                 { id: 'cbrs',       label: 'CBRS / Private 5G',       icon: '5G', color: '#a78bfa', defaultOn: false },
-                { id: 'cellular',   label: 'Cellular Gaps',            icon: 'RF', color: '#ef4444', defaultOn: false }
+                { id: 'cellular',   label: 'Cellular Dead Zones',      icon: 'RF', color: '#ef4444', defaultOn: false }
             ]
         },
         {
             name: 'Infrastructure',
             layers: [
-                { id: 'fiber',      label: 'Fiber Routes',             icon: 'FB', color: '#06d6a0', defaultOn: false },
-                { id: 'grants',     label: 'Fiber Grants',             icon: '$F', color: '#fbbf24', defaultOn: false }
+                { id: 'fiber',      label: 'Fiber Backbone Routes',    icon: 'FB', color: '#06d6a0', defaultOn: false },
+                { id: 'grants',     label: 'Fiber Grant Areas',        icon: '$F', color: '#fbbf24', defaultOn: false }
             ]
         },
         {
             name: 'Programs & Funding',
             layers: [
-                { id: 'smartcities',label: 'Smart Cities',             icon: 'SC', color: '#38bdf8', defaultOn: false },
-                { id: 'rdof',       label: 'RDOF Defaults',            icon: 'RD', color: '#f97316', defaultOn: false }
+                { id: 'smartcities',label: 'Smart City Programs',      icon: 'SC', color: '#38bdf8', defaultOn: false },
+                { id: 'rdof',       label: 'RDOF Default Zones',       icon: 'RD', color: '#f97316', defaultOn: false }
             ]
         }
     ],
@@ -55,6 +62,11 @@ SN.layers = {
 
         var allDefs = this._allDefs();
         allDefs.forEach(function(def) {
+            // Skip special layers — counties and basemap are handled differently
+            if (def.id === 'counties' || def.id === 'basemap') {
+                SN.layers.visible[def.id] = def.defaultOn;
+                return;
+            }
             SN.layers.groups[def.id] = L.layerGroup();
             SN.layers.visible[def.id] = def.defaultOn;
             if (def.defaultOn) {
@@ -239,7 +251,7 @@ SN.layers = {
     },
 
     /**
-     * Build Smart Cities markers — includes decision maker contacts and SI info.
+     * Build Smart Cities markers.
      */
     buildSmartCitiesLayer() {
         var group = this.groups.smartcities;
@@ -270,7 +282,6 @@ SN.layers = {
             if (city.infrastructure.smartLighting) infraList.push('Smart Lighting');
             if (city.infrastructure.iotSensors) infraList.push(city.infrastructure.iotSensors.toLocaleString() + ' IoT Sensors');
 
-            // Decision maker & SI info
             var contactHtml = '';
             if (city.decisionMaker) {
                 contactHtml += '<div class="layer-popup-contact">' +
@@ -324,7 +335,6 @@ SN.layers = {
 
     /**
      * Build RDOF Default Areas markers.
-     * Shows areas where RDOF winners defaulted — creating new funding opportunities.
      */
     buildRDOFLayer() {
         var group = this.groups.rdof;
@@ -357,7 +367,7 @@ SN.layers = {
                     '<div class="layer-popup-stat"><span class="stat-val">' + area.newFundingStatus + '</span><span class="stat-lbl">Refunding Status</span></div>' +
                 '</div>' +
                 '<p class="layer-popup-note">' + area.note + '</p>' +
-                '<p class="layer-popup-opp">Opportunity: These locations need a new provider. BEAD or future programs may fund buildout here.</p>' +
+                '<p class="layer-popup-opp">Opportunity: BEAD priority targets with proven demand.</p>' +
                 '<button class="btn-add-to-report" onclick="SN.executive.addToReport(\'rdof\', \'' + area.region.replace(/'/g, "\\'") + '\')">+ Add to Sales Report</button>' +
             '</div>';
 
@@ -367,19 +377,21 @@ SN.layers = {
     },
 
     /**
-     * Render the categorized layer toggle panel on the map.
+     * Render the categorized layer toggle panel.
      */
     renderTogglePanel() {
         var panel = document.getElementById('layer-toggles');
         if (!panel) return;
 
-        var anyOn = false;
+        var anyOverlayOn = false;
         var allDefs = this._allDefs();
-        allDefs.forEach(function(d) { if (SN.layers.visible[d.id]) anyOn = true; });
+        allDefs.forEach(function(d) {
+            if (d.id !== 'counties' && d.id !== 'basemap' && SN.layers.visible[d.id]) anyOverlayOn = true;
+        });
 
         var html = '<div class="layer-panel-header">' +
             '<span class="layer-panel-title">Map Layers</span>' +
-            '<button class="layer-toggle-all" id="btn-toggle-all-layers">' + (anyOn ? 'Clear All' : 'Show All') + '</button>' +
+            '<button class="layer-toggle-all" id="btn-toggle-all-layers">' + (anyOverlayOn ? 'Clear All' : 'Show All') + '</button>' +
         '</div>';
 
         this.categories.forEach(function(cat) {
@@ -405,14 +417,16 @@ SN.layers = {
             });
         });
 
-        // Bind Show All / Clear All
+        // Bind Show All / Clear All (overlays only, not base layers)
         var toggleAllBtn = document.getElementById('btn-toggle-all-layers');
         if (toggleAllBtn) {
             toggleAllBtn.addEventListener('click', function() {
                 var turnOn = toggleAllBtn.textContent === 'Show All';
                 var allDefs = SN.layers._allDefs();
                 allDefs.forEach(function(def) {
-                    SN.layers.toggleLayer(def.id, turnOn);
+                    if (def.id !== 'counties' && def.id !== 'basemap') {
+                        SN.layers.toggleLayer(def.id, turnOn);
+                    }
                 });
                 SN.layers.renderTogglePanel();
             });
@@ -424,8 +438,35 @@ SN.layers = {
      */
     toggleLayer(layerId, show) {
         var map = SN.map.leafletMap;
+        if (!map) return;
+
+        // Special handling for county circles
+        if (layerId === 'counties') {
+            this.visible.counties = show;
+            if (SN.map.countyLayer) {
+                if (show) {
+                    SN.map.countyLayer.addTo(map);
+                } else {
+                    map.removeLayer(SN.map.countyLayer);
+                }
+            }
+            return;
+        }
+
+        // Special handling for basemap tiles
+        if (layerId === 'basemap') {
+            this.visible.basemap = show;
+            map.eachLayer(function(layer) {
+                if (layer instanceof L.TileLayer) {
+                    layer.setOpacity(show ? 1 : 0);
+                }
+            });
+            return;
+        }
+
+        // Standard overlay layers
         var group = this.groups[layerId];
-        if (!map || !group) return;
+        if (!group) return;
 
         if (show) {
             group.addTo(map);
