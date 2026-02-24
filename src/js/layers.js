@@ -80,6 +80,11 @@ SN.layers = {
         this.buildSmartCitiesLayer();
         this.buildRDOFLayer();
         this.renderTogglePanel();
+
+        // Sync integrated legend with current choropleth metric
+        if (SN.map && SN.map.updateLegend) {
+            SN.map.updateLegend(SN.state.choroplethMetric);
+        }
     },
 
     /**
@@ -407,6 +412,19 @@ SN.layers = {
             html += '</div>';
         });
 
+        // Integrated legend section
+        var colors = SN.config.choroplethColors;
+        html += '<div class="layer-legend-section">';
+        html += '<div class="layer-legend-title" id="legend-title">Opportunity Score</div>';
+        html += '<div class="layer-legend-scale">';
+        for (var ci = 0; ci < colors.length; ci++) {
+            html += '<span style="background:' + colors[ci] + '"></span>';
+        }
+        html += '</div>';
+        html += '<div class="layer-legend-labels" id="legend-labels"><span>100 (Best)</span><span>50</span><span>0 (Low)</span></div>';
+        html += '<div class="layer-legend-hint" id="legend-hint">Circle size = population · Color = score</div>';
+        html += '</div>';
+
         panel.innerHTML = html;
 
         // Bind toggle events
@@ -428,6 +446,10 @@ SN.layers = {
                     }
                 });
                 SN.layers.renderTogglePanel();
+                // Sync legend with current choropleth metric
+                if (SN.map && SN.map.updateLegend) {
+                    SN.map.updateLegend(SN.state.choroplethMetric);
+                }
             });
         }
     },
