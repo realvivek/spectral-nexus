@@ -147,12 +147,36 @@ SN.map = {
     },
 
     /**
-     * Show detail popup for a county.
+     * Show detail popup for a county with decision maker contacts.
      */
     showPopup(county) {
         const breakdown = SN.scoring.getBreakdown(county);
         const scoreColor = county.opportunityScore >= 70 ? '#06d6a0' :
                           county.opportunityScore >= 45 ? '#fbbf24' : '#ef4444';
+
+        // Get decision makers for this county
+        var contactHtml = '';
+        if (SN.decisionMakers) {
+            var contacts = SN.decisionMakers.getForCounty(county);
+            if (contacts.length > 0) {
+                var shown = contacts.slice(0, 3);
+                contactHtml = '<div class="popup-contacts">' +
+                    '<div class="popup-contacts-title">Key Decision Makers</div>';
+                shown.forEach(function(c) {
+                    contactHtml += '<div class="popup-contact-row">' +
+                        '<span class="popup-contact-type">' + c.type + '</span>' +
+                        '<span class="popup-contact-name">' + c.name + '</span>' +
+                        '<span class="popup-contact-detail">' + c.title + '</span>';
+                    if (c.email) contactHtml += '<span class="popup-contact-info">' + c.email + '</span>';
+                    if (c.phone) contactHtml += '<span class="popup-contact-info">' + c.phone + '</span>';
+                    contactHtml += '</div>';
+                });
+                if (contacts.length > 3) {
+                    contactHtml += '<div class="popup-contacts-more">+ ' + (contacts.length - 3) + ' more in Funding Intel tab</div>';
+                }
+                contactHtml += '</div>';
+            }
+        }
 
         const html = `
             <div class="popup-detail">
@@ -203,11 +227,12 @@ SN.map = {
                         <span class="popup-metric-lbl">Poverty Rate</span>
                     </div>
                 </div>
+                ${contactHtml}
                 <button class="btn-add-to-report" onclick="SN.executive.addToReport('county', '${county.fips}')">+ Add to Sales Report</button>
             </div>
         `;
 
-        L.popup({ className: 'sn-popup', maxWidth: 360, minWidth: 280 })
+        L.popup({ className: 'sn-popup', maxWidth: 400, minWidth: 300 })
             .setLatLng([county.lat, county.lng])
             .setContent(html)
             .openOn(this.leafletMap);
