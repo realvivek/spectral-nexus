@@ -32,16 +32,17 @@ src/
     data-awards.js    ← RDOF awards data
     data-layers.js    ← CBRS zones, cellular gaps, fiber routes
     data-smartcities.js ← Smart city programs
+    data-decision-makers.js ← State broadband directors, co-ops, tribal contacts
     scoring.js        ← Opportunity score computation (0-100)
-    kpi.js            ← KPI bar rendering
-    map.js            ← Leaflet map, county circles, popups
-    layers.js         ← Toggleable map overlays (CBRS, fiber, etc.)
+    kpi.js            ← Actionable KPI bar with click-through navigation
+    map.js            ← Leaflet map, county circles, popups with decision makers
+    layers.js         ← All map layers: base, spectrum, infrastructure, programs
     executive.js      ← CSV export, sales report panel
-    onboarding.js     ← Help modal & tutorial
+    onboarding.js     ← Help modal with visual workflow tutorial
     table.js          ← Sortable county data table
     charts.js         ← Chart.js scatter/bar/histogram
-    insights.js       ← Curated insights panel
-    funding.js        ← Funding Intel: grants guide, competitive landscape, scoring
+    insights.js       ← Actionable insights: BEAD urgency, co-ops, tribal, RDOF
+    funding.js        ← Funding Intel: grants, awarded table, decision makers, competitive
     app.js            ← Main controller, init chain, filters, tabs
 
 scripts/
@@ -59,10 +60,11 @@ Scripts in `public/index.html` load in this exact order — **order matters**:
 3. `config.js` — Must load first (other modules read `SN.config`)
 4. `data.js` — County dataset
 5. `data-grants.js`, `data-awards.js`, `data-layers.js`, `data-smartcities.js`
-6. `scoring.js` — Reads `SN.data` and `SN.config`
-7. `kpi.js`, `map.js`, `layers.js`, `executive.js`, `onboarding.js`
-8. `table.js`, `charts.js`, `insights.js`, `funding.js`
-9. `app.js` — **Must be last** (orchestrates all modules)
+6. `data-decision-makers.js` — State directors, co-ops, tribal contacts
+7. `scoring.js` — Reads `SN.data` and `SN.config`
+8. `kpi.js`, `map.js`, `layers.js`, `executive.js`, `onboarding.js`
+9. `table.js`, `charts.js`, `insights.js`, `funding.js`
+10. `app.js` — **Must be last** (orchestrates all modules)
 
 If you add a new module, it must be added to `index.html` in the correct position AND follow the `window.SN = window.SN || {}; SN.moduleName = { ... }` pattern.
 
