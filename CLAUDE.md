@@ -175,3 +175,7 @@ After EVERY change:
 - **Don't change script order carelessly** — `config.js` before `data.js` before `scoring.js` before `app.js`
 - **Don't add `import`/`export` statements** — This is a no-build static site, use the `SN` namespace
 - **Check relative paths from `public/index.html`** — CSS/JS paths use `../src/` because HTML is in `public/`
+
+## Important: No Claude Session Links
+
+**NEVER include Claude session/prompt URLs (e.g., `https://claude.ai/code/session_...`) in any commits, PRs, documentation, comments, or code files.** These are internal development tool links and must not appear in the repository.
