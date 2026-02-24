@@ -40,16 +40,18 @@ SN.config = {
         { max: 5000, score: 30 }
     ],
 
-    /* ─── Funding Score Matrix ─── */
+    /* ─── Funding Score Matrix (calibrated to real data, v0.3.0) ─── */
     fundingScore: {
-        approvedHighUnserved: 95,
-        approvedModUnserved: 80,
-        approvedLowUnserved: 60,
-        pendingHighUnserved: 75,
-        pendingModUnserved: 60,
-        pendingLowUnserved: 40,
-        noBeadHighUnserved: 50,
-        noBeadDefault: 30
+        approvedVeryHigh: 100,  // >30% unserved
+        approvedHigh: 85,       // >15% unserved
+        approvedMod: 65,        // >5% unserved
+        approvedLow: 45,        // >2% unserved
+        approvedMinimal: 25,    // ≤2% unserved
+        pendingHigh: 70,
+        pendingMod: 50,
+        pendingLow: 30,
+        noBeadHigh: 45,
+        noBeadDefault: 20
     },
 
     /* ─── BEAD Program Status by State (all approved as of 2025) ─── */
