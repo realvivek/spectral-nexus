@@ -2,6 +2,10 @@
  * Spectral Nexus — Scoring Engine
  * Computes opportunityScore (0-100) for each county.
  * Weights are configurable in config.js.
+ *
+ * Calibrated to real FCC BDC data (v0.3.0).
+ * Uses sqrt transforms for coverageGap/unservedPct to spread
+ * distributions where most real-world data lives (0-30%).
  */
 
 window.SN = window.SN || {};
@@ -9,8 +13,28 @@ window.SN = window.SN || {};
 SN.scoring = {
 
     /**
+     * Score coverage gap using sqrt transform.
+     * Real data: median=10.6%, p75=25.5%, p95=59%.
+     * sqrt spreads out the low end where most counties cluster.
+     * Calibrated so p75 (~25%) → ~70.
+     */
+    scoreCoverageGap(gap) {
+        return Math.round(Math.min(100, Math.sqrt(gap) * 140));
+    },
+
+    /**
+     * Score unserved percentage using sqrt transform.
+     * Real data: median=6.5%, p75=16.8%, p95=44%.
+     * Calibrated so p75 (~17%) → ~70.
+     */
+    scoreUnserved(pct) {
+        return Math.round(Math.min(100, Math.sqrt(pct) * 170));
+    },
+
+    /**
      * Score population density on a non-linear curve.
-     * Sweet spot is moderate density (50-200/sq mi).
+     * Sweet spot is moderate density (50-200/sq mi) —
+     * dense enough for cost-effective deployment but not already saturated.
      */
     scoreDensity(density) {
         const curve = SN.config.densityCurve;
@@ -22,46 +46,36 @@ SN.scoring = {
 
     /**
      * Score income need — lower income = higher need = more grant-eligible.
-     * Normalized against US median (~$75K).
+     * Continuous linear curve instead of step function.
+     * Real data: median=$60.8K, p5=$41K, p95=$95K.
+     * $30K → 90, $60K → 60, $90K → 30, $120K+ → 20.
      */
     scoreIncomeNeed(medianIncome) {
-        const usMedian = 75000;
-        const ratio = medianIncome / usMedian;
-        if (ratio <= 0.5) return 95;
-        if (ratio <= 0.65) return 80;
-        if (ratio <= 0.80) return 65;
-        if (ratio <= 1.0) return 50;
-        if (ratio <= 1.2) return 35;
-        return 20;
+        return Math.round(Math.max(20, Math.min(95, 120 - (medianIncome / 1000))));
     },
 
     /**
-     * Score funding availability based on BEAD status + unserved %.
+     * Score funding eligibility based on BEAD status + unserved %.
+     * With all states now BEAD-approved, the key differentiator
+     * is unserved percentage — higher unserved = more BEAD-eligible BSLs.
      */
     scoreFunding(beadStatus, unservedPct) {
         const cfg = SN.config.fundingScore;
-        const highUnserved = unservedPct > 0.15;
-        const modUnserved = unservedPct > 0.05;
 
         if (beadStatus === 'Approved') {
-            if (highUnserved) return cfg.approvedHighUnserved;
-            if (modUnserved) return cfg.approvedModUnserved;
-            return cfg.approvedLowUnserved;
+            if (unservedPct > 0.30) return cfg.approvedVeryHigh;
+            if (unservedPct > 0.15) return cfg.approvedHigh;
+            if (unservedPct > 0.05) return cfg.approvedMod;
+            if (unservedPct > 0.02) return cfg.approvedLow;
+            return cfg.approvedMinimal;
         }
         if (beadStatus === 'Pending') {
-            if (highUnserved) return cfg.pendingHighUnserved;
-            if (modUnserved) return cfg.pendingModUnserved;
-            return cfg.pendingLowUnserved;
+            if (unservedPct > 0.15) return cfg.pendingHigh;
+            if (unservedPct > 0.05) return cfg.pendingMod;
+            return cfg.pendingLow;
         }
-        if (highUnserved) return cfg.noBeadHighUnserved;
+        if (unservedPct > 0.15) return cfg.noBeadHigh;
         return cfg.noBeadDefault;
-    },
-
-    /**
-     * Normalize a 0-1 value to a 0-100 score.
-     */
-    pctToScore(pct) {
-        return Math.min(100, Math.max(0, pct * 100));
     },
 
     /**
@@ -70,11 +84,11 @@ SN.scoring = {
     computeScore(county) {
         const w = SN.config.weights;
 
-        const coverageGapScore = this.pctToScore(county.coverageGap);
-        const unservedScore    = this.pctToScore(county.unservedPct);
+        const coverageGapScore = this.scoreCoverageGap(county.coverageGap);
+        const unservedScore    = this.scoreUnserved(county.unservedPct);
         const densityScore     = this.scoreDensity(county.populationDensity);
         const incomeScore      = this.scoreIncomeNeed(county.medianIncome);
-        const readinessScore   = county.readiness5g;  // Already 0-100
+        const readinessScore   = county.readiness5g;
         const fundingScore     = this.scoreFunding(county.beadStatus, county.unservedPct);
 
         const raw = (
@@ -107,8 +121,8 @@ SN.scoring = {
     getBreakdown(county) {
         const w = SN.config.weights;
         return {
-            coverageGap: { weight: w.coverageGap, score: this.pctToScore(county.coverageGap) },
-            unservedPct: { weight: w.unservedPct, score: this.pctToScore(county.unservedPct) },
+            coverageGap: { weight: w.coverageGap, score: this.scoreCoverageGap(county.coverageGap) },
+            unservedPct: { weight: w.unservedPct, score: this.scoreUnserved(county.unservedPct) },
             popDensity:  { weight: w.popDensity,  score: this.scoreDensity(county.populationDensity) },
             incomeNeed:  { weight: w.incomeNeed,  score: this.scoreIncomeNeed(county.medianIncome) },
             readiness5g: { weight: w.readiness5g, score: county.readiness5g },

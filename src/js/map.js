@@ -9,7 +9,6 @@ SN.map = {
 
     leafletMap: null,
     countyLayer: null,
-    stateLayer: null,
     selectedLayer: null,
     countyLookup: {},  // fips → layer
 
@@ -43,7 +42,6 @@ SN.map = {
 
         // Build county lookup and add layers
         this.buildCountyGeoJSON();
-        this.buildStateOutlines();
     },
 
     /**
@@ -85,49 +83,6 @@ SN.map = {
 
             circle.addTo(this.countyLayer);
             this.countyLookup[county.fips] = circle;
-        });
-    },
-
-    /**
-     * Draw state outlines for all 50 states.
-     * Active states get a brighter treatment; inactive get "coming soon" style.
-     */
-    buildStateOutlines() {
-        // We create approximate state center markers for inactive states
-        // In production, we'd load a full state boundary GeoJSON
-        const inactiveStates = [
-            {s:'AL',lt:32.8,ln:-86.8},{s:'AK',lt:64.2,ln:-152.5},{s:'AZ',lt:34.0,ln:-111.1},
-            {s:'AR',lt:35.2,ln:-91.8},{s:'CO',lt:39.5,ln:-105.8},{s:'CT',lt:41.6,ln:-72.7},
-            {s:'DE',lt:39.0,ln:-75.5},{s:'FL',lt:27.6,ln:-81.5},{s:'HI',lt:19.9,ln:-155.6},
-            {s:'ID',lt:44.1,ln:-114.7},{s:'IL',lt:40.6,ln:-89.4},{s:'IN',lt:40.3,ln:-86.1},
-            {s:'KS',lt:38.5,ln:-98.8},{s:'KY',lt:37.8,ln:-84.3},{s:'ME',lt:45.3,ln:-69.4},
-            {s:'MD',lt:39.0,ln:-76.6},{s:'MA',lt:42.4,ln:-71.4},{s:'MI',lt:44.3,ln:-85.6},
-            {s:'MN',lt:46.7,ln:-94.7},{s:'MS',lt:32.3,ln:-89.4},{s:'MO',lt:37.9,ln:-91.8},
-            {s:'NE',lt:41.1,ln:-98.3},{s:'NV',lt:38.8,ln:-116.4},{s:'NH',lt:43.2,ln:-71.6},
-            {s:'NJ',lt:40.1,ln:-74.5},{s:'NY',lt:43.0,ln:-75.0},{s:'NC',lt:35.8,ln:-79.0},
-            {s:'ND',lt:47.5,ln:-100.5},{s:'OK',lt:35.0,ln:-97.1},{s:'OR',lt:43.8,ln:-120.5},
-            {s:'PA',lt:41.2,ln:-77.2},{s:'RI',lt:41.6,ln:-71.5},{s:'SD',lt:43.9,ln:-99.4},
-            {s:'TN',lt:35.5,ln:-86.6},{s:'UT',lt:39.3,ln:-111.1},{s:'VT',lt:44.0,ln:-72.7},
-            {s:'WA',lt:47.8,ln:-120.7},{s:'WV',lt:38.6,ln:-80.6},{s:'WI',lt:43.8,ln:-88.8},
-            {s:'WY',lt:43.1,ln:-107.6}
-        ].filter(s => !SN.config.activeStates.includes(s.s));
-
-        inactiveStates.forEach(st => {
-            const marker = L.circleMarker([st.lt, st.ln], {
-                radius: 4,
-                fillColor: '#334155',
-                fillOpacity: 0.5,
-                color: '#475569',
-                weight: 1,
-                opacity: 0.4
-            });
-            marker.bindPopup(`
-                <div class="popup-inactive">
-                    <strong>${st.s}</strong><br>
-                    <span class="popup-coming-soon">Data coming in Phase 2</span>
-                </div>
-            `, { className: 'sn-popup-inactive' });
-            marker.addTo(this.leafletMap);
         });
     },
 
@@ -207,7 +162,12 @@ SN.map = {
                 </div>
                 <div class="popup-score" style="color:${scoreColor}">
                     <span class="popup-score-num">${county.opportunityScore}</span>
-                    <span class="popup-score-label">Opportunity Score</span>
+                    <span class="popup-score-label">Funding Opportunity Score</span>
+                </div>
+                <div class="popup-funding">
+                    Est. Funding: <strong>${SN.kpi.fmt(county.fundingEstimate, 'currency')}</strong>
+                    · BEAD State Alloc: <strong>${SN.kpi.fmt(county.beadStateAllocation, 'currency')}</strong>
+                    · Status: <strong>${county.beadStatus}</strong>
                 </div>
                 <div class="popup-grid">
                     <div class="popup-metric">
@@ -231,21 +191,17 @@ SN.map = {
                         <span class="popup-metric-lbl">Fiber Avail.</span>
                     </div>
                     <div class="popup-metric">
-                        <span class="popup-metric-val">${county.readiness5g}</span>
-                        <span class="popup-metric-lbl">5G Readiness</span>
-                    </div>
-                    <div class="popup-metric">
                         <span class="popup-metric-val">${county.towerCount}</span>
-                        <span class="popup-metric-lbl">Cell Towers</span>
+                        <span class="popup-metric-lbl">Providers</span>
                     </div>
                     <div class="popup-metric">
-                        <span class="popup-metric-val">${county.beadStatus}</span>
-                        <span class="popup-metric-lbl">BEAD Status</span>
+                        <span class="popup-metric-val">${county.unservedBSLs.toLocaleString()}</span>
+                        <span class="popup-metric-lbl">Unserved BSLs</span>
                     </div>
-                </div>
-                <div class="popup-funding">
-                    Est. Funding: <strong>${SN.kpi.fmt(county.fundingEstimate, 'currency')}</strong>
-                    · BEAD State Alloc: <strong>${SN.kpi.fmt(county.beadStateAllocation, 'currency')}</strong>
+                    <div class="popup-metric">
+                        <span class="popup-metric-val">${(county.povertyRate * 100).toFixed(1)}%</span>
+                        <span class="popup-metric-lbl">Poverty Rate</span>
+                    </div>
                 </div>
             </div>
         `;

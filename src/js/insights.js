@@ -1,6 +1,6 @@
 /**
  * Spectral Nexus — Insights Module
- * Generates plain-English insights, BEAD status tracker, and ROI heuristics.
+ * Funding-focused insights, BEAD status tracker, and grant eligibility analysis.
  */
 
 window.SN = window.SN || {};
@@ -8,25 +8,25 @@ window.SN = window.SN || {};
 SN.insights = {
 
     /**
-     * Render the Insights tab.
+     * Render the Insights tab — funding-first ordering.
      */
     render(counties) {
         const container = document.getElementById('insights-container');
         if (!container) return;
 
         const topOpps = this.topOpportunities(counties);
-        const underserved = this.mostUnderserved(counties);
         const quickWins = this.quickWins(counties);
         const roi = this.roiRanking(counties);
+        const underserved = this.mostUnderserved(counties);
         const emerging = this.emergingMarkets(counties);
 
         container.innerHTML = `
-            ${this.renderSection('★ Top Opportunities', topOpps, 'accent')}
-            ${this.renderSection('⚠ Most Underserved', underserved, 'hot')}
-            ${this.renderSection('⚡ Quick Wins', quickWins, 'warm')}
-            ${this.renderSection('📈 Best ROI Potential', roi, 'blue')}
-            ${this.renderSection('🔮 Emerging Markets', emerging, 'purple')}
             ${this.renderBeadTracker()}
+            ${this.renderSection('★ Top Funding Opportunities', topOpps, 'accent')}
+            ${this.renderSection('⚡ Quick Wins — BEAD Eligible', quickWins, 'warm')}
+            ${this.renderSection('📈 Best ROI Potential', roi, 'blue')}
+            ${this.renderSection('⚠ Most Underserved', underserved, 'hot')}
+            ${this.renderSection('🔮 Emerging Markets', emerging, 'purple')}
             ${this.renderMethodologyLink()}
         `;
     },
@@ -65,7 +65,7 @@ SN.insights = {
             .map(c => ({
                 fips: c.fips,
                 name: `${c.county.replace(' County','').replace(' Parish','')}, ${c.state}`,
-                detail: `Pop: ${SN.kpi.fmt(c.population,'compact')} · Gap: ${(c.coverageGap*100).toFixed(0)}% · ${c.beadStatus}`,
+                detail: `Est. ${SN.kpi.fmt(c.fundingEstimate,'currency')} · ${(c.coverageGap*100).toFixed(0)}% gap · ${SN.kpi.fmt(c.population,'compact')} pop · BEAD ${c.beadStatus}`,
                 badge: c.opportunityScore,
                 badgeColor: '#06d6a0'
             }));
@@ -170,7 +170,7 @@ SN.insights = {
         return `
             <div class="insight-section insight-bead">
                 <h3 class="insight-title">📡 BEAD Program Tracker</h3>
-                <p class="bead-context">The $42.45B BEAD program is the largest broadband funding initiative in US history. As of Feb 2026, 50 of 56 states/territories have Final Proposals approved.</p>
+                <p class="bead-context">The $42.45B BEAD program is the largest broadband funding initiative in US history. All 50 states have Final Proposals approved. Construction timelines are being set — the funding window is open.</p>
                 <table class="bead-table">
                     <thead>
                         <tr><th>State</th><th>Status</th><th>Allocation</th><th>Est. Construction</th></tr>
