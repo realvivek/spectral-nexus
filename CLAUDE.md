@@ -34,6 +34,7 @@ src/
     data-smartcities.js ← Smart city programs
     data-decision-makers.js ← State broadband directors, co-ops, tribal contacts
     data-municipal-fiber.js ← Municipal fiber networks, dark fiber, private 5G deployments
+    data-bead-timeline.js ← BEAD per-state timelines, CBRS GAA data, competitive bids
     scoring.js        ← Opportunity score computation (0-100)
     kpi.js            ← Actionable KPI bar with click-through navigation
     map.js            ← Leaflet map, county circles, popups with decision makers
@@ -63,10 +64,11 @@ Scripts in `public/index.html` load in this exact order — **order matters**:
 5. `data-grants.js`, `data-awards.js`, `data-layers.js`, `data-smartcities.js`
 6. `data-decision-makers.js` — State directors, co-ops, tribal contacts
 7. `data-municipal-fiber.js` — Municipal fiber networks, private 5G deployments
-8. `scoring.js` — Reads `SN.data` and `SN.config`
-9. `kpi.js`, `map.js`, `layers.js`, `executive.js`, `onboarding.js`
-10. `table.js`, `charts.js`, `insights.js`, `funding.js`
-11. `app.js` — **Must be last** (orchestrates all modules)
+8. `data-bead-timeline.js` — BEAD state timelines, CBRS GAA spectrum, competitive bids
+9. `scoring.js` — Reads `SN.data` and `SN.config`
+10. `kpi.js`, `map.js`, `layers.js`, `executive.js`, `onboarding.js`
+11. `table.js`, `charts.js`, `insights.js`, `funding.js`
+12. `app.js` — **Must be last** (orchestrates all modules)
 
 If you add a new module, it must be added to `index.html` in the correct position AND follow the `window.SN = window.SN || {}; SN.moduleName = { ... }` pattern.
 
@@ -145,6 +147,9 @@ The page starts invisible (`body { opacity: 0 }`) and becomes visible via:
 | Fiber grants | NTIA/USDA grant records | `data-grants.js` |
 | Municipal fiber | City/utility reports, MuniNetworks.org | `data-municipal-fiber.js` |
 | Private 5G | FCC CBRS records, OnGo Alliance, vendor PRs | `data-municipal-fiber.js` |
+| BEAD timelines | NTIA tracker, state broadband office websites | `data-bead-timeline.js` |
+| CBRS GAA spectrum | SAS providers (Google, Federated Wireless, CommScope) | `data-bead-timeline.js` |
+| Competitive bids | State broadband office public filings, press releases | `data-bead-timeline.js` |
 
 ## Known Constraints
 
@@ -197,28 +202,73 @@ This environment has **NO GitHub API access** (no `gh` CLI, no `GITHUB_TOKEN`). 
 
 ### Deployment Verification (Required)
 
-After pushing changes, always verify the live site works:
+**You MUST complete ALL checks below before declaring work done or creating a PR. Do not skip any.**
 
-1. **Fetch the deployed page** and check:
-   - Does the page render (not blank/invisible)?
-   - Do interactive elements (buttons, modals, toggles) respond?
-   - Are JS files loading (check for 404s)?
-   - Are CSS styles applied (not unstyled/gray)?
-2. **Trace the initialization path**:
-   - If module A must succeed before module B can init, what happens when A fails?
-   - Are event handlers attached regardless of unrelated module failures?
-   - Is the page visible even if JavaScript completely fails?
-3. **Check for silent failure patterns**:
-   - CSS that hides content until JS acts (`opacity:0`, `display:none`)
-   - Init chains with no error isolation
-   - CDN dependencies that block local code when unavailable
+#### Step 1: File Integrity (run these commands)
 
-### GitHub Pages Specific
+```bash
+# 1a. Verify .nojekyll exists
+ls -la .nojekyll
 
-- Ensure `.nojekyll` exists if not using Jekyll
-- Verify relative paths (`../src/`) resolve correctly from the HTML location
-- Confirm all referenced files exist on the deployed branch (not just the feature branch)
-- The live site URL is: `https://realvivek.github.io/spectral-nexus/public/index.html`
+# 1b. Extract all local script src paths from index.html and verify each file exists
+grep -oP 'src="\.\./\K[^"]+' public/index.html | while read f; do
+  [ -f "$f" ] && echo "OK: $f" || echo "MISSING: $f"
+done
+
+# 1c. Extract all local CSS href paths and verify each file exists
+grep -oP 'href="\.\./\K[^"]+' public/index.html | grep '\.css' | while read f; do
+  [ -f "$f" ] && echo "OK: $f" || echo "MISSING: $f"
+done
+
+# 1d. Syntax-check every JS file referenced in index.html
+grep -oP 'src="\.\./\K[^"]+' public/index.html | while read f; do
+  node -c "$f" 2>&1 || echo "SYNTAX ERROR: $f"
+done
+```
+
+All files must exist and all JS must pass syntax check. **If any file is MISSING or has a SYNTAX ERROR, fix it before proceeding.**
+
+#### Step 2: Trace the Initialization Path
+
+Review `app.js` `SN.app.init()` and answer these questions:
+
+- [ ] Is every module init wrapped in its own `try/catch`?
+- [ ] If a new data file fails to load (404/syntax error), do consuming modules guard with null checks (e.g., `if (!SN.data.newThing) return`)?
+- [ ] Are event handlers in `bindEvents()` attached regardless of which modules succeeded?
+- [ ] Is `document.body.classList.add('loaded')` still called before any module init (so page is always visible)?
+- [ ] Does the CSS `@keyframes force-visible` fallback still exist (so page appears even if JS fails entirely)?
+
+#### Step 3: Check for Silent Failure Patterns
+
+- [ ] No new `display:none` or `opacity:0` on page-level content without a CSS-only fallback
+- [ ] No `import`/`export` statements added (this is a no-build static site)
+- [ ] New rendering methods return graceful fallback HTML when data is missing (not blank/error)
+- [ ] `setTimeout` or DOM-ready guards used when binding events to dynamically-generated elements
+- [ ] CDN failures don't prevent local JS from executing (Leaflet/Chart.js wrapped in try/catch)
+
+#### Step 4: GitHub Pages Specific
+
+- [ ] `.nojekyll` exists at repo root
+- [ ] All relative paths (`../src/`) resolve correctly from `public/index.html`
+- [ ] New script tags are in the correct load order in `index.html` (data before logic, logic before app.js)
+- [ ] No files referenced in `index.html` that only exist on a different branch
+
+#### Step 5: Report Results
+
+Create a table summarizing each check with Pass/Fail status. Example:
+
+| Check | Status |
+|-------|--------|
+| .nojekyll exists | Pass |
+| All JS files exist on disk | Pass |
+| All JS passes syntax check | Pass |
+| ... | ... |
+
+**Do NOT create a PR or declare work complete until all checks pass.**
+
+### Live Site URL
+
+- `https://realvivek.github.io/spectral-nexus/public/index.html`
 
 ## Important: No Claude Session Links
 
