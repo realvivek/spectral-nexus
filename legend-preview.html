@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Layer Legend — 10 Design Options</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
+
+:root {
+    --bg-primary: #060a14;
+    --bg-surface: #0c1222;
+    --bg-elevated: #141c2e;
+    --bg-card: #111827;
+    --bg-overlay: rgba(6, 10, 20, 0.92);
+    --text-primary: #e8ecf4;
+    --text-secondary: #8896ab;
+    --text-muted: #536179;
+    --accent: #06d6a0;
+    --accent-glow: rgba(6, 214, 160, 0.15);
+    --accent-blue: #38bdf8;
+    --accent-warm: #fbbf24;
+    --accent-hot: #ef4444;
+    --accent-orange: #f97316;
+    --accent-purple: #a78bfa;
+    --border: rgba(255,255,255,0.06);
+    --border-hover: rgba(255,255,255,0.12);
+    --border-active: rgba(6,214,160,0.4);
+    --radius: 8px;
+    --radius-lg: 12px;
+    --font-display: 'Outfit', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; -webkit-font-smoothing: antialiased; }
+body {
+    font-family: var(--font-body);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    padding: 30px;
+}
+
+h1 {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+.subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+}
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 24px;
+}
+.option-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+.option-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.option-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #060a14;
+    font-weight: 700;
+    font-size: 0.82rem;
+    flex-shrink: 0;
+}
+.option-name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+.option-desc {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.4;
+}
+.option-body {
+    padding: 12px;
+}
+
+/* ═══════════════════════════════════════════════ */
+/* SHARED BASE for all options                     */
+/* ═══════════════════════════════════════════════ */
+.panel {
+    background: var(--bg-overlay);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+}
+
+/* ═══════════════════════════════════════════════ */
+/* OPTION 1: Current (Broken)                      */
+/* ═══════════════════════════════════════════════ */
+.opt1 .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+.opt1 .panel-title {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+}
+.opt1 .toggle-all-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--accent-blue);
+    font-size: 0.65rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+    padding: 3px 8px;
+    cursor: pointer;
+}
+.opt1 .cat {
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+}
+.opt1 .cat:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.opt1 .cat-name {
+    display: block;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+.opt1 .toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 6px;
+    cursor: pointer;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    border-radius: 4px;
+    flex-direction: row;
+    min-height: 28px;
+}
+.opt1 .toggle-label {
+    font-size: 0.76rem;
+    white-space: nowrap;
+    font-weight: 500;
+    line-height: 1.2;
+    flex: 1;
+    padding-left: 2px;
+}
+.opt1 .toggle input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    min-width: 14px;
+    border: 2px solid var(--border-hover);
+    border-radius: 3px;
+    background: var(--bg-elevated);
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    margin: 0;
+}
+.opt1 .toggle input[type="checkbox"]:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+.opt1 .toggle input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 0px;
+    left: 3px;
+    width: 4px;
+    height: 7px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* ═══════════════════════════════════════════════ */
+/* OPTION 2: Proper Spacing + Sentence Case        */
+/* ═══════════════════════════════════════════════ */
+.opt2 .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+.opt2 .panel-title {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+}
+.opt2 .toggle-all-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--accent-blue);
+    font-size: 0.65rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+    padding: 3px 8px;
+    cursor: pointer;
+}
+.opt2 .cat {
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+}
+.opt2 .cat:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.opt2 .cat-name {
+    display: block;
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+    font-weight: 600;
+    text-transform: none;
+}
+.opt2 .toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 6px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    border-radius: 4px;
+    min-height: 30px;
+}
+.opt2 .toggle-label {
+    font-size: 0.78rem;
+    white-space: nowrap;
+    font-weight: 500;
+    line-height: 1;
+}
+.opt2 .toggle input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    border: 2px solid var(--border-hover);
+    border-radius: 3px;
+    background: var(--bg-elevated);
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    margin: 0;
+}
+.opt2 .toggle input[type="checkbox"]:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+.opt2 .toggle input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 1px;
+    left: 4px;
+    width: 5px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* ═══════════════════════════════════════════════ */
+/* OPTION 3: Color Dot + Sentence Case             */
+/* ═══════════════════════════════════════════════ */
+.opt3 .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+.opt3 .panel-title {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+}
+.opt3 .toggle-all-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--accent-blue);
+    font-size: 0.65rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+    padding: 3px 8px;
+    cursor: pointer;
+}
+.opt3 .cat {
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+}
+.opt3 .cat:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.opt3 .cat-name {
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    margin-bottom: 6px;
+    font-weight: 600;
+    text-transform: none;
+}
+.opt3 .toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 6px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    border-radius: 4px;
+    min-height: 30px;
+}
+.opt3 .color-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.opt3 .toggle-label {
+    font-size: 0.78rem;
+    font-weight: 500;
+    line-height: 1;
+    flex: 1;
+}
+.opt3 .toggle input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    border: 2px solid var(--border-hover);
+    border-radius: 3px;
+    background: var(--bg-elevated);
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    margin: 0;
+}
+.opt3 .toggle input[type="checkbox"]:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+.opt3 .toggle input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 1px;
+    left: 4px;
+    width: 5px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* ═══════════════════════════════════════════════ */
+/* OPTION 4: Toggle Switch Style                   */
+/* ═══════════════════════════════════════════════ */
+.opt4 .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+.opt4 .panel-title {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+}
+.opt4 .toggle-all-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--accent-blue);
+    font-size: 0.65rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+    padding: 3px 8px;
+    cursor: pointer;
+}
+.opt4 .cat {
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+}
+.opt4 .cat:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.opt4 .cat-name {
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    margin-bottom: 6px;
+    font-weight: 600;
+    text-transform: none;
+}
+.opt4 .toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 6px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    border-radius: 4px;
+    min-height: 30px;
+}
+.opt4 .toggle-label {
+    font-size: 0.78rem;
+    font-weight: 500;
+    line-height: 1;
+    flex: 1;
+}
+.opt4 .switch {
+    position: relative;
+    width: 32px;
+    height: 18px;
+    flex-shrink: 0;
+}
+.opt4 .switch input { display: none; }
+.opt4 .switch-track {
+    position: absolute;
+    inset: 0;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-hover);
+    border-radius: 9px;
+    transition: all 0.2s;
+}
+.opt4 .switch input:checked + .switch-track {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+.opt4 .switch-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    border-radius: 50%;
+    transition: all 0.2s;
+    pointer-events: none;
+    z-index: 1;
+}
+.opt4 .switch input:checked ~ .switch-thumb {
+    left: 16px;
+}
+
+/* ═══════════════════════════════════════════════ */
+/* OPTION 5: Colored Checkbox Border               */
+/* ═══════════════════════════════════════════════ */
+.opt5 .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+.opt5 .panel-title {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+}
+.opt5 .toggle-all-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--accent-blue);
+    font-size: 0.65rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+    padding: 3px 8px;
+    cursor: pointer;
+}
+.opt5 .cat {
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+}
+.opt5 .cat:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.opt5 .cat-name {
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    margin-bottom: 6px;
+    font-weight: 600;
+    text-transform: none;
+}
+.opt5 .toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 6px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    border-radius: 4px;
+    min-height: 30px;
+}
+.opt5 .toggle-label {
+    font-size: 0.78rem;
+    font-weight: 500;
+    line-height: 1;
+    flex: 1;
+}
+.opt5 .toggle input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    border: 2px solid var(--border-hover);
+    border-radius: 3px;
+    background: var(--bg-elevated);
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    margin: 0;
+    transition: all 0.15s;
+}
+.opt5 .toggle input[type="checkbox"]:checked {
+    border-color: var(--cb-color, var(--accent));
+    background: var(--cb-color, var(--accent));
+}
+.opt5 .toggle input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 1px;
+    left: 4px;
+    width: 5px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* ═══════════════════════════════════════════════ */
+/* OPTION 6: Compact Pill Toggles                  */
+/* ═══════════════════════════════════════════════ */
+.opt6 .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+.opt6 .panel-title {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+}
+.opt6 .toggle-all-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--accent-blue);
+    font-size: 0.65rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+    padding: 3px 8px;
+    cursor: pointer;
+}
+.opt6 .cat {
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+}
+.opt6 .cat:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.opt6 .cat-name {
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    margin-bottom: 6px;
+    font-weight: 600;
+    text-transform: none;
+}
+.opt6 .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+.opt6 .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border-hover);
+    background: transparent;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 0.72rem;
+    font-family: var(--font-body);
+    font-weight: 500;
+    transition: all 0.15s;
+}
+.opt6 .pill.active {
+    border-color: var(--pill-color, var(--accent));
+    background: color-mix(in srgb, var(--pill-color, var(--accent)) 15%, transparent);
+    color: var(--text-primary);
+}
+.opt6 .pill-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════ */
+/* OPTION 7: Left Color Bar Accent                 */
+/* ═══════════════════════════════════════════════ */
+.opt7 .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+.opt7 .panel-title {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+}
+.opt7 .toggle-all-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--accent-blue);
+    font-size: 0.65rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+    padding: 3px 8px;
+    cursor: pointer;
+}
+.opt7 .cat {
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+}
+.opt7 .cat:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.opt7 .cat-name {
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    margin-bottom: 6px;
+    font-weight: 600;
+    text-transform: none;
+}
+.opt7 .toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 8px;
+    padding-left: 12px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    border-radius: 4px;
+    min-height: 30px;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+}
+.opt7 .toggle.active {
+    border-left-color: var(--bar-color, var(--accent));
+    background: rgba(255,255,255,0.02);
+    color: var(--text-primary);
+}
+.opt7 .toggle-label {
+    font-size: 0.78rem;
+    font-weight: 500;
+    line-height: 1;
+    flex: 1;
+}
+.opt7 .toggle input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    border: 2px solid var(--border-hover);
+    border-radius: 3px;
+    background: var(--bg-elevated);
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    margin: 0;
+}
+.opt7 .toggle input[type="checkbox"]:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+.opt7 .toggle input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 1px;
+    left: 4px;
+    width: 5px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* ═══════════════════════════════════════════════ */
+/* OPTION 8: Icon Badge + Clean Layout             */
+/* ═══════════════════════════════════════════════ */
+.opt8 .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+.opt8 .panel-title {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+}
+.opt8 .toggle-all-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--accent-blue);
+    font-size: 0.65rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+    padding: 3px 8px;
+    cursor: pointer;
+}
+.opt8 .cat {
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+}
+.opt8 .cat:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.opt8 .cat-name {
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    margin-bottom: 6px;
+    font-weight: 600;
+    text-transform: none;
+}
+.opt8 .toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 6px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    border-radius: 4px;
+    min-height: 30px;
+}
+.opt8 .icon-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    font-size: 0.56rem;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: #fff;
+    flex-shrink: 0;
+    letter-spacing: -0.02em;
+}
+.opt8 .toggle-label {
+    font-size: 0.78rem;
+    font-weight: 500;
+    line-height: 1;
+    flex: 1;
+}
+.opt8 .toggle input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    border: 2px solid var(--border-hover);
+    border-radius: 3px;
+    background: var(--bg-elevated);
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    margin: 0;
+}
+.opt8 .toggle input[type="checkbox"]:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+.opt8 .toggle input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 1px;
+    left: 4px;
+    width: 5px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* ═══════════════════════════════════════════════ */
+/* OPTION 9: Flat List, No Categories              */
+/* ═══════════════════════════════════════════════ */
+.opt9 .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+.opt9 .panel-title {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+}
+.opt9 .toggle-all-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--accent-blue);
+    font-size: 0.65rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+    padding: 3px 8px;
+    cursor: pointer;
+}
+.opt9 .toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 6px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    border-radius: 4px;
+    min-height: 32px;
+    border-bottom: 1px solid var(--border);
+}
+.opt9 .toggle:last-child { border-bottom: none; }
+.opt9 .color-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.opt9 .toggle-label {
+    font-size: 0.78rem;
+    font-weight: 500;
+    line-height: 1;
+    flex: 1;
+}
+.opt9 .toggle input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    border: 2px solid var(--border-hover);
+    border-radius: 3px;
+    background: var(--bg-elevated);
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    margin: 0;
+}
+.opt9 .toggle input[type="checkbox"]:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+.opt9 .toggle input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 1px;
+    left: 4px;
+    width: 5px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* ═══════════════════════════════════════════════ */
+/* OPTION 10: Rounded Card Rows                    */
+/* ═══════════════════════════════════════════════ */
+.opt10 .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+.opt10 .panel-title {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+}
+.opt10 .toggle-all-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--accent-blue);
+    font-size: 0.65rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+    padding: 3px 8px;
+    cursor: pointer;
+}
+.opt10 .cat {
+    margin-bottom: 10px;
+}
+.opt10 .cat:last-child { margin-bottom: 0; }
+.opt10 .cat-name {
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    margin-bottom: 6px;
+    font-weight: 600;
+    text-transform: none;
+}
+.opt10 .toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    border-radius: 6px;
+    min-height: 32px;
+    background: var(--bg-elevated);
+    margin-bottom: 4px;
+    transition: all 0.15s;
+}
+.opt10 .toggle:hover {
+    background: rgba(255,255,255,0.05);
+}
+.opt10 .color-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.opt10 .toggle-label {
+    font-size: 0.78rem;
+    font-weight: 500;
+    line-height: 1;
+    flex: 1;
+}
+.opt10 .toggle input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    border: 2px solid var(--border-hover);
+    border-radius: 3px;
+    background: var(--bg-primary);
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    margin: 0;
+}
+.opt10 .toggle input[type="checkbox"]:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+.opt10 .toggle input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 1px;
+    left: 4px;
+    width: 5px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* Current tag for option 1 */
+.current-tag {
+    display: inline-block;
+    font-size: 0.6rem;
+    font-weight: 600;
+    color: var(--accent-hot);
+    background: rgba(239, 68, 68, 0.12);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 8px;
+    letter-spacing: 0.03em;
+}
+</style>
+</head>
+<body>
+
+<h1>Layer Legend — 10 Design Options</h1>
+<p class="subtitle">Open this file in your browser to compare rendered versions. Each uses the exact same dark theme, fonts, and color variables as the live site.</p>
+
+<div class="grid">
+
+<!-- ════════════════ OPTION 1: Current (Broken) ════════════════ -->
+<div class="option-card">
+    <div class="option-header">
+        <span class="option-num">1</span>
+        <span class="option-name">Current (Broken) <span class="current-tag">AS-IS</span></span>
+    </div>
+    <div class="option-desc">The existing layout. Category names are ALL CAPS, checkbox-to-text gap is uneven, vertical alignment is off.</div>
+    <div class="option-body opt1">
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title">MAP LAYERS</span>
+                <button class="toggle-all-btn">Show All</button>
+            </div>
+            <div class="cat">
+                <span class="cat-name">BASE LAYERS</span>
+                <label class="toggle"><input type="checkbox" checked><span class="toggle-label">County Markers</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">SPECTRUM & COVERAGE</span>
+                <label class="toggle"><input type="checkbox"><span class="toggle-label">CBRS / Private 5G</span></label>
+                <label class="toggle"><input type="checkbox"><span class="toggle-label">Cellular Dead Zones</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">INFRASTRUCTURE</span>
+                <label class="toggle"><input type="checkbox"><span class="toggle-label">Fiber Grant Areas</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">PROGRAMS & FUNDING</span>
+                <label class="toggle"><input type="checkbox"><span class="toggle-label">Smart City Programs</span></label>
+                <label class="toggle"><input type="checkbox"><span class="toggle-label">RDOF Default Zones</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">MUNICIPAL NETWORKS</span>
+                <label class="toggle"><input type="checkbox"><span class="toggle-label">Municipal Fiber Networks</span></label>
+                <label class="toggle"><input type="checkbox"><span class="toggle-label">Private 5G Deployments</span></label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ════════════════ OPTION 2: Clean Fix ════════════════ -->
+<div class="option-card">
+    <div class="option-header">
+        <span class="option-num">2</span>
+        <span class="option-name">Clean Fix</span>
+    </div>
+    <div class="option-desc">Fixes the 3 bugs: sentence-case categories, bigger checkbox (16px), consistent 10px gap, proper vertical centering.</div>
+    <div class="option-body opt2">
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title">MAP LAYERS</span>
+                <button class="toggle-all-btn">Show All</button>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Base Layers</span>
+                <label class="toggle"><input type="checkbox" checked><span class="toggle-label">County Markers</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Spectrum & Coverage</span>
+                <label class="toggle"><input type="checkbox"><span class="toggle-label">CBRS / Private 5G</span></label>
+                <label class="toggle"><input type="checkbox"><span class="toggle-label">Cellular Dead Zones</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Infrastructure</span>
+                <label class="toggle"><input type="checkbox"><span class="toggle-label">Fiber Grant Areas</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Programs & Funding</span>
+                <label class="toggle"><input type="checkbox"><span class="toggle-label">Smart City Programs</span></label>
+                <label class="toggle"><input type="checkbox"><span class="toggle-label">RDOF Default Zones</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Municipal Networks</span>
+                <label class="toggle"><input type="checkbox"><span class="toggle-label">Municipal Fiber Networks</span></label>
+                <label class="toggle"><input type="checkbox"><span class="toggle-label">Private 5G Deployments</span></label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ════════════════ OPTION 3: Color Dot + Checkbox ════════════════ -->
+<div class="option-card">
+    <div class="option-header">
+        <span class="option-num">3</span>
+        <span class="option-name">Color Dot + Checkbox</span>
+    </div>
+    <div class="option-desc">Adds a colored dot before the label matching the layer's map color. Checkbox on the left, dot + label after it.</div>
+    <div class="option-body opt3">
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title">MAP LAYERS</span>
+                <button class="toggle-all-btn">Show All</button>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Base Layers</span>
+                <label class="toggle"><input type="checkbox" checked><span class="color-dot" style="background:#06d6a0"></span><span class="toggle-label">County Markers</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Spectrum & Coverage</span>
+                <label class="toggle"><input type="checkbox"><span class="color-dot" style="background:#a78bfa"></span><span class="toggle-label">CBRS / Private 5G</span></label>
+                <label class="toggle"><input type="checkbox"><span class="color-dot" style="background:#ef4444"></span><span class="toggle-label">Cellular Dead Zones</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Infrastructure</span>
+                <label class="toggle"><input type="checkbox"><span class="color-dot" style="background:#fbbf24"></span><span class="toggle-label">Fiber Grant Areas</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Programs & Funding</span>
+                <label class="toggle"><input type="checkbox"><span class="color-dot" style="background:#38bdf8"></span><span class="toggle-label">Smart City Programs</span></label>
+                <label class="toggle"><input type="checkbox"><span class="color-dot" style="background:#f97316"></span><span class="toggle-label">RDOF Default Zones</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Municipal Networks</span>
+                <label class="toggle"><input type="checkbox"><span class="color-dot" style="background:#22d3ee"></span><span class="toggle-label">Municipal Fiber Networks</span></label>
+                <label class="toggle"><input type="checkbox"><span class="color-dot" style="background:#c084fc"></span><span class="toggle-label">Private 5G Deployments</span></label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ════════════════ OPTION 4: Toggle Switches ════════════════ -->
+<div class="option-card">
+    <div class="option-header">
+        <span class="option-num">4</span>
+        <span class="option-name">Toggle Switches</span>
+    </div>
+    <div class="option-desc">Replaces checkboxes with iOS-style toggle switches. Label on left, switch on right. Modern feel.</div>
+    <div class="option-body opt4">
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title">MAP LAYERS</span>
+                <button class="toggle-all-btn">Show All</button>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Base Layers</span>
+                <label class="toggle"><span class="toggle-label">County Markers</span><label class="switch"><input type="checkbox" checked><span class="switch-track"></span><span class="switch-thumb"></span></label></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Spectrum & Coverage</span>
+                <label class="toggle"><span class="toggle-label">CBRS / Private 5G</span><label class="switch"><input type="checkbox"><span class="switch-track"></span><span class="switch-thumb"></span></label></label>
+                <label class="toggle"><span class="toggle-label">Cellular Dead Zones</span><label class="switch"><input type="checkbox"><span class="switch-track"></span><span class="switch-thumb"></span></label></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Infrastructure</span>
+                <label class="toggle"><span class="toggle-label">Fiber Grant Areas</span><label class="switch"><input type="checkbox"><span class="switch-track"></span><span class="switch-thumb"></span></label></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Programs & Funding</span>
+                <label class="toggle"><span class="toggle-label">Smart City Programs</span><label class="switch"><input type="checkbox"><span class="switch-track"></span><span class="switch-thumb"></span></label></label>
+                <label class="toggle"><span class="toggle-label">RDOF Default Zones</span><label class="switch"><input type="checkbox"><span class="switch-track"></span><span class="switch-thumb"></span></label></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Municipal Networks</span>
+                <label class="toggle"><span class="toggle-label">Municipal Fiber Networks</span><label class="switch"><input type="checkbox"><span class="switch-track"></span><span class="switch-thumb"></span></label></label>
+                <label class="toggle"><span class="toggle-label">Private 5G Deployments</span><label class="switch"><input type="checkbox"><span class="switch-track"></span><span class="switch-thumb"></span></label></label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ════════════════ OPTION 5: Colored Checkbox ════════════════ -->
+<div class="option-card">
+    <div class="option-header">
+        <span class="option-num">5</span>
+        <span class="option-name">Layer-Colored Checkbox</span>
+    </div>
+    <div class="option-desc">Checkbox fill matches the layer's map color when checked (purple for CBRS, red for cellular, etc.).</div>
+    <div class="option-body opt5">
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title">MAP LAYERS</span>
+                <button class="toggle-all-btn">Show All</button>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Base Layers</span>
+                <label class="toggle"><input type="checkbox" checked style="--cb-color:#06d6a0"><span class="toggle-label">County Markers</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Spectrum & Coverage</span>
+                <label class="toggle"><input type="checkbox" checked style="--cb-color:#a78bfa"><span class="toggle-label">CBRS / Private 5G</span></label>
+                <label class="toggle"><input type="checkbox" checked style="--cb-color:#ef4444"><span class="toggle-label">Cellular Dead Zones</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Infrastructure</span>
+                <label class="toggle"><input type="checkbox" checked style="--cb-color:#fbbf24"><span class="toggle-label">Fiber Grant Areas</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Programs & Funding</span>
+                <label class="toggle"><input type="checkbox" checked style="--cb-color:#38bdf8"><span class="toggle-label">Smart City Programs</span></label>
+                <label class="toggle"><input type="checkbox" checked style="--cb-color:#f97316"><span class="toggle-label">RDOF Default Zones</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Municipal Networks</span>
+                <label class="toggle"><input type="checkbox" checked style="--cb-color:#22d3ee"><span class="toggle-label">Municipal Fiber Networks</span></label>
+                <label class="toggle"><input type="checkbox" checked style="--cb-color:#c084fc"><span class="toggle-label">Private 5G Deployments</span></label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ════════════════ OPTION 6: Pill Toggles ════════════════ -->
+<div class="option-card">
+    <div class="option-header">
+        <span class="option-num">6</span>
+        <span class="option-name">Pill Toggles</span>
+    </div>
+    <div class="option-desc">Replaces checkboxes with clickable pill buttons. Color dot + label. Active pills glow with layer color.</div>
+    <div class="option-body opt6">
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title">MAP LAYERS</span>
+                <button class="toggle-all-btn">Show All</button>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Base Layers</span>
+                <div class="pills">
+                    <button class="pill active" style="--pill-color:#06d6a0"><span class="pill-dot" style="background:#06d6a0"></span>County Markers</button>
+                </div>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Spectrum & Coverage</span>
+                <div class="pills">
+                    <button class="pill" style="--pill-color:#a78bfa"><span class="pill-dot" style="background:#a78bfa"></span>CBRS / Private 5G</button>
+                    <button class="pill" style="--pill-color:#ef4444"><span class="pill-dot" style="background:#ef4444"></span>Cellular Dead Zones</button>
+                </div>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Infrastructure</span>
+                <div class="pills">
+                    <button class="pill" style="--pill-color:#fbbf24"><span class="pill-dot" style="background:#fbbf24"></span>Fiber Grant Areas</button>
+                </div>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Programs & Funding</span>
+                <div class="pills">
+                    <button class="pill" style="--pill-color:#38bdf8"><span class="pill-dot" style="background:#38bdf8"></span>Smart City Programs</button>
+                    <button class="pill active" style="--pill-color:#f97316"><span class="pill-dot" style="background:#f97316"></span>RDOF Default Zones</button>
+                </div>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Municipal Networks</span>
+                <div class="pills">
+                    <button class="pill" style="--pill-color:#22d3ee"><span class="pill-dot" style="background:#22d3ee"></span>Municipal Fiber</button>
+                    <button class="pill" style="--pill-color:#c084fc"><span class="pill-dot" style="background:#c084fc"></span>Private 5G</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ════════════════ OPTION 7: Left Color Bar ════════════════ -->
+<div class="option-card">
+    <div class="option-header">
+        <span class="option-num">7</span>
+        <span class="option-name">Left Color Bar Accent</span>
+    </div>
+    <div class="option-desc">Active layers get a colored left border bar. Clean vertical rhythm with checkbox + label aligned.</div>
+    <div class="option-body opt7">
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title">MAP LAYERS</span>
+                <button class="toggle-all-btn">Show All</button>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Base Layers</span>
+                <label class="toggle active" style="--bar-color:#06d6a0"><input type="checkbox" checked><span class="toggle-label">County Markers</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Spectrum & Coverage</span>
+                <label class="toggle"><input type="checkbox"><span class="toggle-label">CBRS / Private 5G</span></label>
+                <label class="toggle"><input type="checkbox"><span class="toggle-label">Cellular Dead Zones</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Infrastructure</span>
+                <label class="toggle"><input type="checkbox"><span class="toggle-label">Fiber Grant Areas</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Programs & Funding</span>
+                <label class="toggle active" style="--bar-color:#38bdf8"><input type="checkbox" checked><span class="toggle-label">Smart City Programs</span></label>
+                <label class="toggle"><input type="checkbox"><span class="toggle-label">RDOF Default Zones</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Municipal Networks</span>
+                <label class="toggle"><input type="checkbox"><span class="toggle-label">Municipal Fiber Networks</span></label>
+                <label class="toggle"><input type="checkbox"><span class="toggle-label">Private 5G Deployments</span></label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ════════════════ OPTION 8: Icon Badge ════════════════ -->
+<div class="option-card">
+    <div class="option-header">
+        <span class="option-num">8</span>
+        <span class="option-name">Icon Badge + Checkbox</span>
+    </div>
+    <div class="option-desc">Uses the layer's icon code (5G, RF, $F, SC, etc.) as a small colored badge. Checkbox + badge + label.</div>
+    <div class="option-body opt8">
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title">MAP LAYERS</span>
+                <button class="toggle-all-btn">Show All</button>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Base Layers</span>
+                <label class="toggle"><input type="checkbox" checked><span class="icon-badge" style="background:#06d6a0">&#9679;</span><span class="toggle-label">County Markers</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Spectrum & Coverage</span>
+                <label class="toggle"><input type="checkbox"><span class="icon-badge" style="background:#a78bfa">5G</span><span class="toggle-label">CBRS / Private 5G</span></label>
+                <label class="toggle"><input type="checkbox"><span class="icon-badge" style="background:#ef4444">RF</span><span class="toggle-label">Cellular Dead Zones</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Infrastructure</span>
+                <label class="toggle"><input type="checkbox"><span class="icon-badge" style="background:#fbbf24">$F</span><span class="toggle-label">Fiber Grant Areas</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Programs & Funding</span>
+                <label class="toggle"><input type="checkbox"><span class="icon-badge" style="background:#38bdf8">SC</span><span class="toggle-label">Smart City Programs</span></label>
+                <label class="toggle"><input type="checkbox"><span class="icon-badge" style="background:#f97316">RD</span><span class="toggle-label">RDOF Default Zones</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Municipal Networks</span>
+                <label class="toggle"><input type="checkbox"><span class="icon-badge" style="background:#22d3ee">MF</span><span class="toggle-label">Municipal Fiber Networks</span></label>
+                <label class="toggle"><input type="checkbox"><span class="icon-badge" style="background:#c084fc">P5</span><span class="toggle-label">Private 5G Deployments</span></label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ════════════════ OPTION 9: Flat List ════════════════ -->
+<div class="option-card">
+    <div class="option-header">
+        <span class="option-num">9</span>
+        <span class="option-name">Flat List (No Categories)</span>
+    </div>
+    <div class="option-desc">Removes category groupings entirely. Simple flat list with color dots. Most compact option.</div>
+    <div class="option-body opt9">
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title">MAP LAYERS</span>
+                <button class="toggle-all-btn">Show All</button>
+            </div>
+            <label class="toggle"><input type="checkbox" checked><span class="color-dot" style="background:#06d6a0"></span><span class="toggle-label">County Markers</span></label>
+            <label class="toggle"><input type="checkbox"><span class="color-dot" style="background:#a78bfa"></span><span class="toggle-label">CBRS / Private 5G</span></label>
+            <label class="toggle"><input type="checkbox"><span class="color-dot" style="background:#ef4444"></span><span class="toggle-label">Cellular Dead Zones</span></label>
+            <label class="toggle"><input type="checkbox"><span class="color-dot" style="background:#fbbf24"></span><span class="toggle-label">Fiber Grant Areas</span></label>
+            <label class="toggle"><input type="checkbox"><span class="color-dot" style="background:#38bdf8"></span><span class="toggle-label">Smart City Programs</span></label>
+            <label class="toggle"><input type="checkbox"><span class="color-dot" style="background:#f97316"></span><span class="toggle-label">RDOF Default Zones</span></label>
+            <label class="toggle"><input type="checkbox"><span class="color-dot" style="background:#22d3ee"></span><span class="toggle-label">Municipal Fiber Networks</span></label>
+            <label class="toggle"><input type="checkbox"><span class="color-dot" style="background:#c084fc"></span><span class="toggle-label">Private 5G Deployments</span></label>
+        </div>
+    </div>
+</div>
+
+<!-- ════════════════ OPTION 10: Rounded Card Rows ════════════════ -->
+<div class="option-card">
+    <div class="option-header">
+        <span class="option-num">10</span>
+        <span class="option-name">Rounded Card Rows</span>
+    </div>
+    <div class="option-desc">Each layer is its own rounded mini-card with a subtle elevated background. Color dot + label + checkbox.</div>
+    <div class="option-body opt10">
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title">MAP LAYERS</span>
+                <button class="toggle-all-btn">Show All</button>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Base Layers</span>
+                <label class="toggle"><input type="checkbox" checked><span class="color-dot" style="background:#06d6a0"></span><span class="toggle-label">County Markers</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Spectrum & Coverage</span>
+                <label class="toggle"><input type="checkbox"><span class="color-dot" style="background:#a78bfa"></span><span class="toggle-label">CBRS / Private 5G</span></label>
+                <label class="toggle"><input type="checkbox"><span class="color-dot" style="background:#ef4444"></span><span class="toggle-label">Cellular Dead Zones</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Infrastructure</span>
+                <label class="toggle"><input type="checkbox"><span class="color-dot" style="background:#fbbf24"></span><span class="toggle-label">Fiber Grant Areas</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Programs & Funding</span>
+                <label class="toggle"><input type="checkbox"><span class="color-dot" style="background:#38bdf8"></span><span class="toggle-label">Smart City Programs</span></label>
+                <label class="toggle"><input type="checkbox"><span class="color-dot" style="background:#f97316"></span><span class="toggle-label">RDOF Default Zones</span></label>
+            </div>
+            <div class="cat">
+                <span class="cat-name">Municipal Networks</span>
+                <label class="toggle"><input type="checkbox"><span class="color-dot" style="background:#22d3ee"></span><span class="toggle-label">Municipal Fiber Networks</span></label>
+                <label class="toggle"><input type="checkbox"><span class="color-dot" style="background:#c084fc"></span><span class="toggle-label">Private 5G Deployments</span></label>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div><!-- /grid -->
+
+</body>
+</html>
