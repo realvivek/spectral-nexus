@@ -16,9 +16,13 @@ SN.state = {
 SN.app = {
 
     init() {
-        // Restore saved theme before making visible
+        // Default to light mode; only use dark if explicitly saved
         var savedTheme = localStorage.getItem('sn-theme');
-        if (savedTheme === 'light') {
+        if (savedTheme === 'dark') {
+            // User explicitly chose dark
+            SN.state.theme = 'dark';
+        } else {
+            // Default: light mode
             document.body.classList.add('light-mode');
             SN.state.theme = 'light';
         }
@@ -106,7 +110,9 @@ SN.app = {
         var themeBtn = document.getElementById('btn-theme');
         if (themeBtn) {
             // Update button label to match current theme
-            if (SN.state.theme === 'light') {
+            if (SN.state.theme === 'dark') {
+                themeBtn.innerHTML = '<span class="theme-toggle-icon">&#9790;</span> Dark';
+            } else {
                 themeBtn.innerHTML = '<span class="theme-toggle-icon">&#9728;</span> Light';
             }
             themeBtn.addEventListener('click', function() { self.toggleTheme(); });

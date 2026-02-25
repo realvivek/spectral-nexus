@@ -123,6 +123,15 @@ SN.executive = {
                     item.note = net.darkFiberAvailable ? 'Dark fiber available for leasing' : '';
                 }
             }
+        } else if (type === 'datacenter') {
+            item.detail = 'Data Center Connectivity Opportunity';
+            if (SN.data.dataCenters) {
+                var dc = SN.data.dataCenters.find(function(d) { return d.name === name; });
+                if (dc) {
+                    item.detail = dc.operator + ' — ' + dc.city + ', ' + dc.state + ' — ' + dc.capacityMW + ' MW, ' + dc.status;
+                    item.note = dc.cbrsOpportunity ? 'CBRS/Private 5G opportunity' : '';
+                }
+            }
         }
 
         this.reportItems.push(item);
@@ -225,8 +234,8 @@ SN.executive = {
             return;
         }
 
-        var typeLabels = { cbrs: 'CBRS Zone', cellular: 'Coverage Gap', grant: 'Fiber Grant', smartcity: 'Smart City', county: 'County', decisionmaker: 'Decision Maker', beadstate: 'BEAD State', competitor: 'Competitor', munifiber: 'Municipal Fiber', rdof: 'RDOF Default' };
-        var typeColors = { cbrs: '#a78bfa', cellular: '#ef4444', grant: '#fbbf24', smartcity: '#38bdf8', county: '#06d6a0', decisionmaker: '#38bdf8', beadstate: '#06d6a0', competitor: '#f97316', munifiber: '#22d3ee', rdof: '#f97316' };
+        var typeLabels = { cbrs: 'CBRS Zone', cellular: 'Coverage Gap', grant: 'Fiber Grant', smartcity: 'Smart City', county: 'County', decisionmaker: 'Decision Maker', beadstate: 'BEAD State', competitor: 'Competitor', munifiber: 'Municipal Fiber', rdof: 'RDOF Default', datacenter: 'Data Center' };
+        var typeColors = { cbrs: '#a78bfa', cellular: '#ef4444', grant: '#fbbf24', smartcity: '#38bdf8', county: '#06d6a0', decisionmaker: '#38bdf8', beadstate: '#06d6a0', competitor: '#f97316', munifiber: '#22d3ee', rdof: '#f97316', datacenter: '#818cf8' };
 
         var html = this.reportItems.map(function(item, i) {
             return '<div class="report-item">' +

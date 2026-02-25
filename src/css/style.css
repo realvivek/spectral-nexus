@@ -3846,6 +3846,8 @@ body.light-mode .header-btn-warm:hover {
 .home-badge-amber { background: rgba(251,191,36,0.15); color: var(--accent-warm); }
 .home-badge-blue { background: rgba(56,189,248,0.15); color: var(--accent-blue); }
 .home-badge-red { background: rgba(239,68,68,0.15); color: var(--accent-hot); }
+.home-badge-purple { background: rgba(167,139,250,0.15); color: var(--accent-purple); }
+.home-badge-indigo { background: rgba(129,140,248,0.15); color: #818cf8; }
 
 .home-section-desc {
     font-size: 0.76rem;
@@ -3870,6 +3872,63 @@ body.light-mode .header-btn-warm:hover {
 }
 .home-opp-card:hover { border-color: var(--border-hover); transform: translateY(-1px); }
 .home-opp-fiber { border-left: 3px solid #22d3ee; }
+.home-opp-5g { border-left: 3px solid var(--accent-purple); }
+
+/* Full-width home layout (no empty right panel) */
+.home-full-width { width: 100%; }
+.home-section-featured { margin-bottom: 28px; }
+.home-card-grid-3 { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+
+/* 5G opportunity badges */
+.home-opp-badge-5g {
+    background: rgba(167,139,250,0.15) !important;
+    color: var(--accent-purple) !important;
+}
+.home-tag-green {
+    display: inline-block;
+    font-size: 0.58rem;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 3px;
+    background: rgba(6,214,160,0.15);
+    color: var(--accent);
+}
+.home-tag-blue {
+    display: inline-block;
+    font-size: 0.58rem;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 3px;
+    background: rgba(56,189,248,0.15);
+    color: var(--accent-blue);
+}
+
+/* Active 5G deployments pills */
+.home-section-sub { margin-top: 14px; }
+.home-section-sub h3 {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+.home-existing-5g {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.home-5g-pill {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent-purple);
+    border-radius: var(--radius);
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 200px;
+}
+.home-5g-pill strong { font-size: 0.78rem; }
+.home-5g-pill span { font-size: 0.66rem; color: var(--text-muted); }
 
 .home-opp-header {
     display: flex;
@@ -4271,8 +4330,17 @@ body.light-mode .header-btn-warm:hover {
 
 .insights-fullpage,
 .funding-fullpage {
-    max-width: 1200px;
+    max-width: 100%;
     margin: 0 auto;
+    display: flex;
+    gap: 0;
+}
+.funding-fullpage .fm-sidebar {
+    flex: 0 0 200px;
+}
+.funding-fullpage .fm-body {
+    flex: 1;
+    min-width: 0;
 }
 
 .view-page-title {
