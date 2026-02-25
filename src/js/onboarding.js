@@ -2,6 +2,7 @@
  * Spectral Nexus — Onboarding Tutorial
  * Step-by-step welcome guide with visual workflow examples.
  * Shows on first visit (stored in localStorage).
+ * Updated for v0.8.0: Wireless & Fiber Pipeline Intelligence.
  */
 
 window.SN = window.SN || {};
@@ -12,50 +13,67 @@ SN.onboarding = {
 
     steps: [
         {
-            title: 'Welcome to Broadband Funding Intelligence',
-            content: 'Spectral Nexus helps <strong>telecom professionals</strong> identify the best broadband deployment and funding opportunities across 3,100+ US counties.' +
-                '<br><br>Powered by real FCC BDC data, $42.45B in BEAD funding allocations, CBRS spectrum zones, smart city programs, and RDOF default tracking.',
+            title: 'Welcome to Wireless & Fiber Pipeline Intelligence',
+            content: '<strong>Spectral Nexus</strong> helps telecom professionals and system integrators find the best <strong>private 5G, CBRS, fiber, and broadband</strong> opportunities across 3,100+ US counties.' +
+                '<br><br>What\'s inside:' +
+                '<br>&bull; <strong>Private 5G & Smart City opportunities</strong> — cities ready for CBRS/private wireless' +
+                '<br>&bull; <strong>Data Center connectivity</strong> — new builds, expansions, CBRS-ready facilities' +
+                '<br>&bull; <strong>BEAD funding pipeline</strong> — $42.45B in state allocations, open bids, deadlines' +
+                '<br>&bull; <strong>Decision Maker contacts</strong> — CIOs, state directors, co-ops, tribal offices' +
+                '<br>&bull; <strong>Competitive intelligence</strong> — who\'s bidding where, RDOF defaults',
             icon: 'SN'
         },
         {
-            title: 'The Map — Your Command Center',
-            content: '<strong>Each dot is a county</strong>, colored by the selected metric (Opportunity Score by default). Bigger dots = larger population.' +
-                '<br><br><strong>Click any county</strong> to see detailed broadband, funding, and demographic data — plus key decision maker contacts.' +
-                '<br><br><strong>Change metric</strong> using the "Choropleth Metric" dropdown in the top-left corner of the map.',
+            title: 'Dashboard Home — Your Starting Point',
+            content: 'The <strong>Home</strong> page is your intelligence brief. It\'s organized top to bottom by priority:' +
+                '<br><br>' +
+                '<strong>1. Private 5G & Smart City Opportunities</strong> — Cities with fiber backbone but no private 5G. Each card shows the city program, budget, IoT sensors, CBRS utilization, dark fiber availability, and the decision maker to contact.' +
+                '<br><br>' +
+                '<strong>2. Data Center Connectivity</strong> — New builds and expansions that need wireless backhaul. Flagged for CBRS opportunity.' +
+                '<br><br>' +
+                '<strong>3. Active Bids & Contracts</strong> — Competitive BEAD subgrant bids with deadlines, known bidders, and competition level.' +
+                '<br><br>' +
+                '<strong>4. Top Counties, BEAD Pipeline, Dark Fiber, RDOF, Grants</strong> — Paired sections below with detailed data.' +
+                '<br><br>Every section has <strong>"+ Report"</strong> buttons — click them to build your sales report as you browse.',
+            icon: 'HOME'
+        },
+        {
+            title: 'Maps & Data — Deep Analysis',
+            content: 'Click <strong>"Maps & Data"</strong> in the top nav to open the interactive analysis view:' +
+                '<br><br>' +
+                '<strong>The Map</strong> — Each dot is a county, colored by opportunity score. Click any county for a detailed popup with funding estimates, coverage gaps, and contacts.' +
+                '<br><br>' +
+                '<strong>Map Layers</strong> — Toggle overlays on/off:' +
+                '<br>&bull; <span style="color:var(--accent-purple)">CBRS Spectrum Zones</span> with GAA utilization data' +
+                '<br>&bull; <span style="color:#c084fc">Private 5G Deployments</span> — active networks' +
+                '<br>&bull; <span style="color:#818cf8">Data Centers</span> — facilities with contacts' +
+                '<br>&bull; <span style="color:#22d3ee">Municipal Fiber</span> — dark fiber networks' +
+                '<br>&bull; <span style="color:#38bdf8">Smart Cities</span> · <span style="color:#ef4444">Cellular Dead Zones</span> · <span style="color:#f97316">RDOF Defaults</span> · <span style="color:#fbbf24">Fiber Grants</span>' +
+                '<br><br>' +
+                '<strong>Filters</strong> — State dropdown and minimum score slider to narrow results.' +
+                '<br><strong>Table & Charts</strong> — Sortable county data and visual analysis in the right panel.',
             icon: 'MAP'
         },
         {
-            title: 'Map Layers — Toggle Everything On/Off',
-            content: 'The <strong>Map Layers</strong> panel (below the map metric selector) lets you control all map elements:' +
+            title: 'Contacts, Funding & Top Targets',
+            content: 'Use the <strong>top navigation bar</strong> to access specialized views:' +
                 '<br><br>' +
-                '<strong>Base Layers</strong> — Toggle county markers and basemap on/off' +
+                '<strong>Contacts</strong> — Full rolodex of decision makers. Filter by type:' +
+                '<br>&bull; <span style="color:#38bdf8">State Broadband Directors</span> — the people who approve BEAD subgrants' +
+                '<br>&bull; <span style="color:#fbbf24">City CIOs/CTOs</span> — smart city technology leaders' +
+                '<br>&bull; <span style="color:#818cf8">Data Center Contacts</span> — facility leasing and operations' +
+                '<br>&bull; <span style="color:#a78bfa">Electric Co-ops</span> · <span style="color:#06d6a0">Tribal Offices</span>' +
+                '<br>Search by name, state, org, or email.' +
                 '<br><br>' +
-                '<strong>Spectrum & Coverage</strong>' +
-                '<br><span style="color:#a78bfa">5G — CBRS Zones</span> · <span style="color:#ef4444">RF — Cellular Dead Zones</span>' +
+                '<strong>Funding Intel</strong> — Complete grant database, BEAD state timelines, awarded contracts, and competitive landscape in a full-page view.' +
                 '<br><br>' +
-                '<strong>Infrastructure</strong>' +
-                '<br><span style="color:#06d6a0">FB — Fiber Routes</span> · <span style="color:#fbbf24">$F — Grant Areas</span>' +
+                '<strong>Insights</strong> — Automated analysis of BEAD urgency, quick wins, emerging markets, and co-op/tribal opportunities.' +
                 '<br><br>' +
-                '<strong>Programs & Funding</strong>' +
-                '<br><span style="color:#38bdf8">SC — Smart Cities</span> · <span style="color:#f97316">RD — RDOF Defaults</span>' +
-                '<br><br>Use "Show All" / "Clear All" for quick control. Click any overlay for details.',
-            icon: 'LYR'
+                '<strong>Top Targets</strong> — Pre-ranked list of highest-opportunity counties with one-click report building.',
+            icon: 'DIR'
         },
         {
-            title: 'KPI Bar, Tabs & Decision Makers',
-            content: 'The <strong>top KPI bar</strong> shows actionable metrics — click any card to filter or navigate:' +
-                '<br><br>' +
-                '<strong>High-Opportunity Counties</strong> — Click to filter to score 60+' +
-                '<br><strong>Available Funding</strong> — Click to view Grants Guide' +
-                '<br><strong>BEAD-Ready Counties</strong> — Click to filter approved areas' +
-                '<br><strong>#1 Opportunity</strong> — Click to fly to top county on map' +
-                '<br><br>' +
-                'The <strong>right panel</strong> has 5 tabs: Table, Charts, Insights, Funding Intel, and each with data you can sort and click through.' +
-                '<br><br>The <strong>Funding Intel</strong> tab now includes a Decision Makers directory with state broadband office directors, electric co-op contacts, and tribal administrators.',
-            icon: 'TBL'
-        },
-        {
-            title: 'Workflow: Find an Opportunity in 5 Steps',
+            title: 'Workflow: Land a Deal in 5 Steps',
             content: '',
             icon: 'ACT',
             isWorkflow: true
@@ -100,16 +118,8 @@ SN.onboarding = {
                 '<div class="workflow-step-card">' +
                     '<div class="wf-step-num">1</div>' +
                     '<div class="wf-step-content">' +
-                        '<div class="wf-step-title">Choose Your Target State</div>' +
-                        '<div class="wf-step-desc">Use the <strong>State filter</strong> dropdown to narrow to your focus area (e.g., Texas, Virginia).</div>' +
-                        '<div class="wf-step-visual">' +
-                            '<div class="wf-mockup">' +
-                                '<span class="wf-mock-label">State</span>' +
-                                '<span class="wf-mock-select">TX - Texas</span>' +
-                                '<span class="wf-mock-label">Min Score</span>' +
-                                '<span class="wf-mock-slider">&#9608;&#9608;&#9608;&#9608;&#9608;&#9601;&#9601; 50+</span>' +
-                            '</div>' +
-                        '</div>' +
+                        '<div class="wf-step-title">Scan the Dashboard for Opportunities</div>' +
+                        '<div class="wf-step-desc">Start on the <strong>Home</strong> page. Review the <strong>Private 5G opportunities</strong> at the top — these are smart cities with fiber backbone but no private wireless network. Check <strong>Data Center</strong> new builds that need connectivity.</div>' +
                     '</div>' +
                 '</div>' +
 
@@ -118,16 +128,16 @@ SN.onboarding = {
                 '<div class="workflow-step-card">' +
                     '<div class="wf-step-num">2</div>' +
                     '<div class="wf-step-content">' +
-                        '<div class="wf-step-title">Identify High-Score Counties on the Map</div>' +
-                        '<div class="wf-step-desc">Green/bright dots = high opportunity scores. Toggle on <span style="color:#f97316">RDOF Defaults</span> and <span style="color:#fbbf24">Fiber Grants</span> layers to see where money is flowing.</div>' +
+                        '<div class="wf-step-title">Build Your Target List</div>' +
+                        '<div class="wf-step-desc">Click <strong>"+ Sales Report"</strong> on any card to save it. Add cities, counties, data centers, grants, and contacts. Everything accumulates in your report.</div>' +
                         '<div class="wf-step-visual">' +
-                            '<div class="wf-mockup wf-mockup-map">' +
-                                '<span class="wf-dot wf-dot-green" style="left:30%;top:40%"></span>' +
-                                '<span class="wf-dot wf-dot-green" style="left:50%;top:25%"></span>' +
-                                '<span class="wf-dot wf-dot-yellow" style="left:70%;top:55%"></span>' +
-                                '<span class="wf-dot wf-dot-red" style="left:20%;top:65%"></span>' +
-                                '<span class="wf-dot wf-dot-green" style="left:60%;top:70%"></span>' +
-                                '<span class="wf-label-overlay">Click a green dot</span>' +
+                            '<div class="wf-mockup">' +
+                                '<span class="wf-mock-label">Report</span>' +
+                                '<span class="wf-mock-select">3 items saved</span>' +
+                                '<span class="wf-mock-label">Types</span>' +
+                                '<span style="color:var(--accent-purple);font-size:0.64rem">Smart City</span> ' +
+                                '<span style="color:#818cf8;font-size:0.64rem">Data Center</span> ' +
+                                '<span style="color:var(--accent);font-size:0.64rem">County</span>' +
                             '</div>' +
                         '</div>' +
                     '</div>' +
@@ -138,15 +148,16 @@ SN.onboarding = {
                 '<div class="workflow-step-card">' +
                     '<div class="wf-step-num">3</div>' +
                     '<div class="wf-step-content">' +
-                        '<div class="wf-step-title">Review County Details & Decision Makers</div>' +
-                        '<div class="wf-step-desc">Click a county to see its <strong>popup</strong> with funding estimate, coverage gap, unserved BSLs, and <strong>key decision maker contacts</strong> — state broadband director, co-ops, tribal admins.</div>' +
+                        '<div class="wf-step-title">Deep-Dive with Maps & Data</div>' +
+                        '<div class="wf-step-desc">Go to <strong>Maps & Data</strong>. Toggle on layers like <span style="color:var(--accent-purple)">CBRS Zones</span>, <span style="color:#818cf8">Data Centers</span>, and <span style="color:#22d3ee">Municipal Fiber</span>. Click any marker for detail popups with contacts.</div>' +
                         '<div class="wf-step-visual">' +
-                            '<div class="wf-mockup wf-mockup-popup">' +
-                                '<div class="wf-popup-head">Wheeler County, TX</div>' +
-                                '<div class="wf-popup-score" style="color:#06d6a0">Score: 82</div>' +
-                                '<div class="wf-popup-line">Est. Funding: $4.2M · 28% unserved</div>' +
-                                '<div class="wf-popup-contact">State Director: Greg Conte</div>' +
-                                '<div class="wf-popup-contact">broadband@cpa.texas.gov</div>' +
+                            '<div class="wf-mockup wf-mockup-map">' +
+                                '<span class="wf-dot wf-dot-green" style="left:30%;top:40%"></span>' +
+                                '<span class="wf-dot wf-dot-green" style="left:50%;top:25%"></span>' +
+                                '<span class="wf-dot wf-dot-yellow" style="left:70%;top:55%"></span>' +
+                                '<span class="wf-dot wf-dot-red" style="left:20%;top:65%"></span>' +
+                                '<span class="wf-dot wf-dot-green" style="left:60%;top:70%"></span>' +
+                                '<span class="wf-label-overlay">Click any marker for details</span>' +
                             '</div>' +
                         '</div>' +
                     '</div>' +
@@ -157,8 +168,17 @@ SN.onboarding = {
                 '<div class="workflow-step-card">' +
                     '<div class="wf-step-num">4</div>' +
                     '<div class="wf-step-content">' +
-                        '<div class="wf-step-title">Check Funding Intel & Build Your Report</div>' +
-                        '<div class="wf-step-desc">Go to <strong>Funding Intel</strong> tab &rarr; <strong>Decision Makers</strong> for full contact directory. Check <strong>Grants Awarded</strong> to see who is already building. Add promising areas to your <strong>Sales Report</strong>.</div>' +
+                        '<div class="wf-step-title">Find the Right Contact</div>' +
+                        '<div class="wf-step-desc">Go to <strong>Contacts</strong> to search the decision maker rolodex. Filter by <strong>City CIOs</strong> for smart city deals, <strong>State Directors</strong> for BEAD subgrants, or <strong>Data Center</strong> contacts for facility partnerships.</div>' +
+                        '<div class="wf-step-visual">' +
+                            '<div class="wf-mockup wf-mockup-popup">' +
+                                '<div class="wf-popup-head">Michael Sherwood</div>' +
+                                '<div class="wf-popup-score" style="color:var(--accent-blue)">Chief Innovation Officer</div>' +
+                                '<div class="wf-popup-line">City of Las Vegas — Smart City Program</div>' +
+                                '<div class="wf-popup-contact">msherwood@lasvegasnevada.gov</div>' +
+                                '<div class="wf-popup-contact">(702) 229-6301</div>' +
+                            '</div>' +
+                        '</div>' +
                     '</div>' +
                 '</div>' +
 
@@ -168,7 +188,7 @@ SN.onboarding = {
                     '<div class="wf-step-num">5</div>' +
                     '<div class="wf-step-content">' +
                         '<div class="wf-step-title">Export & Take Action</div>' +
-                        '<div class="wf-step-desc">Click <strong>Sales Report</strong> in the header to review your saved items. Export as HTML and share with your team. You now have specific counties, funding amounts, and decision maker contacts — schedule your first meeting.</div>' +
+                        '<div class="wf-step-desc">Click <strong>Sales Report</strong> in the header to review everything you\'ve saved. Export as an HTML report to share with your team, or email it directly. You now have specific targets, funding amounts, competitive intel, and the right person to call.</div>' +
                     '</div>' +
                 '</div>' +
             '</div>';
