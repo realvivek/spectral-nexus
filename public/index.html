@@ -34,110 +34,142 @@
             <span class="logo-text">Spectral Nexus</span>
             <span class="logo-tag">Broadband Funding Intelligence</span>
         </div>
+        <nav class="header-nav">
+            <button class="header-nav-btn nav-active" data-nav="dashboard">Home</button>
+            <button class="header-nav-btn" data-nav="main">Map & Data</button>
+            <button class="header-nav-btn" data-nav="targets">Top Targets</button>
+            <button class="header-nav-btn" data-nav="rolodex">Contacts</button>
+        </nav>
         <div class="header-controls">
+            <button id="btn-pursuit-builder" class="header-btn header-btn-accent" title="Guided opportunity finder">Pursuit Builder</button>
             <button id="btn-theme" class="theme-toggle" title="Switch light/dark mode"><span class="theme-toggle-icon">&#9790;</span> Dark</button>
             <button id="btn-help" class="header-btn" title="How to use this dashboard">Help</button>
             <button id="btn-export-csv" class="header-btn header-btn-accent" title="Export filtered data to CSV">Export CSV</button>
             <button id="btn-open-report" class="header-btn header-btn-warm" title="View your sales report">
                 Sales Report <span id="report-badge" class="report-badge" style="display:none">0</span>
             </button>
-            <span class="header-version">v0.6.0</span>
+            <span class="header-version">v0.7.0</span>
         </div>
     </header>
 
-    <!-- ═══ KPI BAR ═══ -->
-    <div id="kpi-bar"></div>
+    <!-- ═══ VIEW: DASHBOARD HOME (#9) ═══ -->
+    <div id="view-dashboard" class="sn-view sn-view-active">
+        <div id="dashboard-home-content" class="dashboard-home"></div>
+    </div>
 
-    <!-- ═══ MAIN LAYOUT ═══ -->
-    <div class="main-layout">
+    <!-- ═══ VIEW: MAIN (Map + Data) ═══ -->
+    <div id="view-main" class="sn-view">
 
-        <!-- Map Panel -->
-        <div class="map-panel">
-            <div id="map-container"></div>
+        <!-- KPI BAR -->
+        <div id="kpi-bar"></div>
 
-            <div class="map-controls">
-                <div class="map-control-group">
-                    <label>Choropleth Metric</label>
-                    <select id="metric-select">
-                        <option value="opportunityScore">Opportunity Score</option>
-                        <option value="unservedPct">Unserved %</option>
-                        <option value="coverageGap">Coverage Gap</option>
-                        <option value="medianIncome">Median Income</option>
-                        <option value="populationDensity">Pop. Density</option>
-                        <option value="fiberAvailPct">Fiber Availability</option>
-                    </select>
+        <!-- Smart Filter Lenses (#8) -->
+        <div id="filter-lenses" class="filter-lenses"></div>
+
+        <!-- MAIN LAYOUT -->
+        <div class="main-layout">
+
+            <!-- Map Panel -->
+            <div class="map-panel">
+                <div id="map-container"></div>
+
+                <div class="map-controls">
+                    <div class="map-control-group">
+                        <label>Choropleth Metric</label>
+                        <select id="metric-select">
+                            <option value="opportunityScore">Opportunity Score</option>
+                            <option value="unservedPct">Unserved %</option>
+                            <option value="coverageGap">Coverage Gap</option>
+                            <option value="medianIncome">Median Income</option>
+                            <option value="populationDensity">Pop. Density</option>
+                            <option value="fiberAvailPct">Fiber Availability</option>
+                        </select>
+                    </div>
+                    <!-- Layer Toggles -->
+                    <div class="map-control-group" id="layer-toggles"></div>
                 </div>
-                <!-- Layer Toggles -->
-                <div class="map-control-group" id="layer-toggles"></div>
+
+                <div class="map-legend" id="map-legend">
+                    <div class="legend-title" id="legend-title">Opportunity Score</div>
+                    <div class="legend-scale">
+                        <span style="background:#06d6a0"></span>
+                        <span style="background:#0bc49a"></span>
+                        <span style="background:#10b294"></span>
+                        <span style="background:#15a08e"></span>
+                        <span style="background:#38bdf8"></span>
+                        <span style="background:#5298c8"></span>
+                        <span style="background:#6b7298"></span>
+                        <span style="background:#845c78"></span>
+                        <span style="background:#fbbf24"></span>
+                        <span style="background:#ef4444"></span>
+                    </div>
+                    <div class="legend-labels" id="legend-labels"><span>100 (Best)</span><span>50</span><span>0 (Low)</span></div>
+                    <div class="legend-hint" id="legend-hint">Circle size = population · Color = score</div>
+                </div>
+
+                <div id="map-tooltip"></div>
             </div>
 
-            <div class="map-legend" id="map-legend">
-                <div class="legend-title" id="legend-title">Opportunity Score</div>
-                <div class="legend-scale">
-                    <span style="background:#06d6a0"></span>
-                    <span style="background:#0bc49a"></span>
-                    <span style="background:#10b294"></span>
-                    <span style="background:#15a08e"></span>
-                    <span style="background:#38bdf8"></span>
-                    <span style="background:#5298c8"></span>
-                    <span style="background:#6b7298"></span>
-                    <span style="background:#845c78"></span>
-                    <span style="background:#fbbf24"></span>
-                    <span style="background:#ef4444"></span>
-                </div>
-                <div class="legend-labels" id="legend-labels"><span>100 (Best)</span><span>50</span><span>0 (Low)</span></div>
-                <div class="legend-hint" id="legend-hint">Circle size = population · Color = score</div>
-            </div>
+            <!-- Right Panel -->
+            <div class="right-panel">
 
-            <div id="map-tooltip"></div>
+                <!-- Filter Bar -->
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <label>State</label>
+                        <select id="filter-state"><option value="all">All States</option></select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Score ≥</label>
+                        <input type="range" id="filter-score" min="0" max="100" value="0" step="5">
+                        <span id="score-label">Min Score: 0</span>
+                    </div>
+                    <button id="btn-reset" class="btn-reset">Reset</button>
+                </div>
+
+                <!-- Tabs -->
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="table">Table</button>
+                    <button class="tab-btn" data-tab="charts">Charts</button>
+                    <button class="tab-btn" data-tab="insights">Insights</button>
+                    <button class="tab-btn" data-tab="funding">Funding Intel</button>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="tab-content">
+                    <div id="panel-table" class="tab-panel active">
+                        <div id="table-container"></div>
+                    </div>
+
+                    <div id="panel-charts" class="tab-panel">
+                        <div class="chart-box chart-scatter-wrap"><canvas id="chart-scatter"></canvas></div>
+                        <div class="chart-box chart-bar-wrap"><canvas id="chart-bar"></canvas></div>
+                        <div class="chart-box chart-hist-wrap"><canvas id="chart-hist"></canvas></div>
+                    </div>
+
+                    <div id="panel-insights" class="tab-panel">
+                        <div id="insights-container"></div>
+                    </div>
+
+                    <div id="panel-funding" class="tab-panel">
+                        <div class="funding-tab-header">
+                            <button id="btn-expand-funding" class="btn-expand-funding" title="Open full-screen view">Expand Full View</button>
+                        </div>
+                        <div id="funding-container"></div>
+                    </div>
+                </div>
+            </div>
         </div>
+    </div>
 
-        <!-- Right Panel -->
-        <div class="right-panel">
+    <!-- ═══ VIEW: TOP TARGETS (#4) ═══ -->
+    <div id="view-targets" class="sn-view">
+        <div id="targets-content" class="targets-page"></div>
+    </div>
 
-            <!-- Filter Bar -->
-            <div class="filter-bar">
-                <div class="filter-group">
-                    <label>State</label>
-                    <select id="filter-state"><option value="all">All States</option></select>
-                </div>
-                <div class="filter-group">
-                    <label>Score ≥</label>
-                    <input type="range" id="filter-score" min="0" max="100" value="0" step="5">
-                    <span id="score-label">Min Score: 0</span>
-                </div>
-                <button id="btn-reset" class="btn-reset">Reset</button>
-            </div>
-
-            <!-- Tabs -->
-            <div class="tabs">
-                <button class="tab-btn active" data-tab="table">Table</button>
-                <button class="tab-btn" data-tab="charts">Charts</button>
-                <button class="tab-btn" data-tab="insights">Insights</button>
-                <button class="tab-btn" data-tab="funding">Funding Intel</button>
-            </div>
-
-            <!-- Tab Content -->
-            <div class="tab-content">
-                <div id="panel-table" class="tab-panel active">
-                    <div id="table-container"></div>
-                </div>
-
-                <div id="panel-charts" class="tab-panel">
-                    <div class="chart-box chart-scatter-wrap"><canvas id="chart-scatter"></canvas></div>
-                    <div class="chart-box chart-bar-wrap"><canvas id="chart-bar"></canvas></div>
-                    <div class="chart-box chart-hist-wrap"><canvas id="chart-hist"></canvas></div>
-                </div>
-
-                <div id="panel-insights" class="tab-panel">
-                    <div id="insights-container"></div>
-                </div>
-
-                <div id="panel-funding" class="tab-panel">
-                    <div id="funding-container"></div>
-                </div>
-            </div>
-        </div>
+    <!-- ═══ VIEW: DECISION MAKER ROLODEX (#10) ═══ -->
+    <div id="view-rolodex" class="sn-view">
+        <div id="rolodex-content" class="rolodex-page"></div>
     </div>
 
     <!-- ═══ SALES REPORT PANEL ═══ -->
@@ -193,6 +225,37 @@
         </div>
     </div>
 
+    <!-- ═══ FULL-SCREEN FUNDING MODAL (#1) ═══ -->
+    <div id="funding-fullscreen-modal" class="funding-fullscreen-modal">
+        <div id="funding-modal-content" class="funding-modal-layout"></div>
+    </div>
+
+    <!-- ═══ COUNTY DEEP-DIVE MODAL (#5) ═══ -->
+    <div id="county-dive-modal" class="county-dive-modal">
+        <div id="county-dive-content" class="county-dive-layout"></div>
+    </div>
+
+    <!-- ═══ PURSUIT BUILDER MODAL (#3) ═══ -->
+    <div id="pursuit-modal" class="pursuit-modal">
+        <div class="pursuit-modal-inner">
+            <div class="pursuit-modal-header">
+                <h2>Pursuit Builder</h2>
+                <button class="pursuit-close" onclick="SN.enhancedUI.closePursuitBuilder()">✕</button>
+            </div>
+            <div id="pursuit-content"></div>
+        </div>
+    </div>
+
+    <!-- ═══ STICKY ACTION BAR (#6) ═══ -->
+    <div id="action-bar" class="action-bar">
+        <span id="action-bar-count" class="action-bar-count">0 items in report</span>
+        <span id="action-bar-last" class="action-bar-last" style="display:none"></span>
+        <div class="action-bar-btns">
+            <button class="action-bar-btn" onclick="SN.executive.openReportPanel()">View Report</button>
+            <button class="action-bar-btn" onclick="SN.executive.exportCSV()">Export CSV</button>
+        </div>
+    </div>
+
     <!-- Disclaimer -->
     <div class="disclaimer">Real FCC BDC data · 3,100+ counties · CBRS spectrum · Smart Cities · Not investment advice</div>
 
@@ -222,6 +285,7 @@
     <script src="../src/js/charts.js"></script>
     <script src="../src/js/insights.js"></script>
     <script src="../src/js/funding.js"></script>
+    <script src="../src/js/enhanced-ui.js"></script>
     <script src="../src/js/app.js"></script>
 
 </body>
