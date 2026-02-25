@@ -41,6 +41,14 @@ SN.funding = {
             '<div id="funding-content">' + sectionHtml + '</div>';
 
         this.bindSubTabs();
+
+        // Inject report buttons if enhanced UI is available
+        try {
+            if (SN.enhancedUI) {
+                SN.enhancedUI.fundingModalSection = this.activeSection;
+                SN.enhancedUI._injectFundingReportButtons(container);
+            }
+        } catch(e) { /* Enhanced UI not loaded yet */ }
     },
 
     renderActiveSection() {
