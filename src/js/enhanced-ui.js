@@ -16,13 +16,14 @@ SN.enhancedUI = {
     /* ═══════════════════════════════════════════════ */
 
     init: function() {
-        this.initNavigation();
-        this.initActionBar();
-        this.initFilterLenses();
-        this.initFundingModal();
-        this.initCountyDive();
-        this.initPursuitBuilder();
-        this.showView('dashboard');
+        // Each sub-init wrapped in try/catch so one failure doesn't prevent others
+        try { this.initNavigation(); } catch(e) { console.error('EnhancedUI: navigation init failed:', e); }
+        try { this.initActionBar(); } catch(e) { console.error('EnhancedUI: action bar init failed:', e); }
+        try { this.initFilterLenses(); } catch(e) { console.error('EnhancedUI: filter lenses init failed:', e); }
+        try { this.initFundingModal(); } catch(e) { console.error('EnhancedUI: funding modal init failed:', e); }
+        try { this.initCountyDive(); } catch(e) { console.error('EnhancedUI: county dive init failed:', e); }
+        try { this.initPursuitBuilder(); } catch(e) { console.error('EnhancedUI: pursuit builder init failed:', e); }
+        try { this.showView('dashboard'); } catch(e) { console.error('EnhancedUI: showView failed:', e); }
     },
 
     /* ═══════════════════════════════════════════════ */
@@ -84,8 +85,9 @@ SN.enhancedUI = {
         var container = document.getElementById('dashboard-home-content');
         if (!container) return;
 
+        try {
         var counties = SN.data.counties || [];
-        var kpi = SN.kpi.compute(counties);
+        var kpi = SN.kpi.compute ? SN.kpi.compute(counties) : { highOppCount: 0 };
         var topCounties = counties.slice().sort(function(a, b) {
             return b.opportunityScore - a.opportunityScore;
         }).slice(0, 5);
@@ -186,6 +188,11 @@ SN.enhancedUI = {
 
         // Bind events
         this._bindHomeEvents(container);
+        } catch(e) {
+            console.error('Dashboard home render failed:', e);
+            container.innerHTML = '<div class="home-hero"><h1 class="home-title">Broadband Funding Intelligence</h1>' +
+                '<p class="home-subtitle">Use the navigation above to explore data.</p></div>';
+        }
     },
 
     _renderActionCards: function(urgentStates, recentDefaults, openGrants) {

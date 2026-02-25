@@ -144,6 +144,66 @@ SN.data.fiberGrants = [
 ];
 
 /* ═══════════════════════════════════════════════════════════
+ * FCC Underserved Areas (25/3 to 100/20 Mbps)
+ * Regions classified as "underserved" under BEAD definitions:
+ *   - At least one provider, but max speeds between 25/3 and 100/20 Mbps
+ *   - High priority for BEAD funding upgrades
+ * Sources: FCC Broadband Data Collection (BDC), NTIA BEAD technical assistance.
+ * ═══════════════════════════════════════════════════════════ */
+SN.data.fccUnderserved = [
+    // Appalachian underserved corridors
+    { region: "Eastern Kentucky DSL Belt", lat: 37.8, lng: -83.5, radius: 50000, bslCount: 68000, maxDown: 50, maxUp: 10, primaryTech: "DSL", providers: 1, beadEligible: true, note: "Single DSL provider at 50/10. Prime BEAD fiber upgrade target." },
+    { region: "SW Virginia Coalfields", lat: 37.0, lng: -82.0, radius: 40000, bslCount: 34000, maxDown: 25, maxUp: 3, primaryTech: "DSL", providers: 1, beadEligible: true, note: "Barely served. CenturyLink DSL only. BEAD priority." },
+    { region: "Central Appalachia WV", lat: 38.3, lng: -80.8, radius: 45000, bslCount: 52000, maxDown: 50, maxUp: 5, primaryTech: "DSL/Cable", providers: 2, beadEligible: true, note: "Frontier DSL + limited cable. Upgrade candidate." },
+    // Rural South
+    { region: "Mississippi Delta", lat: 33.5, lng: -90.5, radius: 55000, bslCount: 78000, maxDown: 25, maxUp: 3, primaryTech: "DSL", providers: 1, beadEligible: true, note: "AT&T DSL-only service. Poverty compounding access gap." },
+    { region: "Alabama Black Belt", lat: 32.3, lng: -87.0, radius: 50000, bslCount: 45000, maxDown: 50, maxUp: 5, primaryTech: "DSL/FWA", providers: 2, beadEligible: true, note: "Legacy DSL + nascent FWA. BEAD fiber target." },
+    { region: "Louisiana Parishes", lat: 31.3, lng: -92.5, radius: 45000, bslCount: 56000, maxDown: 30, maxUp: 5, primaryTech: "Cable", providers: 1, beadEligible: true, note: "Single cable provider, no fiber. BEAD high priority." },
+    // Great Plains
+    { region: "Western Kansas", lat: 38.5, lng: -100.5, radius: 60000, bslCount: 22000, maxDown: 25, maxUp: 3, primaryTech: "DSL", providers: 1, beadEligible: true, note: "Nex-Tech DSL territory. Sparse but underserved." },
+    { region: "Oklahoma Panhandle", lat: 36.7, lng: -100.5, radius: 40000, bslCount: 8500, maxDown: 25, maxUp: 3, primaryTech: "DSL", providers: 1, beadEligible: true, note: "Most remote OK region. Single provider." },
+    { region: "Rural Nebraska", lat: 41.5, lng: -101.0, radius: 55000, bslCount: 18000, maxDown: 50, maxUp: 10, primaryTech: "FWA", providers: 2, beadEligible: true, note: "FWA primary service. Fiber extension needed." },
+    // Pacific Northwest / Mountain West
+    { region: "Eastern Oregon", lat: 44.0, lng: -120.5, radius: 50000, bslCount: 28000, maxDown: 25, maxUp: 3, primaryTech: "DSL/Satellite", providers: 1, beadEligible: true, note: "CenturyLink DSL. Vast territory, low density." },
+    { region: "Rural Montana", lat: 47.0, lng: -109.5, radius: 65000, bslCount: 24000, maxDown: 50, maxUp: 5, primaryTech: "DSL/FWA", providers: 2, beadEligible: true, note: "Ranching communities. Long backhaul distances." },
+    { region: "Tribal Lands AZ/NM", lat: 35.5, lng: -110.0, radius: 55000, bslCount: 42000, maxDown: 25, maxUp: 3, primaryTech: "DSL", providers: 1, beadEligible: true, note: "Navajo Nation + surrounding pueblos. Critical digital equity gap." },
+    // Upper Midwest
+    { region: "Northern Minnesota", lat: 47.5, lng: -94.5, radius: 50000, bslCount: 35000, maxDown: 50, maxUp: 10, primaryTech: "FWA/DSL", providers: 2, beadEligible: true, note: "Lake country. Seasonal population surges stress network." },
+    { region: "Upper Peninsula MI", lat: 46.5, lng: -87.0, radius: 45000, bslCount: 30000, maxDown: 25, maxUp: 3, primaryTech: "DSL", providers: 1, beadEligible: true, note: "Isolated from lower Michigan infrastructure." },
+    // Southeast
+    { region: "Georgia Coastal Plain", lat: 31.5, lng: -82.5, radius: 45000, bslCount: 38000, maxDown: 50, maxUp: 5, primaryTech: "Cable", providers: 1, beadEligible: true, note: "Rural South Georgia. Single cable provider." },
+    { region: "SC Lowcountry Rural", lat: 33.0, lng: -80.5, radius: 35000, bslCount: 26000, maxDown: 50, maxUp: 10, primaryTech: "Cable/DSL", providers: 2, beadEligible: true, note: "Legacy infrastructure. Growing demand from retirees." },
+    // Texas
+    { region: "West Texas", lat: 31.5, lng: -103.5, radius: 60000, bslCount: 19000, maxDown: 25, maxUp: 3, primaryTech: "DSL/Satellite", providers: 1, beadEligible: true, note: "Permian Basin adjacent. Oil worker housing underserved." },
+    { region: "East Texas Piney Woods", lat: 31.8, lng: -95.0, radius: 45000, bslCount: 44000, maxDown: 50, maxUp: 5, primaryTech: "DSL/Cable", providers: 2, beadEligible: true, note: "Windstream/Frontier DSL legacy. BEAD target." }
+];
+
+/* ═══════════════════════════════════════════════════════════
+ * Fixed Wireless Access (FWA) Coverage Areas
+ * Licensed and unlicensed FWA deployments providing broadband.
+ * Sources: FCC BDC fixed wireless filings, carrier FWA coverage maps.
+ * ═══════════════════════════════════════════════════════════ */
+SN.data.fixedWirelessCoverage = [
+    // T-Mobile FWA (5G Home Internet)
+    { region: "T-Mobile FWA Houston Metro", lat: 29.76, lng: -95.37, radius: 50000, operator: "T-Mobile", technology: "5G NR (n41)", maxDown: 245, maxUp: 33, subscribers: 185000, capacity: "High", note: "Dense mid-band FWA. Urban/suburban focus." },
+    { region: "T-Mobile FWA DFW Metro", lat: 32.78, lng: -96.80, radius: 48000, operator: "T-Mobile", technology: "5G NR (n41)", maxDown: 220, maxUp: 30, subscribers: 142000, capacity: "High", note: "Expanding suburban FWA footprint." },
+    { region: "T-Mobile FWA Phoenix", lat: 33.45, lng: -112.07, radius: 45000, operator: "T-Mobile", technology: "5G NR (n41)", maxDown: 200, maxUp: 28, subscribers: 118000, capacity: "Medium", note: "Desert metro. Heat stress on equipment." },
+    { region: "T-Mobile FWA Chicago Suburbs", lat: 41.88, lng: -87.88, radius: 40000, operator: "T-Mobile", technology: "5G NR (n41)", maxDown: 210, maxUp: 30, subscribers: 155000, capacity: "High", note: "Suburban collar counties." },
+    // Verizon FWA (5G Home)
+    { region: "Verizon 5G Home LA", lat: 34.05, lng: -118.24, radius: 35000, operator: "Verizon", technology: "5G mmWave + C-Band", maxDown: 300, maxUp: 50, subscribers: 95000, capacity: "High", note: "mmWave dense urban + C-band suburban." },
+    { region: "Verizon 5G Home NYC Metro", lat: 40.71, lng: -74.01, radius: 30000, operator: "Verizon", technology: "5G mmWave + C-Band", maxDown: 300, maxUp: 50, subscribers: 125000, capacity: "High", note: "Dense urban mmWave. Limited range." },
+    { region: "Verizon FWA Miami", lat: 25.76, lng: -80.19, radius: 30000, operator: "Verizon", technology: "5G C-Band", maxDown: 200, maxUp: 30, subscribers: 72000, capacity: "Medium", note: "South Florida C-Band buildout." },
+    // Regional WISPs
+    { region: "Rise Broadband CO/NE", lat: 40.0, lng: -104.5, radius: 65000, operator: "Rise Broadband", technology: "CBRS + Unlicensed", maxDown: 100, maxUp: 20, subscribers: 45000, capacity: "Low", note: "Largest WISP. Rural CO/NE fixed wireless." },
+    { region: "Starry Internet Boston", lat: 42.36, lng: -71.06, radius: 20000, operator: "Starry", technology: "mmWave P2MP", maxDown: 200, maxUp: 100, subscribers: 28000, capacity: "Medium", note: "MDU-focused mmWave FWA. Urban only." },
+    { region: "Midco FWA Dakotas", lat: 46.88, lng: -96.79, radius: 50000, operator: "Midco", technology: "CBRS + Licensed", maxDown: 100, maxUp: 20, subscribers: 32000, capacity: "Medium", note: "Regional FWA serving rural Dakotas." },
+    { region: "GeoLinks CA Rural FWA", lat: 35.0, lng: -118.5, radius: 55000, operator: "GeoLinks", technology: "Licensed Microwave", maxDown: 150, maxUp: 50, subscribers: 18000, capacity: "Low", note: "California Central Valley and mountain communities." },
+    { region: "Nextlink Internet TX/OK", lat: 33.0, lng: -97.0, radius: 60000, operator: "Nextlink Internet", technology: "CBRS + Licensed", maxDown: 100, maxUp: 20, subscribers: 52000, capacity: "Medium", note: "North Texas + Southern Oklahoma WISP." },
+    { region: "Resound Networks OK/KS", lat: 36.5, lng: -97.5, radius: 50000, operator: "Resound Networks", technology: "CBRS + Unlicensed", maxDown: 50, maxUp: 10, subscribers: 22000, capacity: "Low", note: "Rural OK/KS FWA. Transitioning to fiber." },
+    { region: "Wisper Internet MO/IL", lat: 38.5, lng: -90.5, radius: 45000, operator: "Wisper Internet", technology: "CBRS + Unlicensed", maxDown: 75, maxUp: 15, subscribers: 35000, capacity: "Medium", note: "Rural Missouri/Illinois. BEAD fiber partner." }
+];
+
+/* ═══════════════════════════════════════════════════════════
  * RDOF Default Areas
  * Areas where RDOF auction winners defaulted, creating new funding opportunities.
  * Sources: FCC Auction 904 default summaries, Benton Institute analysis (Feb 2025).
