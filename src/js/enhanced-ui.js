@@ -69,6 +69,8 @@ SN.enhancedUI = {
         if (view === 'dashboard') this.renderDashboardHome();
         if (view === 'targets') this.renderTopTargets();
         if (view === 'rolodex') this.renderRolodex();
+        if (view === 'insights') this.renderInsightsView();
+        if (view === 'funding') this.renderFundingView();
         if (view === 'main') {
             // Invalidate map size after view switch
             setTimeout(function() {
@@ -86,66 +88,212 @@ SN.enhancedUI = {
         if (!container) return;
 
         try {
+        var self = this;
+        var fmt = SN.kpi.fmt ? SN.kpi.fmt.bind(SN.kpi) : function(n) { return String(n); };
         var counties = SN.data.counties || [];
-        var kpi = SN.kpi.compute ? SN.kpi.compute(counties) : { highOppCount: 0 };
+        var kpi = SN.kpi.compute ? SN.kpi.compute(counties) : { highOppCount: 0, totalUnservedBSLs: 0, totalFunding: 0 };
+
         var topCounties = counties.slice().sort(function(a, b) {
             return b.opportunityScore - a.opportunityScore;
-        }).slice(0, 5);
+        }).slice(0, 8);
 
-        // BEAD deadlines (states with timelines)
-        var beadTimeline = SN.data.beadTimeline || [];
-        var urgentStates = beadTimeline.filter(function(s) {
-            return s.phase === 'RFP Open' || s.phase === 'Application Review';
-        }).slice(0, 5);
+        // BEAD timeline — object keyed by state, convert to array
+        var beadObj = SN.data.beadTimeline || {};
+        var beadStates = Object.keys(beadObj).map(function(st) {
+            var d = beadObj[st]; d.stateCode = st; return d;
+        });
+        var openSubgrants = beadStates.filter(function(s) {
+            return s.phase === 'subgrant_open';
+        }).sort(function(a, b) {
+            return (a.subgrantClose || 'z') < (b.subgrantClose || 'z') ? -1 : 1;
+        });
 
-        // RDOF defaults for action items
+        // Competitive bids with deadlines
+        var bids = (SN.data.competitiveBids || []).filter(function(b) {
+            return b.deadline;
+        }).sort(function(a, b) { return a.deadline < b.deadline ? -1 : 1; }).slice(0, 6);
+
+        // RDOF defaults
         var rdofDefaults = SN.data.rdofDefaults || [];
-        var recentDefaults = rdofDefaults.slice(0, 3);
 
-        // Open grants
-        var grants = SN.data.fiberGrants || [];
-        var openGrants = grants.filter(function(g) { return g.status === 'Open' || g.status === 'Rolling'; }).slice(0, 4);
+        // Dark fiber opportunities: cities with dark fiber but NOT in smart cities or private 5G lists
+        var smartCityNames = {};
+        (SN.data.smartCities || []).forEach(function(c) { smartCityNames[c.name.toLowerCase()] = true; });
+        var priv5gCities = {};
+        (SN.data.private5GDeployments || []).forEach(function(d) { priv5gCities[d.city.toLowerCase()] = true; });
+        var darkFiberOpps = (SN.data.municipalFiber || []).filter(function(net) {
+            return net.darkFiberAvailable && !smartCityNames[net.city.toLowerCase()] && !priv5gCities[net.city.toLowerCase()];
+        });
+
+        // Open grants (from data-layers fiberGrants, not the deep grants obj)
+        var fiberGrants = SN.data.fiberGrants || [];
+        var openFiberGrants = fiberGrants.filter(function(g) { return g.status === 'Open' || g.status === 'Rolling' || g.status === 'Awarded'; });
+
+        // Federal/state grant programs with open status
+        var grantPrograms = [];
+        if (SN.data.grants) {
+            (SN.data.grants.federal || []).forEach(function(g) {
+                if (g.statusCode === 'open' || g.statusCode === 'rolling') grantPrograms.push(g);
+            });
+            var stObj = SN.data.grants.state || {};
+            Object.keys(stObj).forEach(function(st) {
+                (stObj[st] || []).forEach(function(g) {
+                    if (g.statusCode === 'open' || g.statusCode === 'rolling') { g._state = st; grantPrograms.push(g); }
+                });
+            });
+        }
 
         // Total addressable market
-        var totalUnserved = counties.reduce(function(s, c) { return s + c.unservedBSLs; }, 0);
-        var totalFunding = Object.values(SN.config.beadAllocations).reduce(function(s, v) { return s + v; }, 0);
+        var totalUnserved = counties.reduce(function(s, c) { return s + (c.unservedBSLs || 0); }, 0);
+        var totalFunding = 0;
+        try { totalFunding = Object.values(SN.config.beadAllocations).reduce(function(s, v) { return s + v; }, 0); } catch(e) {}
+        var openBidCount = bids.length;
+        var darkFiberCount = darkFiberOpps.length;
 
         container.innerHTML =
-            // Hero stats
+            // ═══ HERO ═══
             '<div class="home-hero">' +
                 '<h1 class="home-title">Broadband Funding Intelligence</h1>' +
-                '<p class="home-subtitle">Your daily briefing across 3,100+ US counties</p>' +
+                '<p class="home-subtitle">Actionable sales intelligence across 3,100+ US counties</p>' +
                 '<div class="home-hero-stats">' +
-                    '<div class="home-stat">' +
-                        '<span class="home-stat-val">' + SN.kpi.fmt(totalFunding, 'currency') + '</span>' +
+                    '<div class="home-stat home-stat-accent">' +
+                        '<span class="home-stat-val">' + fmt(totalFunding, 'currency') + '</span>' +
                         '<span class="home-stat-lbl">Total BEAD Funding</span>' +
                     '</div>' +
                     '<div class="home-stat">' +
-                        '<span class="home-stat-val">' + SN.kpi.fmt(totalUnserved, 'compact') + '</span>' +
+                        '<span class="home-stat-val">' + fmt(totalUnserved, 'compact') + '</span>' +
                         '<span class="home-stat-lbl">Unserved Locations</span>' +
                     '</div>' +
                     '<div class="home-stat">' +
-                        '<span class="home-stat-val">' + kpi.highOppCount + '</span>' +
-                        '<span class="home-stat-lbl">High-Opportunity Counties</span>' +
+                        '<span class="home-stat-val">' + openSubgrants.length + '</span>' +
+                        '<span class="home-stat-lbl">States Taking Bids Now</span>' +
                     '</div>' +
                     '<div class="home-stat">' +
-                        '<span class="home-stat-val">' + openGrants.length + '</span>' +
-                        '<span class="home-stat-lbl">Open Grant Programs</span>' +
+                        '<span class="home-stat-val">' + darkFiberCount + '</span>' +
+                        '<span class="home-stat-lbl">Dark Fiber Opportunities</span>' +
+                    '</div>' +
+                    '<div class="home-stat">' +
+                        '<span class="home-stat-val">' + kpi.highOppCount + '</span>' +
+                        '<span class="home-stat-lbl">High-Score Counties</span>' +
+                    '</div>' +
+                    '<div class="home-stat home-stat-hot">' +
+                        '<span class="home-stat-val">' + rdofDefaults.length + '</span>' +
+                        '<span class="home-stat-lbl">RDOF Defaulters</span>' +
                     '</div>' +
                 '</div>' +
             '</div>' +
 
-            // Action required feed
+            // ═══ TWO-COLUMN LAYOUT ═══
+            '<div class="home-columns">' +
+
+            // LEFT COLUMN
+            '<div class="home-col-main">' +
+
+            // ── DARK FIBER OPPORTUNITIES ──
             '<div class="home-section">' +
-                '<h2 class="home-section-title">Action Required</h2>' +
-                '<div class="home-actions-grid">' +
-                    this._renderActionCards(urgentStates, recentDefaults, openGrants) +
+                '<div class="home-section-header">' +
+                    '<h2 class="home-section-title">Dark Fiber — Untapped Opportunities</h2>' +
+                    '<span class="home-section-badge home-badge-teal">' + darkFiberCount + ' cities</span>' +
+                '</div>' +
+                '<p class="home-section-desc">Cities with available dark fiber but <strong>no smart city program or private 5G deployment</strong> — prime targets for system integrators.</p>' +
+                '<div class="home-card-grid">' +
+                    darkFiberOpps.map(function(net) {
+                        // Find state director for contact
+                        var director = SN.data.stateDecisionMakers && SN.data.stateDecisionMakers[net.state];
+                        return '<div class="home-opp-card home-opp-fiber">' +
+                            '<div class="home-opp-header">' +
+                                '<strong>' + net.city + ', ' + net.state + '</strong>' +
+                                '<span class="home-opp-badge">DARK FIBER</span>' +
+                            '</div>' +
+                            '<div class="home-opp-body">' +
+                                '<span class="home-opp-name">' + net.name + '</span>' +
+                                '<div class="home-opp-metrics">' +
+                                    '<span>' + net.fiberMiles.toLocaleString() + ' miles</span>' +
+                                    '<span>' + (net.homesPassed / 1000).toFixed(0) + 'K homes</span>' +
+                                    '<span>' + net.maxSpeed + '</span>' +
+                                    '<span>' + fmt(net.investmentTotal, 'currency') + ' invested</span>' +
+                                '</div>' +
+                                (director ? '<div class="home-opp-contact">' +
+                                    '<span class="home-opp-contact-name">' + director.name + '</span>' +
+                                    '<span class="home-opp-contact-title">' + director.title + ', ' + director.agency + '</span>' +
+                                    (director.email ? '<span class="home-opp-contact-info">' + director.email + '</span>' : '') +
+                                    (director.phone ? '<span class="home-opp-contact-info">' + director.phone + '</span>' : '') +
+                                '</div>' : '') +
+                            '</div>' +
+                            '<div class="home-opp-actions">' +
+                                '<button class="home-rpt-btn" data-rpt-type="munifiber" data-rpt-name="' + net.name.replace(/"/g, '&quot;') + '">+ Sales Report</button>' +
+                                (director ? '<button class="home-rpt-btn home-rpt-btn-sec" data-rpt-type="decisionmaker" data-rpt-name="' + net.state + '">+ Add Contact</button>' : '') +
+                            '</div>' +
+                        '</div>';
+                    }).join('') +
+                    (darkFiberOpps.length === 0 ? '<div class="home-empty">No untapped dark fiber cities found.</div>' : '') +
                 '</div>' +
             '</div>' +
 
-            // Top 5 opportunities
+            // ── ACTIVE BIDS & CONTRACTS ──
             '<div class="home-section">' +
-                '<h2 class="home-section-title">Top 5 Opportunities</h2>' +
+                '<div class="home-section-header">' +
+                    '<h2 class="home-section-title">Active Bids & Contracts</h2>' +
+                    '<span class="home-section-badge home-badge-amber">' + bids.length + ' opportunities</span>' +
+                '</div>' +
+                '<p class="home-section-desc">Competitive BEAD subgrant bids with known bidders — identify low-competition regions and upcoming deadlines.</p>' +
+                '<div class="home-bid-table-wrap">' +
+                    '<table class="home-bid-table">' +
+                        '<thead><tr>' +
+                            '<th>State</th><th>Region</th><th>Program</th><th>Bidders</th><th>Competition</th><th>Deadline</th><th></th>' +
+                        '</tr></thead>' +
+                        '<tbody>' +
+                        bids.map(function(b) {
+                            var compClass = b.competitionLevel === 'Low' ? 'home-comp-low' :
+                                            b.competitionLevel === 'Medium' ? 'home-comp-med' : 'home-comp-high';
+                            return '<tr>' +
+                                '<td><strong>' + b.state + '</strong></td>' +
+                                '<td>' + b.region + '</td>' +
+                                '<td class="home-bid-program">' + b.program + '</td>' +
+                                '<td class="home-bid-bidders">' + b.knownBidders.join(', ') + '</td>' +
+                                '<td><span class="home-comp-badge ' + compClass + '">' + b.competitionLevel + '</span></td>' +
+                                '<td class="home-bid-deadline">' + b.deadline + '</td>' +
+                                '<td><button class="home-rpt-btn-sm" data-rpt-type="competitor" data-rpt-name="' + b.state + ' ' + b.region + '">+ Report</button></td>' +
+                            '</tr>';
+                        }).join('') +
+                        '</tbody>' +
+                    '</table>' +
+                '</div>' +
+            '</div>' +
+
+            // ── BEAD PIPELINE ──
+            '<div class="home-section">' +
+                '<div class="home-section-header">' +
+                    '<h2 class="home-section-title">BEAD Pipeline — Open for Bids</h2>' +
+                    '<span class="home-section-badge home-badge-blue">' + openSubgrants.length + ' states</span>' +
+                '</div>' +
+                '<div class="home-bead-grid">' +
+                    openSubgrants.slice(0, 8).map(function(s) {
+                        return '<div class="home-bead-card">' +
+                            '<div class="home-bead-header">' +
+                                '<strong>' + s.stateCode + '</strong>' +
+                                '<span class="home-bead-alloc">' + fmt(s.allocation, 'currency') + '</span>' +
+                            '</div>' +
+                            '<div class="home-bead-details">' +
+                                '<span>Close: <strong>' + (s.subgrantClose || 'TBD') + '</strong></span>' +
+                                '<span>Applicants: <strong>' + (s.subgrantApplicants || '?') + '</strong></span>' +
+                                '<span>Awards: <strong>' + (s.awardsExpected || 'TBD') + '</strong></span>' +
+                            '</div>' +
+                            '<div class="home-bead-note">' + (s.notes || '') + '</div>' +
+                            '<button class="home-rpt-btn-sm" data-rpt-type="beadstate" data-rpt-name="' + s.stateCode + '" data-rpt-extra="' + s.phase + '">+ Report</button>' +
+                        '</div>';
+                    }).join('') +
+                '</div>' +
+            '</div>' +
+
+            '</div>' + // end col-main
+
+            // RIGHT COLUMN
+            '<div class="home-col-side">' +
+
+            // ── TOP OPPORTUNITIES ──
+            '<div class="home-section">' +
+                '<h2 class="home-section-title">Top Opportunities</h2>' +
                 '<div class="home-top-list">' +
                     topCounties.map(function(c, i) {
                         var scoreColor = c.opportunityScore >= 70 ? '#06d6a0' :
@@ -156,131 +304,224 @@ SN.enhancedUI = {
                             '<div class="home-top-info">' +
                                 '<span class="home-top-name">' + name + ', ' + c.state + '</span>' +
                                 '<span class="home-top-detail">' +
-                                    SN.kpi.fmt(c.fundingEstimate, 'currency') + ' funding · ' +
-                                    (c.unservedPct * 100).toFixed(0) + '% unserved · ' +
-                                    SN.kpi.fmt(c.population, 'compact') + ' pop' +
+                                    fmt(c.fundingEstimate, 'currency') + ' · ' +
+                                    (c.unservedPct * 100).toFixed(0) + '% unserved' +
                                 '</span>' +
                             '</div>' +
                             '<span class="home-top-score" style="background:' + scoreColor + '">' + c.opportunityScore + '</span>' +
+                            '<button class="home-rpt-btn-sm home-rpt-inline" data-rpt-type="county" data-rpt-name="' + c.fips + '">+</button>' +
                         '</div>';
                     }).join('') +
                 '</div>' +
             '</div>' +
 
-            // Quick links
+            // ── RDOF RECAPTURE ──
             '<div class="home-section">' +
-                '<h2 class="home-section-title">Quick Links</h2>' +
-                '<div class="home-links">' +
-                    '<button class="home-link-btn" data-nav="main" data-action="map">Map & Analysis</button>' +
-                    '<button class="home-link-btn" data-nav="targets">Top Targets</button>' +
-                    '<button class="home-link-btn" data-action="funding-modal">Funding Intel (Full View)</button>' +
-                    '<button class="home-link-btn" data-nav="rolodex">Decision Makers</button>' +
-                    '<button class="home-link-btn" data-action="pursuit">Start Pursuit Builder</button>' +
-                    '<button class="home-link-btn" data-action="report">View Sales Report</button>' +
+                '<div class="home-section-header">' +
+                    '<h2 class="home-section-title">RDOF Recapture Targets</h2>' +
+                    '<span class="home-section-badge home-badge-red">' + rdofDefaults.length + '</span>' +
+                '</div>' +
+                '<div class="home-rdof-list">' +
+                    rdofDefaults.map(function(d) {
+                        return '<div class="home-rdof-item">' +
+                            '<div class="home-rdof-info">' +
+                                '<strong>' + d.awardee + '</strong>' +
+                                '<span>' + d.locations.toLocaleString() + ' locations · ' + fmt(d.award, 'currency') + ' defaulted</span>' +
+                                '<span class="home-rdof-reason">' + d.reason + '</span>' +
+                            '</div>' +
+                            '<button class="home-rpt-btn-sm" data-rpt-type="rdof" data-rpt-name="' + d.awardee.replace(/"/g, '&quot;') + '">+ Report</button>' +
+                        '</div>';
+                    }).join('') +
                 '</div>' +
             '</div>' +
 
-            // Your Report preview
+            // ── OPEN GRANT PROGRAMS ──
+            '<div class="home-section">' +
+                '<h2 class="home-section-title">Open Grant Programs</h2>' +
+                '<div class="home-grants-list">' +
+                    grantPrograms.slice(0, 8).map(function(g) {
+                        var amt = g.totalFunding ? fmt(g.totalFunding, 'currency') : 'Varies';
+                        return '<div class="home-grant-item">' +
+                            '<div class="home-grant-info">' +
+                                '<strong>' + g.name + (g._state ? ' (' + g._state + ')' : '') + '</strong>' +
+                                '<span>' + amt + ' · ' + (g.agency || '') + '</span>' +
+                                (g.applicationDeadline ? '<span class="home-grant-deadline">' + g.applicationDeadline + '</span>' : '') +
+                            '</div>' +
+                            '<button class="home-rpt-btn-sm" data-rpt-type="grant" data-rpt-name="' + g.name.replace(/"/g, '&quot;') + '">+ Report</button>' +
+                        '</div>';
+                    }).join('') +
+                '</div>' +
+                '<button class="home-link-btn home-link-full" data-nav="funding">View All Funding Intel</button>' +
+            '</div>' +
+
+            // ── QUICK ACTIONS ──
+            '<div class="home-section">' +
+                '<h2 class="home-section-title">Quick Actions</h2>' +
+                '<div class="home-quick-actions">' +
+                    '<button class="home-action-btn home-action-btn-primary" data-action="pursuit">Start Pursuit Builder</button>' +
+                    '<button class="home-action-btn" data-nav="main">Map & Analysis</button>' +
+                    '<button class="home-action-btn" data-nav="targets">Top Targets</button>' +
+                    '<button class="home-action-btn" data-action="report">View Sales Report</button>' +
+                '</div>' +
+            '</div>' +
+
+            // ── REPORT PREVIEW ──
             '<div class="home-section">' +
                 '<h2 class="home-section-title">Your Report</h2>' +
                 this._renderReportPreview() +
-            '</div>';
+            '</div>' +
+
+            '</div>' + // end col-side
+            '</div>'; // end home-columns
 
         // Bind events
         this._bindHomeEvents(container);
         } catch(e) {
             console.error('Dashboard home render failed:', e);
             container.innerHTML = '<div class="home-hero"><h1 class="home-title">Broadband Funding Intelligence</h1>' +
-                '<p class="home-subtitle">Use the navigation above to explore data.</p></div>';
+                '<p class="home-subtitle">Error loading dashboard. Use navigation above to explore data.</p>' +
+                '<pre style="color:var(--accent-hot);font-size:0.7rem;margin-top:12px">' + e.message + '</pre></div>';
         }
-    },
-
-    _renderActionCards: function(urgentStates, recentDefaults, openGrants) {
-        var cards = '';
-
-        // BEAD urgent states
-        urgentStates.forEach(function(s) {
-            cards += '<div class="home-action-card home-action-bead">' +
-                '<span class="home-action-badge">BEAD</span>' +
-                '<strong>' + s.state + ' — ' + s.phase + '</strong>' +
-                '<span class="home-action-detail">' + SN.kpi.fmt(s.allocation || 0, 'currency') + ' allocation</span>' +
-                (s.rfpDate ? '<span class="home-action-date">RFP: ' + s.rfpDate + '</span>' : '') +
-            '</div>';
-        });
-
-        // RDOF defaults
-        recentDefaults.forEach(function(d) {
-            cards += '<div class="home-action-card home-action-rdof">' +
-                '<span class="home-action-badge home-action-badge-red">RDOF Default</span>' +
-                '<strong>' + d.awardee + '</strong>' +
-                '<span class="home-action-detail">' + d.locations.toLocaleString() + ' locations re-eligible</span>' +
-                '<span class="home-action-detail">' + d.reason + '</span>' +
-            '</div>';
-        });
-
-        // Open grants
-        openGrants.forEach(function(g) {
-            var fmtAmt = g.amount >= 1e9 ? '$' + (g.amount / 1e9).toFixed(1) + 'B' : '$' + (g.amount / 1e6).toFixed(0) + 'M';
-            cards += '<div class="home-action-card home-action-grant">' +
-                '<span class="home-action-badge home-action-badge-amber">Grant Open</span>' +
-                '<strong>' + g.name + '</strong>' +
-                '<span class="home-action-detail">' + fmtAmt + ' · ' + g.agency + '</span>' +
-                '<span class="home-action-date">Deadline: ' + (g.deadline || 'Rolling') + '</span>' +
-            '</div>';
-        });
-
-        if (!cards) {
-            cards = '<div class="home-action-card"><span class="home-action-detail">No urgent items at this time.</span></div>';
-        }
-
-        return cards;
     },
 
     _renderReportPreview: function() {
-        var items = SN.executive.reportItems || [];
+        var items = (SN.executive && SN.executive.reportItems) ? SN.executive.reportItems : [];
         if (!items.length) {
             return '<div class="home-report-empty">' +
                 '<p>No items in your report yet.</p>' +
-                '<p>Use the Pursuit Builder or browse the map to add targets.</p>' +
+                '<p>Click <strong>+ Sales Report</strong> on any item above to start building.</p>' +
             '</div>';
         }
 
-        var preview = items.slice(0, 3).map(function(item) {
+        var preview = items.slice(0, 4).map(function(item) {
             return '<div class="home-report-item">' +
                 '<strong>' + item.name + '</strong>' +
                 (item.detail ? '<span>' + item.detail + '</span>' : '') +
             '</div>';
         }).join('');
 
-        if (items.length > 3) {
-            preview += '<div class="home-report-more">+ ' + (items.length - 3) + ' more items</div>';
+        if (items.length > 4) {
+            preview += '<div class="home-report-more">+ ' + (items.length - 4) + ' more items</div>';
         }
 
-        return '<div class="home-report-preview">' + preview + '</div>';
+        return '<div class="home-report-preview">' + preview +
+            '<button class="home-link-btn home-link-full" data-action="report">Open Full Report</button>' +
+        '</div>';
     },
 
     _bindHomeEvents: function(container) {
         var self = this;
 
-        // Top county clicks -> deep dive
+        // Top county clicks -> fly to on map
         container.querySelectorAll('.home-top-item').forEach(function(el) {
-            el.addEventListener('click', function() {
+            el.addEventListener('click', function(e) {
+                if (e.target.closest('.home-rpt-btn-sm')) return; // Don't nav when clicking report btn
                 self.showView('main');
-                setTimeout(function() { SN.map.flyTo(el.dataset.fips); }, 200);
+                setTimeout(function() {
+                    try { SN.map.flyTo(el.dataset.fips); } catch(err) {}
+                }, 200);
             });
         });
 
-        // Quick link buttons
-        container.querySelectorAll('.home-link-btn').forEach(function(btn) {
+        // All + Sales Report buttons
+        container.querySelectorAll('.home-rpt-btn, .home-rpt-btn-sm').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var type = btn.dataset.rptType;
+                var name = btn.dataset.rptName;
+                var extra = btn.dataset.rptExtra;
+                try {
+                    SN.executive.addToReport(type, name, extra);
+                    btn.textContent = 'Added!';
+                    btn.classList.add('home-rpt-added');
+                    setTimeout(function() {
+                        btn.textContent = type === 'county' ? '+' : '+ Report';
+                        btn.classList.remove('home-rpt-added');
+                    }, 1200);
+                    self._refreshReportPreview();
+                } catch(err) { console.error('Add to report failed:', err); }
+            });
+        });
+
+        // Quick action / nav buttons
+        container.querySelectorAll('.home-action-btn, .home-link-btn').forEach(function(btn) {
             btn.addEventListener('click', function() {
                 var nav = btn.dataset.nav;
                 var action = btn.dataset.action;
                 if (nav) self.showView(nav);
-                else if (action === 'funding-modal') self.openFundingModal();
                 else if (action === 'pursuit') self.openPursuitBuilder();
                 else if (action === 'report') SN.executive.openReportPanel();
             });
         });
+    },
+
+    _refreshReportPreview: function() {
+        var section = document.querySelector('.home-section:last-child');
+        if (!section) return;
+        var title = section.querySelector('.home-section-title');
+        if (title && title.textContent === 'Your Report') {
+            var html = this._renderReportPreview();
+            var container = title.parentElement;
+            var wrapper = container.querySelector('.home-report-preview, .home-report-empty');
+            if (wrapper) wrapper.outerHTML = html;
+        }
+    },
+
+    /* ═══════════════════════════════════════════════ */
+    /* INSIGHTS VIEW (full page)                       */
+    /* ═══════════════════════════════════════════════ */
+
+    renderInsightsView: function() {
+        var container = document.getElementById('insights-view-content');
+        if (!container) return;
+        try {
+            var filtered = SN.app.getFilteredData();
+            container.innerHTML = '<div class="insights-fullpage">' +
+                '<h1 class="view-page-title">Actionable Insights</h1>' +
+                '<div id="insights-view-inner"></div>' +
+            '</div>';
+            SN.insights.render(filtered);
+            SN.insights.update(filtered);
+            // Move rendered content
+            var original = document.getElementById('insights-container');
+            var dest = document.getElementById('insights-view-inner');
+            if (original && dest) dest.innerHTML = original.innerHTML;
+        } catch(e) {
+            container.innerHTML = '<div class="view-page-title">Insights</div><p>Failed to load insights.</p>';
+        }
+    },
+
+    /* ═══════════════════════════════════════════════ */
+    /* FUNDING VIEW (full page)                        */
+    /* ═══════════════════════════════════════════════ */
+
+    renderFundingView: function() {
+        var container = document.getElementById('funding-view-content');
+        if (!container) return;
+        try {
+            // Render into full page using funding modal content
+            this.fundingModalOpen = true;
+            this.renderFundingModalContent();
+            var modal = document.getElementById('funding-modal-content');
+            if (modal) {
+                container.innerHTML = '<div class="funding-fullpage">' + modal.innerHTML + '</div>';
+                // Re-bind events on the cloned content
+                this._bindFundingViewEvents(container);
+            }
+        } catch(e) {
+            container.innerHTML = '<div class="view-page-title">Funding Intel</div><p>Failed to load funding data.</p>';
+        }
+    },
+
+    _bindFundingViewEvents: function(container) {
+        var self = this;
+        container.querySelectorAll('.fm-nav-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                self.fundingModalSection = btn.dataset.section;
+                self.renderFundingView();
+            });
+        });
+        this._injectFundingReportButtons(container);
     },
 
     /* ═══════════════════════════════════════════════ */
