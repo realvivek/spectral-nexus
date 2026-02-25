@@ -1247,9 +1247,9 @@ body.light-mode ::-webkit-scrollbar-thumb:hover { background: #a8b0ba; }
     .layer-category-name { font-size: 0.56rem; margin-bottom: 3px; }
     .layer-toggle { padding: 3px 4px; gap: 6px; min-height: 24px; }
     .layer-toggle-label { font-size: 0.68rem; }
-    .layer-toggle-switch { width: 28px; height: 16px; }
-    .layer-toggle-switch .switch-thumb { width: 10px; height: 10px; top: 2px; left: 2px; }
-    .layer-toggle-switch input:checked ~ .switch-thumb { left: 14px; }
+    .layer-toggle-switch { width: 32px; min-width: 32px; height: 18px; }
+    .layer-toggle-switch .switch-thumb { width: 12px; height: 12px; top: 2px; left: 2px; }
+    .layer-toggle-switch input:checked ~ .switch-thumb { left: 16px; }
     .layer-legend-section { padding-top: 6px; margin-top: 6px; }
     .layer-legend-title { font-size: 0.56rem; }
     .layer-legend-labels { font-size: 0.52rem; }
@@ -1665,12 +1665,16 @@ body.light-mode ::-webkit-scrollbar-thumb:hover { background: #a8b0ba; }
     font-weight: 500;
     line-height: 1;
     flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .layer-toggle-switch {
     position: relative;
-    width: 32px;
-    height: 18px;
+    width: 36px;
+    min-width: 36px;
+    height: 20px;
     flex-shrink: 0;
 }
 
@@ -1684,9 +1688,9 @@ body.light-mode ::-webkit-scrollbar-thumb:hover { background: #a8b0ba; }
 .layer-toggle-switch .switch-track {
     position: absolute;
     inset: 0;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border-hover);
-    border-radius: 9px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 10px;
     transition: all 0.2s;
     cursor: pointer;
 }
@@ -1698,11 +1702,11 @@ body.light-mode ::-webkit-scrollbar-thumb:hover { background: #a8b0ba; }
 
 .layer-toggle-switch .switch-thumb {
     position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 12px;
-    height: 12px;
-    background: #fff;
+    top: 3px;
+    left: 3px;
+    width: 14px;
+    height: 14px;
+    background: rgba(255,255,255,0.85);
     border-radius: 50%;
     transition: all 0.2s;
     pointer-events: none;
@@ -1710,7 +1714,21 @@ body.light-mode ::-webkit-scrollbar-thumb:hover { background: #a8b0ba; }
 }
 
 .layer-toggle-switch input:checked ~ .switch-thumb {
-    left: 16px;
+    left: 19px;
+    background: #fff;
+}
+
+body.light-mode .layer-toggle-switch .switch-track {
+    background: rgba(0,0,0,0.12);
+    border-color: rgba(0,0,0,0.2);
+}
+
+body.light-mode .layer-toggle-switch .switch-thumb {
+    background: rgba(0,0,0,0.4);
+}
+
+body.light-mode .layer-toggle-switch input:checked ~ .switch-thumb {
+    background: #fff;
 }
 
 /* ═══════════════════════════════════════════════ */
