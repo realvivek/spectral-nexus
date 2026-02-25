@@ -118,6 +118,29 @@ SN.layers = {
                 dashArray: zone.incumbentExclusion ? '6,4' : null
             });
 
+            // Look up GAA data for this zone
+            var gaaData = SN.data.cbrsGAA && SN.data.cbrsGAA[zone.name] ? SN.data.cbrsGAA[zone.name] : null;
+
+            var gaaHtml = '';
+            if (gaaData) {
+                var gaaBadgeCls = gaaData.exclusionPct > 30 ? 'gaa-limited' :
+                                  gaaData.exclusionPct > 0 ? 'gaa-limited' : 'gaa-available';
+                var gaaBadgeText = gaaData.exclusionPct > 30 ? 'LIMITED' :
+                                   gaaData.exclusionPct > 0 ? 'PARTIAL' : 'OPEN';
+                gaaHtml = '<div style="margin:8px 0;padding:8px;background:var(--bg-elevated);border-radius:6px;border-left:3px solid #a78bfa">' +
+                    '<div style="font-size:0.62rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;font-weight:600;margin-bottom:4px">GAA Spectrum Intelligence</div>' +
+                    '<div class="layer-popup-grid">' +
+                        '<div class="layer-popup-stat"><span class="stat-val">' + gaaData.gaaChannels + '</span><span class="stat-lbl">GAA Channels</span></div>' +
+                        '<div class="layer-popup-stat"><span class="stat-val">' + gaaData.gaaMaxPower + ' dBm</span><span class="stat-lbl">Max EIRP</span></div>' +
+                        '<div class="layer-popup-stat"><span class="stat-val">' + gaaData.avgUtilization + '%</span><span class="stat-lbl">Avg Utilization</span></div>' +
+                        '<div class="layer-popup-stat"><span class="stat-val"><span class="gaa-badge ' + gaaBadgeCls + '">' + gaaBadgeText + '</span></span><span class="stat-lbl">GAA Status</span></div>' +
+                    '</div>' +
+                    '<div style="font-size:0.68rem;color:var(--text-secondary);margin-top:4px"><strong>SAS Providers:</strong> ' + gaaData.sasProviders.join(', ') + '</div>' +
+                    (gaaData.incumbentType !== 'None' ? '<div style="font-size:0.66rem;color:var(--accent-warm);margin-top:2px">Incumbent: ' + gaaData.incumbentType + ' (' + gaaData.exclusionPct + '% area excluded)</div>' : '') +
+                    '<div style="font-size:0.66rem;color:var(--text-muted);margin-top:2px;font-style:italic">' + gaaData.note + '</div>' +
+                '</div>';
+            }
+
             var popupHtml = '<div class="layer-popup cbrs-popup">' +
                 '<div class="layer-popup-header">' +
                     '<span class="layer-popup-icon" style="background:#a78bfa">5G</span>' +
@@ -134,6 +157,7 @@ SN.layers = {
                     '<div class="layer-popup-stat"><span class="stat-val">' + zone.campuses + '</span><span class="stat-lbl">Campuses</span></div>' +
                     '<div class="layer-popup-stat"><span class="stat-val">' + zone.ports + '</span><span class="stat-lbl">Ports</span></div>' +
                 '</div>' +
+                gaaHtml +
                 '<p class="layer-popup-note">' + zone.note + '</p>' +
                 '<button class="btn-add-to-report" onclick="SN.executive.addToReport(\'cbrs\', \'' + zone.name.replace(/'/g, "\\'") + '\')">+ Add to Sales Report</button>' +
             '</div>';
