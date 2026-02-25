@@ -114,6 +114,15 @@ SN.executive = {
             }
         } else if (type === 'competitor') {
             item.detail = 'Competitive Intelligence';
+        } else if (type === 'munifiber') {
+            item.detail = 'Municipal Fiber Network — Dark Fiber Available';
+            if (SN.data.municipalFiber) {
+                var net = SN.data.municipalFiber.find(function(n) { return n.name === name; });
+                if (net) {
+                    item.detail = net.city + ', ' + net.state + ' — ' + net.fiberMiles.toLocaleString() + ' miles, ' + net.maxSpeed;
+                    item.note = net.darkFiberAvailable ? 'Dark fiber available for leasing' : '';
+                }
+            }
         }
 
         this.reportItems.push(item);
@@ -216,8 +225,8 @@ SN.executive = {
             return;
         }
 
-        var typeLabels = { cbrs: 'CBRS Zone', cellular: 'Coverage Gap', grant: 'Fiber Grant', smartcity: 'Smart City', county: 'County', decisionmaker: 'Decision Maker', beadstate: 'BEAD State', competitor: 'Competitor' };
-        var typeColors = { cbrs: '#a78bfa', cellular: '#ef4444', grant: '#fbbf24', smartcity: '#38bdf8', county: '#06d6a0', decisionmaker: '#38bdf8', beadstate: '#06d6a0', competitor: '#f97316' };
+        var typeLabels = { cbrs: 'CBRS Zone', cellular: 'Coverage Gap', grant: 'Fiber Grant', smartcity: 'Smart City', county: 'County', decisionmaker: 'Decision Maker', beadstate: 'BEAD State', competitor: 'Competitor', munifiber: 'Municipal Fiber', rdof: 'RDOF Default' };
+        var typeColors = { cbrs: '#a78bfa', cellular: '#ef4444', grant: '#fbbf24', smartcity: '#38bdf8', county: '#06d6a0', decisionmaker: '#38bdf8', beadstate: '#06d6a0', competitor: '#f97316', munifiber: '#22d3ee', rdof: '#f97316' };
 
         var html = this.reportItems.map(function(item, i) {
             return '<div class="report-item">' +
