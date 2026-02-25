@@ -297,6 +297,58 @@ Create a table summarizing each check with Pass/Fail status. Example:
 
 - `https://realvivek.github.io/spectral-nexus/public/index.html`
 
+## CSS & UI Rules (Mandatory)
+
+These rules exist because of bugs that were actually shipped. Follow them exactly.
+
+### Scrollbar Rule
+- **Only ONE element per view should have `overflow-y: auto`**. The `.sn-view` parent provides scroll for all views.
+- **NEVER** add `overflow-y: auto` to both a parent and child container (creates nested scrollbars).
+- `.dashboard-home`, `.targets-page`, `.rolodex-page` must NOT have `overflow-y: auto` or `height: calc(...)` — the parent `.sn-view` handles scrolling.
+- `.insights-fullpage-wrap` and `.funding-fullpage-wrap` are exceptions: they have their own scroll because they replace `.sn-view`'s scroll.
+
+### Layout Rule: No Fixed-Width Sidebar Columns
+- **NEVER** use `grid-template-columns: 1fr 360px` or similar fixed right columns on the dashboard — they create an empty scrollable pane on most screen sizes.
+- Use `home-two-up` (1fr 1fr grid) for side-by-side pairs.
+- Use `home-full-width > .home-section` for full-width card sections.
+- Two-up grids collapse to single column at 900px breakpoint.
+
+### Light Mode Color Rules
+- **NEVER** use hardcoded `color: #fff` on badges, pills, or scores without a `body.light-mode` override. White text on white backgrounds is invisible.
+- **ALWAYS** use CSS variables (`var(--text-primary)`, `var(--accent)`, etc.) for colors that change between themes.
+- **Exception**: Badge/pill elements that have a colored background (e.g., `background: #06d6a0`) can use `color: #fff` because the background is opaque in both modes. Document these in the light-mode override block.
+- Scrollbar, selection, and hover shadow styles ALL need `body.light-mode` variants.
+
+### Card & Section Alignment Rules
+- Sections inside `home-two-up` use `align-items: stretch` — both columns are equal height.
+- Each `home-two-up > .home-section` gets card styling (background, border, padding, border-radius) automatically via CSS.
+- Full-width `home-full-width > .home-section` elements also get card styling.
+- **Consistent spacing**: All dashboard section `margin-bottom` is `20px`. All `gap` inside grids is `8px` for dense grids, `20px` for section-level grids.
+
+### View Centering Rules
+- `.insights-fullpage` must be `display: block` (not `display: flex`) with `max-width` + `margin: 0 auto` for centering.
+- `.funding-fullpage` uses `display: flex` because it has a sidebar + body layout.
+- Never apply `display: flex` to a view wrapper that should be centered — flex doesn't center children the same way.
+
+### Z-Index Stack (Reference)
+| Layer | Z-Index | Element |
+|-------|---------|---------|
+| Header | 100 | `.header` |
+| Map controls | 800 | Map overlays, disclaimer |
+| Methodology modal | 9000 | `.methodology-modal` |
+| County deep-dive | 9400 | `#county-dive-modal` |
+| Report panel, Funding modal | 9500 | `.report-panel`, `.funding-fullscreen-modal` |
+| Pursuit modal | 9600 | `#pursuit-modal` |
+| Onboarding | 9900 | `.onboarding-modal` |
+| Map tooltip | 9999 | `#map-tooltip` |
+| Toast notification | 10000 | `.exec-toast` |
+
+### Responsive Breakpoint Rules
+When adding a new CSS class that uses `grid-template-columns`, `flex-wrap`, or fixed widths:
+1. Add a `@media (max-width: 900px)` rule that collapses to single column
+2. Add a `@media (max-width: 600px)` rule for mobile spacing adjustments
+3. Test that the element is visible and usable at 375px viewport width
+
 ## Important: No Claude Session Links
 
 **NEVER include Claude session/prompt URLs (e.g., `https://claude.ai/code/session_...`) in any commits, PRs, documentation, comments, or code files.** These are internal development tool links and must not appear in the repository.
