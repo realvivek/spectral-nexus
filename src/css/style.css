@@ -376,6 +376,7 @@ body.light-mode ::-webkit-scrollbar-thumb:hover { background: #a8b0ba; }
 /* ── Right Panel ── */
 .right-panel {
     width: 520px;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     background: var(--bg-surface);
@@ -495,6 +496,7 @@ body.light-mode ::-webkit-scrollbar-thumb:hover { background: #a8b0ba; }
     display: none;
     height: 100%;
     overflow-y: auto;
+    overflow-x: auto;
     padding: 0;
 }
 
