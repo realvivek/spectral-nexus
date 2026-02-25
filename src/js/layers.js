@@ -17,14 +17,15 @@ SN.layers = {
         {
             name: 'Base Layers',
             layers: [
-                { id: 'counties',   label: 'County Markers',          icon: '●',  color: '#06d6a0', defaultOn: true }
+                { id: 'counties',   label: 'County Markers',          icon: '●',  color: '#06d6a0', defaultOn: false }
             ]
         },
         {
-            name: 'Spectrum & Coverage',
+            name: 'RF Coverage & Gaps',
             layers: [
-                { id: 'cbrs',       label: 'CBRS / Private 5G',       icon: '5G', color: '#a78bfa', defaultOn: false },
-                { id: 'cellular',   label: 'Cellular Dead Zones',      icon: 'RF', color: '#ef4444', defaultOn: false }
+                { id: 'cellular',   label: 'Cellular Dead Zones',      icon: 'RF', color: '#ef4444', defaultOn: false },
+                { id: 'fccserved',  label: 'FCC Underserved Areas',    icon: 'US', color: '#f59e0b', defaultOn: false },
+                { id: 'fixedwl',    label: 'Fixed Wireless Coverage',  icon: 'FW', color: '#6ee7b7', defaultOn: false }
             ]
         },
         {
@@ -41,9 +42,10 @@ SN.layers = {
             ]
         },
         {
-            name: 'Municipal Networks',
+            name: 'Municipal & Private Networks',
             layers: [
                 { id: 'munifiber',  label: 'Municipal Fiber Networks', icon: 'MF', color: '#22d3ee', defaultOn: false },
+                { id: 'cbrs',       label: 'CBRS Spectrum Zones',      icon: '5G', color: '#a78bfa', defaultOn: false },
                 { id: 'priv5g',     label: 'Private 5G Deployments',   icon: 'P5', color: '#c084fc', defaultOn: false }
             ]
         }
@@ -79,13 +81,15 @@ SN.layers = {
             }
         });
 
-        this.buildCBRSLayer();
         this.buildCellularLayer();
+        this.buildFCCUnderservedLayer();
+        this.buildFixedWirelessLayer();
 
         this.buildGrantsLayer();
         this.buildSmartCitiesLayer();
         this.buildRDOFLayer();
         this.buildMuniFiberLayer();
+        this.buildCBRSLayer();
         this.buildPrivate5GLayer();
         this.renderTogglePanel();
 
@@ -206,6 +210,98 @@ SN.layers = {
             '</div>';
 
             circle.bindPopup(popupHtml, { className: 'sn-popup', maxWidth: 300 });
+            circle.addTo(group);
+        });
+    },
+
+    /**
+     * Build FCC Underserved Areas layer.
+     * Shows regions with service between 25/3 and 100/20 Mbps — BEAD upgrade targets.
+     */
+    buildFCCUnderservedLayer() {
+        var group = this.groups.fccserved;
+        if (!SN.data.fccUnderserved) return;
+
+        SN.data.fccUnderserved.forEach(function(area) {
+            var circle = L.circle([area.lat, area.lng], {
+                radius: area.radius,
+                fillColor: '#f59e0b',
+                fillOpacity: 0.10,
+                color: '#f59e0b',
+                weight: 1.5,
+                opacity: 0.4,
+                dashArray: '4,3'
+            });
+
+            var speedBadge = area.maxDown <= 25 ? '<span style="color:#ef4444;font-weight:700">UNSERVED</span>' :
+                             area.maxDown <= 50 ? '<span style="color:#f97316;font-weight:700">UNDERSERVED</span>' :
+                             '<span style="color:#fbbf24;font-weight:700">UNDERSERVED</span>';
+
+            var popupHtml = '<div class="layer-popup">' +
+                '<div class="layer-popup-header">' +
+                    '<span class="layer-popup-icon" style="background:#f59e0b">US</span>' +
+                    '<div>' +
+                        '<h4>' + area.region + '</h4>' +
+                        '<span class="layer-popup-tier">' + area.primaryTech + ' · ' + speedBadge + '</span>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="layer-popup-grid">' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + area.bslCount.toLocaleString() + '</span><span class="stat-lbl">BSLs</span></div>' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + area.maxDown + '/' + area.maxUp + '</span><span class="stat-lbl">Max Mbps ↓/↑</span></div>' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + area.providers + '</span><span class="stat-lbl">Providers</span></div>' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + (area.beadEligible ? 'Yes' : 'No') + '</span><span class="stat-lbl">BEAD Eligible</span></div>' +
+                '</div>' +
+                '<p class="layer-popup-note">' + area.note + '</p>' +
+                '<p class="layer-popup-opp">BEAD upgrade target — fiber deployment opportunity.</p>' +
+            '</div>';
+
+            circle.bindPopup(popupHtml, { className: 'sn-popup', maxWidth: 320 });
+            circle.addTo(group);
+        });
+    },
+
+    /**
+     * Build Fixed Wireless Access coverage layer.
+     * Shows FWA providers (T-Mobile, Verizon, WISPs) — competitive landscape for fiber.
+     */
+    buildFixedWirelessLayer() {
+        var group = this.groups.fixedwl;
+        if (!SN.data.fixedWirelessCoverage) return;
+
+        SN.data.fixedWirelessCoverage.forEach(function(fwa) {
+            var color = fwa.operator === 'T-Mobile' ? '#e91e8e' :
+                        fwa.operator === 'Verizon' ? '#cd040b' :
+                        '#6ee7b7';
+            var fillOpacity = fwa.capacity === 'High' ? 0.12 : fwa.capacity === 'Medium' ? 0.08 : 0.05;
+
+            var circle = L.circle([fwa.lat, fwa.lng], {
+                radius: fwa.radius,
+                fillColor: color,
+                fillOpacity: fillOpacity,
+                color: color,
+                weight: 1,
+                opacity: 0.35
+            });
+
+            var popupHtml = '<div class="layer-popup">' +
+                '<div class="layer-popup-header">' +
+                    '<span class="layer-popup-icon" style="background:' + color + '">FW</span>' +
+                    '<div>' +
+                        '<h4>' + fwa.region + '</h4>' +
+                        '<span class="layer-popup-tier">' + fwa.operator + ' · ' + fwa.technology + '</span>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="layer-popup-grid">' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + fwa.maxDown + '/' + fwa.maxUp + '</span><span class="stat-lbl">Max Mbps ↓/↑</span></div>' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + (fwa.subscribers / 1000).toFixed(0) + 'K</span><span class="stat-lbl">Subscribers</span></div>' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + fwa.capacity + '</span><span class="stat-lbl">Capacity</span></div>' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + fwa.technology + '</span><span class="stat-lbl">Technology</span></div>' +
+                '</div>' +
+                '<p class="layer-popup-note">' + fwa.note + '</p>' +
+                '<p class="layer-popup-opp">FWA competitor — fiber offers superior reliability & speeds.</p>' +
+            '</div>';
+
+            circle.bindPopup(popupHtml, { className: 'sn-popup', maxWidth: 340 });
             circle.addTo(group);
         });
     },
