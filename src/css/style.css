@@ -1063,27 +1063,468 @@ body.light-mode ::-webkit-scrollbar-thumb:hover { background: #a8b0ba; }
 /* RESPONSIVE                                      */
 /* ═══════════════════════════════════════════════ */
 
+/* ── Tablet landscape / small desktop ── */
 @media (max-width: 1100px) {
     .right-panel { width: 420px; }
 }
 
+/* ── Tablet portrait / large phone landscape ── */
 @media (max-width: 900px) {
-    .main-layout { flex-direction: column; }
-    .map-panel { height: 45vh; border-right: none; border-bottom: 1px solid var(--border); }
-    .right-panel { width: 100%; flex: 1; }
-    #kpi-bar { flex-wrap: nowrap; overflow-x: auto; }
-    .kpi-card { min-width: 120px; }
+    body {
+        overflow: auto;
+        overflow-x: hidden;
+        height: auto;
+        min-height: 100vh;
+        min-height: 100dvh;
+    }
+
+    .main-layout {
+        flex-direction: column;
+        height: auto;
+        min-height: 50vh;
+        overflow: visible;
+    }
+
+    .map-panel {
+        height: 40vh;
+        min-height: 280px;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        flex: none;
+    }
+
+    .right-panel {
+        width: 100%;
+        flex: none;
+        height: auto;
+        min-height: 50vh;
+        overflow: visible;
+    }
+
+    .tab-content {
+        overflow: visible;
+    }
+
+    .tab-panel {
+        height: auto;
+        overflow: visible;
+    }
+
+    .table-wrapper {
+        height: auto;
+        max-height: 60vh;
+    }
+
+    #kpi-bar {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x proximity;
+        padding: 8px 12px;
+    }
+
+    .kpi-card {
+        min-width: 130px;
+        scroll-snap-align: start;
+        flex-shrink: 0;
+    }
+
+    /* Map controls — compact on tablet */
+    .map-controls {
+        max-width: 180px;
+    }
+
+    /* Funding subtabs — scrollable */
+    .funding-subtabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap;
+    }
+
+    .funding-subtab {
+        flex: none;
+        padding: 8px 10px;
+        white-space: nowrap;
+    }
+
+    /* Report panel — narrower */
+    .report-panel {
+        width: 340px;
+        right: -340px;
+    }
 }
 
+/* ── Phone ── */
 @media (max-width: 600px) {
-    .header { padding: 0 12px; }
+    :root {
+        --header-h: 48px;
+        --kpi-h: 72px;
+    }
+
+    html { font-size: 13px; }
+
+    /* ── Header ── */
+    .header {
+        padding: 0 10px;
+        gap: 6px;
+    }
+
+    .logo-mark { width: 26px; height: 26px; }
+    .logo-text { font-size: 1.05rem; }
     .logo-tag { display: none; }
+    .logo-area { gap: 8px; }
+
+    .header-controls {
+        gap: 6px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        flex-shrink: 1;
+        min-width: 0;
+    }
+
     .header-version { display: none; }
-    .header-btn { font-size: 0.65rem; padding: 3px 6px; }
-    .filter-bar { gap: 6px; padding: 6px 10px; }
-    .map-panel { height: 35vh; }
-    .kpi-card { min-width: 100px; padding: 8px 10px; }
+    .header-btn {
+        font-size: 0.62rem;
+        padding: 4px 8px;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .theme-toggle {
+        font-size: 0.72rem;
+        padding: 3px 8px;
+    }
+
+    /* ── KPI Bar ── */
+    #kpi-bar {
+        padding: 6px 10px;
+        gap: 6px;
+        min-height: var(--kpi-h);
+    }
+
+    .kpi-card {
+        min-width: 110px;
+        padding: 6px 10px;
+        gap: 6px;
+    }
+
+    .kpi-icon { font-size: 1rem; }
     .kpi-value { font-size: 1rem; }
+    .kpi-label { font-size: 0.62rem; }
+    .kpi-sub { font-size: 0.6rem; }
+    .kpi-action { font-size: 0.56rem; }
+
+    /* ── Main Layout ── */
+    .map-panel {
+        height: 35vh;
+        min-height: 240px;
+    }
+
+    /* ── Map Controls ── */
+    .map-controls {
+        top: 8px;
+        left: 8px;
+        max-width: 160px;
+        gap: 6px;
+    }
+
+    .map-control-group {
+        padding: 8px 10px;
+    }
+
+    .map-control-group label {
+        font-size: 0.64rem;
+        margin-bottom: 4px;
+    }
+
+    .map-control-group select {
+        font-size: 0.72rem;
+        padding: 4px 6px;
+    }
+
+    /* Layer toggles compact */
+    .layer-category { margin-bottom: 6px; padding-bottom: 4px; }
+    .layer-category-name { font-size: 0.56rem; margin-bottom: 3px; }
+    .layer-toggle { padding: 3px 4px; gap: 6px; font-size: 0.72rem; min-height: 24px; }
+    .layer-toggle-label { font-size: 0.68rem; }
+    .layer-toggle input[type="checkbox"] { width: 12px; height: 12px; min-width: 12px; }
+    .layer-toggle input[type="checkbox"]:checked::after { top: -1px; left: 2px; width: 4px; height: 6px; }
+    .layer-legend-section { padding-top: 6px; margin-top: 6px; }
+    .layer-legend-title { font-size: 0.56rem; }
+    .layer-legend-labels { font-size: 0.52rem; }
+    .layer-legend-hint { font-size: 0.5rem; }
+
+    /* ── Filter Bar ── */
+    .filter-bar {
+        gap: 6px;
+        padding: 6px 10px;
+        flex-wrap: wrap;
+    }
+
+    .filter-group {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .filter-group label {
+        font-size: 0.62rem;
+    }
+
+    .filter-group select,
+    .filter-group input[type="range"] {
+        font-size: 0.72rem;
+        min-width: 0;
+        width: 100%;
+    }
+
+    .filter-group input[type="range"] {
+        width: 80px;
+    }
+
+    #score-label {
+        font-size: 0.62rem;
+        min-width: 60px;
+    }
+
+    .btn-reset {
+        font-size: 0.64rem;
+        padding: 4px 8px;
+    }
+
+    /* ── Tabs ── */
+    .tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap;
+    }
+
+    .tab-btn {
+        flex: none;
+        padding: 8px 12px;
+        font-size: 0.7rem;
+        white-space: nowrap;
+    }
+
+    /* ── Tables ── */
+    .table-wrapper {
+        max-height: 50vh;
+    }
+
+    .sn-table { font-size: 0.72rem; }
+    .sn-table th { padding: 6px; font-size: 0.6rem; }
+    .sn-table td { padding: 4px 6px; }
+    .cell-county { max-width: 90px; }
+
+    .funding-table { font-size: 0.68rem; }
+    .funding-table th { padding: 6px 8px; font-size: 0.58rem; }
+    .funding-table td { padding: 4px 8px; }
+    .funding-reason { max-width: 140px; }
+
+    .bead-table { font-size: 0.68rem; }
+    .bead-table th { padding: 4px 6px; font-size: 0.58rem; }
+    .bead-table td { padding: 4px 6px; }
+
+    /* ── Funding Intel ── */
+    .funding-subtabs {
+        gap: 0;
+    }
+
+    .funding-subtab {
+        font-size: 0.6rem;
+        padding: 6px 8px;
+    }
+
+    .funding-hero {
+        padding: 14px;
+        margin-bottom: 12px;
+    }
+
+    .funding-hero h3 { font-size: 0.92rem; }
+    .funding-hero p { font-size: 0.72rem; }
+
+    .funding-hero-stats {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .funding-hero-stat {
+        flex: 1 1 calc(50% - 6px);
+        min-width: 0;
+        padding: 6px 8px;
+    }
+
+    .fhs-val { font-size: 0.88rem; }
+    .fhs-lbl { font-size: 0.54rem; }
+
+    .funding-section { padding: 10px; }
+    .funding-section h4 { font-size: 0.82rem; margin: 12px 0 6px; }
+
+    .funding-table-wrap { margin-bottom: 8px; }
+
+    .playbook-step { padding: 8px 10px; font-size: 0.72rem; gap: 8px; }
+    .step-num { width: 24px; height: 24px; min-width: 24px; font-size: 0.68rem; }
+
+    /* Grant detail panel */
+    .grant-detail-panel { padding: 10px; margin: 0 6px 8px; }
+    .grant-detail-grid { grid-template-columns: 1fr; gap: 6px; }
+    .grant-checklist-item { font-size: 0.68rem; }
+    .grant-expand-hint { font-size: 0.58rem; }
+
+    /* BEAD Timeline */
+    .bead-timeline-card { padding: 10px; }
+    .bead-timeline-state { font-size: 0.76rem; }
+    .bead-timeline-alloc { font-size: 0.7rem; }
+    .bead-timeline-bar { height: 18px; }
+    .bead-timeline-phase { font-size: 0.5rem; }
+    .bead-timeline-dates { grid-template-columns: 1fr 1fr; gap: 4px; }
+    .bead-date-item { padding: 3px 5px; }
+    .bead-date-label { font-size: 0.52rem; }
+    .bead-date-value { font-size: 0.62rem; }
+    .bead-timeline-director { font-size: 0.62rem; }
+    .bead-timeline-filter { gap: 4px; }
+    .bead-filter-btn { font-size: 0.62rem; padding: 3px 8px; }
+
+    /* Bid Tracker */
+    .bid-tracker-legend { gap: 8px; font-size: 0.6rem; padding: 6px 8px; flex-wrap: wrap; }
+    .bid-heat-indicator { font-size: 0.62rem; }
+
+    /* Competitive cards */
+    .competitive-card { padding: 8px 10px; }
+    .competitive-card-header strong { font-size: 0.76rem; }
+    .competitive-note { font-size: 0.68rem; }
+
+    /* ── Insights ── */
+    #insights-container { padding: 10px; gap: 10px; }
+    .insight-section { padding: 10px; }
+    .insight-title { font-size: 0.82rem; }
+    .insight-item { padding: 6px 8px; gap: 8px; }
+    .insight-name { font-size: 0.74rem; }
+    .insight-detail { font-size: 0.62rem; }
+    .insight-badge { font-size: 0.66rem; padding: 2px 6px; }
+
+    .insight-urgency-grid { grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .urgency-val { font-size: 1.1rem; }
+    .urgency-lbl { font-size: 0.58rem; }
+
+    /* ── Charts ── */
+    #panel-charts.active { padding: 10px; gap: 10px; }
+    .chart-box { padding: 8px; }
+    .chart-scatter-wrap { height: 180px; }
+    .chart-bar-wrap { height: 220px; }
+    .chart-hist-wrap { height: 150px; }
+
+    /* ── Report Panel ── */
+    .report-panel {
+        width: 100vw;
+        right: -100vw;
+    }
+
+    .report-panel.open { right: 0; }
+
+    .report-header { padding: 12px 14px; }
+    .report-header h2 { font-size: 0.92rem; }
+    .report-actions { padding: 8px 14px; gap: 4px; }
+    .report-action-btn { font-size: 0.62rem; padding: 5px 6px; }
+    .report-items { padding: 10px 14px; }
+    .report-item { padding: 8px 10px; }
+    .report-item-name { font-size: 0.76rem; }
+    .report-item-detail { font-size: 0.66rem; }
+
+    /* ── Onboarding Modal ── */
+    .onboarding-card {
+        width: 95vw;
+        max-height: 85vh;
+        border-radius: 12px;
+    }
+
+    .onb-step { padding: 20px 18px 16px; }
+    .onb-title { font-size: 1.1rem; }
+    .onb-body { font-size: 0.78rem; }
+    .onb-btn { padding: 8px 18px; font-size: 0.76rem; }
+
+    /* ── Methodology Modal ── */
+    .methodology-content {
+        max-width: 95vw;
+        max-height: 85vh;
+        padding: 20px;
+        border-radius: 12px;
+    }
+
+    .methodology-content h2 { font-size: 1.1rem; }
+    .methodology-content h3 { font-size: 0.88rem; }
+    .methodology-content p,
+    .methodology-content li { font-size: 0.76rem; }
+
+    /* ── Popups ── */
+    .sn-popup .leaflet-popup-content-wrapper {
+        max-width: 85vw;
+    }
+
+    .sn-popup .leaflet-popup-content {
+        font-size: 0.76rem;
+    }
+
+    .layer-popup { padding: 10px; }
+    .layer-popup h4 { font-size: 0.85rem; }
+    .layer-popup-grid { grid-template-columns: 1fr 1fr; gap: 4px; }
+    .layer-popup-stat { padding: 4px 6px; }
+    .stat-val { font-size: 0.72rem; }
+    .stat-lbl { font-size: 0.54rem; }
+    .layer-popup-note { font-size: 0.68rem; }
+    .layer-popup-desc { font-size: 0.7rem; }
+
+    .popup-detail { padding: 12px; }
+    .popup-score-num { font-size: 1.8rem; }
+    .popup-grid { gap: 6px; }
+    .popup-metric { padding: 5px 6px; }
+    .popup-metric-val { font-size: 0.76rem; }
+    .popup-metric-lbl { font-size: 0.56rem; }
+
+    /* ── Disclaimer ── */
+    .disclaimer {
+        font-size: 0.54rem;
+        right: 8px;
+        bottom: 6px;
+        padding: 2px 8px;
+    }
+
+    /* ── Scoring Factors ── */
+    .scoring-factor { padding: 10px; }
+    .scoring-factor-name { font-size: 0.76rem; }
+    .scoring-factor-weight { font-size: 0.66rem; }
+    .scoring-factor-desc { font-size: 0.68rem; }
+    .scoring-breakdown { padding: 10px; }
+    .breakdown-row { font-size: 0.7rem; }
+
+    /* ── Decision Makers ── */
+    .dm-contact-cell { max-width: 140px; }
+    .grants-contact-cell { max-width: 160px; }
+}
+
+/* ── Very small phones (< 380px) ── */
+@media (max-width: 380px) {
+    html { font-size: 12px; }
+
+    .header-controls { gap: 4px; }
+    .header-btn { padding: 3px 6px; font-size: 0.58rem; }
+    .theme-toggle { padding: 3px 6px; font-size: 0.66rem; }
+
+    .kpi-card { min-width: 95px; padding: 5px 8px; }
+    .kpi-value { font-size: 0.92rem; }
+
+    .map-panel { height: 30vh; min-height: 200px; }
+
+    .tab-btn { padding: 6px 8px; font-size: 0.64rem; }
+
+    .funding-subtab { font-size: 0.54rem; padding: 5px 6px; }
+
+    .funding-hero-stat { flex: 1 1 100%; }
+
+    .insight-urgency-grid { grid-template-columns: 1fr; }
+
+    .onboarding-card { width: 98vw; }
+    .onb-step { padding: 16px 14px 12px; }
+    .onb-title { font-size: 1rem; }
 }
 
 /* ═══════════════════════════════════════════════ */
