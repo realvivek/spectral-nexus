@@ -85,12 +85,40 @@ body.light-mode {
 }
 
 ::selection { background: rgba(6,214,160,0.3); color: #fff; }
+body.light-mode ::selection { background: rgba(5,155,119,0.25); color: #1a202c; }
+
+/* ── Light Mode: badge/pill white-text overrides ── */
+body.light-mode .score-badge,
+body.light-mode .insight-badge,
+body.light-mode .scoring-factor-weight,
+body.light-mode .report-item-type,
+body.light-mode .rolodex-card-type,
+body.light-mode .home-top-score,
+body.light-mode .home-comp-badge,
+body.light-mode .home-opp-badge,
+body.light-mode .home-opp-badge-5g,
+body.light-mode .gaa-badge { color: #fff; }
+
+body.light-mode .report-badge {
+    background: var(--accent);
+    color: #fff;
+}
+body.light-mode .kpi-card:hover {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+body.light-mode .home-stat:hover {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+body.light-mode .home-bid-table tbody tr:hover {
+    background: rgba(5,155,119,0.04);
+}
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
 ::-webkit-scrollbar-thumb { background: #2a3548; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #3a4a60; }
-body.light-mode ::-webkit-scrollbar-thumb { background: #c1c8d0; }
-body.light-mode ::-webkit-scrollbar-thumb:hover { background: #a8b0ba; }
+body.light-mode ::-webkit-scrollbar-track { background: var(--bg-primary); }
+body.light-mode ::-webkit-scrollbar-thumb { background: var(--border-hover); }
+body.light-mode ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
 /* ═══════════════════════════════════════════════ */
 /* HEADER                                          */
@@ -3694,6 +3722,9 @@ body.light-mode .header-btn-warm:hover {
     color: var(--text-secondary);
     background: rgba(255,255,255,0.04);
 }
+body.light-mode .header-nav-btn:hover {
+    background: rgba(0,0,0,0.04);
+}
 
 .header-nav-btn.nav-active {
     color: var(--accent);
@@ -3708,8 +3739,6 @@ body.light-mode .header-btn-warm:hover {
     max-width: 1300px;
     margin: 0 auto;
     padding: 24px 24px 80px;
-    overflow-y: auto;
-    height: calc(100vh - var(--header-h));
 }
 
 .home-hero {
@@ -3778,9 +3807,16 @@ body.light-mode .header-btn-warm:hover {
 .home-two-up {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    align-items: start;
-    margin-bottom: 8px;
+    gap: 20px;
+    align-items: stretch;
+    margin-bottom: 20px;
+}
+.home-two-up > .home-section {
+    margin-bottom: 0;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px;
 }
 
 /* Legacy two-column (unused in v0.8.0, kept for compat) */
@@ -3794,7 +3830,15 @@ body.light-mode .header-btn-warm:hover {
 .home-col-side { min-width: 0; }
 
 .home-section {
-    margin-bottom: 24px;
+    margin-bottom: 20px;
+}
+
+/* Full-width sections inside home-full-width get card treatment */
+.home-full-width > .home-section {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px;
 }
 
 .home-section-header {
@@ -3854,7 +3898,10 @@ body.light-mode .header-btn-warm:hover {
 
 /* Full-width home layout (no empty right panel) */
 .home-full-width { width: 100%; }
-.home-section-featured { margin-bottom: 28px; }
+.home-section-featured {
+    margin-bottom: 20px;
+    border-left: 3px solid var(--accent-purple) !important;
+}
 .home-card-grid-3 { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
 
 /* 5G opportunity badges */
@@ -4062,7 +4109,7 @@ body.light-mode .header-btn-warm:hover {
 /* ── BEAD Pipeline Cards ── */
 .home-bead-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 8px;
 }
 
@@ -4315,7 +4362,11 @@ body.light-mode .header-btn-warm:hover {
     padding: 24px;
 }
 
-.insights-fullpage,
+.insights-fullpage {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
 .funding-fullpage {
     max-width: 100%;
     margin: 0 auto;
@@ -5732,6 +5783,9 @@ body.light-mode .header-btn-warm:hover {
         grid-template-columns: 1fr;
     }
     .home-card-grid {
+        grid-template-columns: 1fr;
+    }
+    .home-card-grid-3 {
         grid-template-columns: 1fr;
     }
 
