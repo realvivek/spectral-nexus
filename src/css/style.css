@@ -1730,6 +1730,11 @@ body.light-mode .layer-toggle-switch .switch-track {
     border-color: rgba(0,0,0,0.28);
 }
 
+body.light-mode .layer-toggle-switch input:checked + .switch-track {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
 body.light-mode .layer-toggle-switch .switch-thumb {
     background: #fff;
     box-shadow: 0 1px 3px rgba(0,0,0,0.2);
