@@ -1247,9 +1247,9 @@ body.light-mode ::-webkit-scrollbar-thumb:hover { background: #a8b0ba; }
     .layer-category-name { font-size: 0.56rem; margin-bottom: 3px; }
     .layer-toggle { padding: 3px 4px; gap: 6px; min-height: 24px; }
     .layer-toggle-label { font-size: 0.68rem; }
-    .layer-toggle-switch { width: 32px; min-width: 32px; height: 18px; }
-    .layer-toggle-switch .switch-thumb { width: 12px; height: 12px; top: 2px; left: 2px; }
-    .layer-toggle-switch input:checked ~ .switch-thumb { left: 16px; }
+    .layer-toggle-switch { width: 36px; min-width: 36px; height: 20px; }
+    .layer-toggle-switch .switch-thumb { width: 14px; height: 14px; top: 3px; left: 3px; }
+    .layer-toggle-switch input:checked ~ .switch-thumb { left: 19px; }
     .layer-legend-section { padding-top: 6px; margin-top: 6px; }
     .layer-legend-title { font-size: 0.56rem; }
     .layer-legend-labels { font-size: 0.52rem; }
@@ -1643,7 +1643,7 @@ body.light-mode ::-webkit-scrollbar-thumb:hover { background: #a8b0ba; }
 }
 
 .layer-toggle {
-    display: flex;
+    display: flex !important;
     align-items: center;
     gap: 10px;
     padding: 4px 6px;
@@ -1652,6 +1652,10 @@ body.light-mode ::-webkit-scrollbar-thumb:hover { background: #a8b0ba; }
     transition: all 0.15s;
     border-radius: 4px;
     min-height: 30px;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    margin-bottom: 0 !important;
+    font-weight: 500 !important;
 }
 
 .layer-toggle:hover {
@@ -1672,9 +1676,9 @@ body.light-mode ::-webkit-scrollbar-thumb:hover { background: #a8b0ba; }
 
 .layer-toggle-switch {
     position: relative;
-    width: 36px;
-    min-width: 36px;
-    height: 20px;
+    width: 40px;
+    min-width: 40px;
+    height: 22px;
     flex-shrink: 0;
 }
 
@@ -1685,12 +1689,13 @@ body.light-mode ::-webkit-scrollbar-thumb:hover { background: #a8b0ba; }
     height: 0;
 }
 
+/* Dark mode (default): light track on dark panel */
 .layer-toggle-switch .switch-track {
     position: absolute;
     inset: 0;
-    background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.25);
-    border-radius: 10px;
+    background: rgba(255,255,255,0.20);
+    border: 1.5px solid rgba(255,255,255,0.35);
+    border-radius: 11px;
     transition: all 0.2s;
     cursor: pointer;
 }
@@ -1704,27 +1709,30 @@ body.light-mode ::-webkit-scrollbar-thumb:hover { background: #a8b0ba; }
     position: absolute;
     top: 3px;
     left: 3px;
-    width: 14px;
-    height: 14px;
-    background: rgba(255,255,255,0.85);
+    width: 16px;
+    height: 16px;
+    background: rgba(255,255,255,0.9);
     border-radius: 50%;
     transition: all 0.2s;
     pointer-events: none;
     z-index: 1;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
 .layer-toggle-switch input:checked ~ .switch-thumb {
-    left: 19px;
+    left: 21px;
     background: #fff;
 }
 
+/* Light mode: dark track on light panel */
 body.light-mode .layer-toggle-switch .switch-track {
-    background: rgba(0,0,0,0.12);
-    border-color: rgba(0,0,0,0.2);
+    background: rgba(0,0,0,0.18);
+    border-color: rgba(0,0,0,0.28);
 }
 
 body.light-mode .layer-toggle-switch .switch-thumb {
-    background: rgba(0,0,0,0.4);
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
 body.light-mode .layer-toggle-switch input:checked ~ .switch-thumb {
