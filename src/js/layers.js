@@ -514,8 +514,12 @@ SN.layers = {
             cat.layers.forEach(function(def) {
                 var checked = SN.layers.visible[def.id] ? 'checked' : '';
                 html += '<label class="layer-toggle" data-layer="' + def.id + '">' +
-                    '<input type="checkbox" ' + checked + ' data-layer-id="' + def.id + '">' +
                     '<span class="layer-toggle-label">' + def.label + '</span>' +
+                    '<span class="layer-toggle-switch">' +
+                        '<input type="checkbox" ' + checked + ' data-layer-id="' + def.id + '">' +
+                        '<span class="switch-track"></span>' +
+                        '<span class="switch-thumb"></span>' +
+                    '</span>' +
                 '</label>';
             });
             html += '</div>';
