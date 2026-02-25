@@ -3805,10 +3805,19 @@ body.light-mode .header-btn-warm:hover {
     margin-top: 3px;
 }
 
-/* Two-column layout */
+/* Two-up row layout — side-by-side sections within single-column flow */
+.home-two-up {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+    margin-bottom: 8px;
+}
+
+/* Legacy two-column (unused in v0.8.0, kept for compat) */
 .home-columns {
     display: grid;
-    grid-template-columns: 1fr 360px;
+    grid-template-columns: 1fr 1fr;
     gap: 24px;
     align-items: start;
 }
@@ -3957,6 +3966,15 @@ body.light-mode .header-btn-warm:hover {
     font-size: 0.74rem;
     color: var(--text-secondary);
     margin-bottom: 6px;
+}
+
+.home-opp-desc {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin-bottom: 8px;
+    padding: 6px 0;
+    border-top: 1px solid var(--border);
 }
 
 .home-opp-metrics {
@@ -5739,6 +5757,9 @@ body.light-mode .header-btn-warm:hover {
         grid-template-columns: repeat(3, 1fr);
     }
     .home-columns {
+        grid-template-columns: 1fr;
+    }
+    .home-two-up {
         grid-template-columns: 1fr;
     }
     .home-card-grid {
