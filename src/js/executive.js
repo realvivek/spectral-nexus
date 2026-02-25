@@ -94,10 +94,32 @@ SN.executive = {
                 item.detail = 'Score: ' + county.opportunityScore + ' · ' + (county.coverageGap * 100).toFixed(0) + '% gap · Est. ' + SN.kpi.fmt(county.fundingEstimate, 'currency');
                 item.note = county.population.toLocaleString() + ' pop · ' + (county.unservedPct * 100).toFixed(1) + '% unserved';
             }
+        } else if (type === 'decisionmaker') {
+            item.detail = 'Decision Maker Contact';
+            if (SN.data.stateDecisionMakers) {
+                Object.keys(SN.data.stateDecisionMakers).forEach(function(state) {
+                    var d = SN.data.stateDecisionMakers[state];
+                    if (d.name === name) {
+                        item.detail = d.title + ' · ' + d.agency + ' (' + state + ')';
+                        item.note = (d.email || '') + (d.phone ? ' · ' + d.phone : '');
+                    }
+                });
+            }
+        } else if (type === 'beadstate') {
+            var alloc = SN.config.beadAllocations[name] || 0;
+            var status = SN.config.beadStatus[name] || 'Unknown';
+            item.detail = 'BEAD ' + status + ' · ' + SN.kpi.fmt(alloc, 'currency') + ' allocation';
+            if (SN.data.stateDecisionMakers && SN.data.stateDecisionMakers[name]) {
+                item.note = 'Director: ' + SN.data.stateDecisionMakers[name].name;
+            }
+        } else if (type === 'competitor') {
+            item.detail = 'Competitive Intelligence';
         }
 
         this.reportItems.push(item);
         this.updateBadge();
+        // Update action bar if enhanced UI is loaded
+        try { if (SN.enhancedUI) SN.enhancedUI.updateActionBar(); } catch(e) {}
         // Re-render if panel is currently open
         var panel = document.getElementById('report-panel');
         if (panel && panel.classList.contains('open')) {
@@ -194,8 +216,8 @@ SN.executive = {
             return;
         }
 
-        var typeLabels = { cbrs: 'CBRS Zone', cellular: 'Coverage Gap', grant: 'Fiber Grant', smartcity: 'Smart City', county: 'County' };
-        var typeColors = { cbrs: '#a78bfa', cellular: '#ef4444', grant: '#fbbf24', smartcity: '#38bdf8', county: '#06d6a0' };
+        var typeLabels = { cbrs: 'CBRS Zone', cellular: 'Coverage Gap', grant: 'Fiber Grant', smartcity: 'Smart City', county: 'County', decisionmaker: 'Decision Maker', beadstate: 'BEAD State', competitor: 'Competitor' };
+        var typeColors = { cbrs: '#a78bfa', cellular: '#ef4444', grant: '#fbbf24', smartcity: '#38bdf8', county: '#06d6a0', decisionmaker: '#38bdf8', beadstate: '#06d6a0', competitor: '#f97316' };
 
         var html = this.reportItems.map(function(item, i) {
             return '<div class="report-item">' +
