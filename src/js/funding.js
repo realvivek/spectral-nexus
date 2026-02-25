@@ -47,6 +47,8 @@ SN.funding = {
         switch (this.activeSection) {
             case 'grants': return this.renderGrants();
             case 'awarded': return this.renderGrantsAwarded();
+            case 'beadtimeline': return this.renderBEADTimeline();
+            case 'bidtracker': return this.renderBidTracker();
             case 'decisionmakers': return this.renderDecisionMakers();
             case 'winners': return this.renderWinners();
             case 'competitive': return this.renderCompetitive();
@@ -59,6 +61,8 @@ SN.funding = {
         var tabs = [
             { id: 'grants', label: 'Grants Guide' },
             { id: 'awarded', label: 'Grants Awarded' },
+            { id: 'beadtimeline', label: 'BEAD Timeline' },
+            { id: 'bidtracker', label: 'Bid Tracker' },
             { id: 'decisionmakers', label: 'Decision Makers' },
             { id: 'winners', label: 'Past Winners' },
             { id: 'competitive', label: 'Competitive' },
@@ -120,29 +124,38 @@ SN.funding = {
         '</div>';
 
         html += '<h4>Federal Grant Programs</h4>' +
+            '<p class="grant-expand-hint">Click any program row to expand application details, eligibility, and step-by-step checklist.</p>' +
             '<div class="funding-table-wrap"><table class="funding-table" id="grants-table">' +
             '<thead><tr>' +
                 '<th>Program</th>' +
                 '<th>Funding</th>' +
                 '<th>Status</th>' +
                 '<th>Type</th>' +
-                '<th>Key Date</th>' +
+                '<th>Deadline</th>' +
                 '<th>Notes</th>' +
             '</tr></thead><tbody>';
 
-        grants.federal.forEach(function(g) {
+        grants.federal.forEach(function(g, idx) {
             var statusCls = g.statusCode === 'open' ? 'status-open' : g.statusCode === 'upcoming' ? 'status-upcoming' : g.statusCode === 'rolling' ? 'status-rolling' : 'status-closed';
-            html += '<tr>' +
+            html += '<tr class="grant-playbook-row" data-grant-idx="' + idx + '">' +
                 '<td><strong>' + g.name + '</strong><br><span class="funding-agency">' + g.agency + '</span></td>' +
                 '<td class="cell-num">' + SN.kpi.fmt(g.totalFunding || 0, 'currency') + '</td>' +
                 '<td><span class="funding-status ' + statusCls + '">' + g.statusCode.toUpperCase() + '</span></td>' +
                 '<td>' + g.type + '</td>' +
-                '<td class="funding-date">' + (g.keyDate || 'TBD') + '</td>' +
+                '<td class="funding-date">' + (g.applicationDeadline || g.keyDate || 'TBD') + '</td>' +
                 '<td class="funding-reason">' + (g.notes || '') + '</td>' +
             '</tr>';
+
+            // Expandable detail row (hidden by default)
+            html += '<tr class="grant-detail-row" id="grant-detail-' + idx + '" style="display:none"><td colspan="6">' +
+                SN.funding.renderGrantDetail(g) +
+            '</td></tr>';
         });
 
         html += '</tbody></table></div>';
+
+        // Bind grant row expansion
+        setTimeout(function() { SN.funding.bindGrantExpand(); }, 0);
 
         html += '<h4>State Programs</h4>' +
             '<div class="funding-table-wrap"><table class="funding-table">' +
@@ -675,6 +688,294 @@ SN.funding = {
         '</div>';
 
         html += '</div>';
+        return html;
+    },
+
+    /* ═══════════════════════════════════════════════
+     * GRANT APPLICATION PLAYBOOK (expandable detail)
+     * ═══════════════════════════════════════════════ */
+
+    renderGrantDetail(g) {
+        var html = '<div class="grant-detail-panel">';
+
+        html += '<div class="grant-detail-grid">';
+
+        // Deadline
+        html += '<div class="grant-detail-item"><div class="grant-detail-label">Application Deadline</div><div class="grant-detail-value">' + (g.applicationDeadline || 'TBD') + '</div></div>';
+
+        // Match requirement
+        html += '<div class="grant-detail-item"><div class="grant-detail-label">Match Requirement</div><div class="grant-detail-value">' + (g.match || 'N/A') + '</div></div>';
+
+        // Tech requirements
+        html += '<div class="grant-detail-item"><div class="grant-detail-label">Technical Requirements</div><div class="grant-detail-value">' + (g.techReq || 'N/A') + '</div></div>';
+
+        // Cost benchmarks
+        if (g.costBenchmarks) {
+            var benchStr = Object.keys(g.costBenchmarks).map(function(k) {
+                return '<strong>' + k + ':</strong> ' + g.costBenchmarks[k];
+            }).join(' · ');
+            html += '<div class="grant-detail-item"><div class="grant-detail-label">Cost Benchmarks</div><div class="grant-detail-value">' + benchStr + '</div></div>';
+        }
+
+        html += '</div>';
+
+        // Eligibility
+        if (g.eligibility && g.eligibility.length) {
+            html += '<div class="grant-detail-item full-width" style="margin-bottom:8px"><div class="grant-detail-label">Who Can Apply</div>';
+            html += '<div class="grant-checklist">';
+            g.eligibility.forEach(function(e) {
+                html += '<div class="grant-checklist-item"><span class="grant-check-icon">&#10003;</span> ' + e + '</div>';
+            });
+            html += '</div></div>';
+        }
+
+        // Required certifications
+        if (g.requiredCerts && g.requiredCerts.length) {
+            html += '<div class="grant-detail-item full-width" style="margin-bottom:8px"><div class="grant-detail-label">Required Certifications</div>';
+            html += '<div class="grant-checklist">';
+            g.requiredCerts.forEach(function(c) {
+                html += '<div class="grant-checklist-item"><span class="grant-check-icon">&#9675;</span> ' + c + '</div>';
+            });
+            html += '</div></div>';
+        }
+
+        // Application steps
+        if (g.applicationSteps && g.applicationSteps.length) {
+            html += '<div class="grant-detail-item full-width" style="margin-bottom:8px"><div class="grant-detail-label">Application Steps</div>';
+            html += '<div class="grant-checklist">';
+            g.applicationSteps.forEach(function(s, i) {
+                html += '<div class="grant-checklist-item"><span class="grant-check-icon" style="color:var(--accent-blue)">' + (i + 1) + '.</span> ' + s + '</div>';
+            });
+            html += '</div></div>';
+        }
+
+        // Stacking rules
+        if (g.canStackWith && g.canStackWith.length) {
+            html += '<div class="grant-detail-item full-width"><div class="grant-detail-label">Can Stack With</div>';
+            html += '<div class="grant-detail-value">' + g.canStackWith.join(' · ') + '</div></div>';
+        }
+
+        // Link
+        if (g.url) {
+            html += '<a class="grant-detail-link" href="' + g.url + '" target="_blank" rel="noopener">View Official Program Page &rarr;</a>';
+        }
+
+        html += '</div>';
+        return html;
+    },
+
+    bindGrantExpand() {
+        document.querySelectorAll('.grant-playbook-row').forEach(function(row) {
+            row.addEventListener('click', function() {
+                var idx = row.dataset.grantIdx;
+                var detail = document.getElementById('grant-detail-' + idx);
+                if (detail) {
+                    var isOpen = detail.style.display !== 'none';
+                    detail.style.display = isOpen ? 'none' : 'table-row';
+                    row.style.background = isOpen ? '' : 'rgba(6,214,160,0.04)';
+                }
+            });
+        });
+    },
+
+    /* ═══════════════════════════════════════════════
+     * BEAD SUBGRANT TIMELINE TRACKER
+     * ═══════════════════════════════════════════════ */
+
+    beadTimelineFilter: 'all',
+
+    renderBEADTimeline() {
+        var self = this;
+        var timeline = SN.data.beadTimeline;
+        if (!timeline) return '<div class="funding-section"><p>No BEAD timeline data available.</p></div>';
+
+        var states = Object.keys(timeline).sort();
+        var totalAlloc = 0;
+        var openCount = 0;
+        var awardedCount = 0;
+        states.forEach(function(st) {
+            totalAlloc += timeline[st].allocation || 0;
+            if (timeline[st].phase === 'subgrant_open') openCount++;
+            if (timeline[st].phase === 'awards_made' || timeline[st].phase === 'construction') awardedCount++;
+        });
+
+        var html = '<div class="funding-section">' +
+            '<div class="funding-hero">' +
+                '<h3>BEAD Subgrant Timeline Tracker</h3>' +
+                '<p>Track each state\'s BEAD subgrant process: from plan approval through construction deadlines. Know where to bid NOW vs. where to pre-register for upcoming rounds.</p>' +
+                '<div class="funding-hero-stats">' +
+                    '<div class="funding-hero-stat"><span class="fhs-val">' + states.length + '</span><span class="fhs-lbl">States Tracked</span></div>' +
+                    '<div class="funding-hero-stat"><span class="fhs-val">' + openCount + '</span><span class="fhs-lbl">Subgrants Open</span></div>' +
+                    '<div class="funding-hero-stat"><span class="fhs-val">' + awardedCount + '</span><span class="fhs-lbl">Awards Made</span></div>' +
+                    '<div class="funding-hero-stat"><span class="fhs-val">' + SN.kpi.fmt(totalAlloc, 'currency') + '</span><span class="fhs-lbl">Total Tracked</span></div>' +
+                '</div>' +
+            '</div>';
+
+        // Filter buttons
+        html += '<div class="bead-timeline-filter">' +
+            '<button class="bead-filter-btn' + (self.beadTimelineFilter === 'all' ? ' active' : '') + '" data-bead-filter="all">All States</button>' +
+            '<button class="bead-filter-btn' + (self.beadTimelineFilter === 'subgrant_open' ? ' active' : '') + '" data-bead-filter="subgrant_open">Bidding Open</button>' +
+            '<button class="bead-filter-btn' + (self.beadTimelineFilter === 'challenge_complete' ? ' active' : '') + '" data-bead-filter="challenge_complete">Opening Soon</button>' +
+            '<button class="bead-filter-btn' + (self.beadTimelineFilter === 'awards_made' ? ' active' : '') + '" data-bead-filter="awards_made">Awards Made</button>' +
+        '</div>';
+
+        var filteredStates = states.filter(function(st) {
+            if (self.beadTimelineFilter === 'all') return true;
+            return timeline[st].phase === self.beadTimelineFilter;
+        });
+
+        var phases = ['plan_approved', 'challenge_complete', 'subgrant_open', 'subgrant_closed', 'awards_made', 'construction'];
+        var phaseLabels = { plan_approved: 'Plan', challenge_complete: 'Challenge', subgrant_open: 'Bidding', subgrant_closed: 'Closed', awards_made: 'Awards', construction: 'Build' };
+
+        filteredStates.forEach(function(st) {
+            var t = timeline[st];
+            var director = SN.data.stateDecisionMakers && SN.data.stateDecisionMakers[st] ? SN.data.stateDecisionMakers[st] : null;
+            var currentPhaseIdx = phases.indexOf(t.phase);
+
+            html += '<div class="bead-timeline-card">';
+            html += '<div class="bead-timeline-header">' +
+                '<span class="bead-timeline-state">' + st + '</span>' +
+                '<span class="bead-timeline-alloc">' + SN.kpi.fmt(t.allocation, 'currency') + '</span>' +
+            '</div>';
+
+            // Phase progress bar
+            html += '<div class="bead-timeline-bar">';
+            phases.forEach(function(p, i) {
+                var cls = i < currentPhaseIdx ? 'bead-phase-complete' :
+                          i === currentPhaseIdx ? 'bead-phase-active' : 'bead-phase-upcoming';
+                var flex = i <= currentPhaseIdx ? 1 : 0.6;
+                html += '<div class="bead-timeline-phase ' + cls + '" style="flex:' + flex + '">' + phaseLabels[p] + '</div>';
+            });
+            html += '</div>';
+
+            // Key dates
+            html += '<div class="bead-timeline-dates">';
+            if (t.subgrantOpen) html += '<div class="bead-date-item"><span class="bead-date-label">Bidding Opens</span><span class="bead-date-value">' + t.subgrantOpen + '</span></div>';
+            if (t.subgrantClose) html += '<div class="bead-date-item"><span class="bead-date-label">Bidding Closes</span><span class="bead-date-value">' + t.subgrantClose + '</span></div>';
+            if (t.awardsExpected) html += '<div class="bead-date-item"><span class="bead-date-label">Awards Expected</span><span class="bead-date-value">' + t.awardsExpected + '</span></div>';
+            if (t.constructionStart) html += '<div class="bead-date-item"><span class="bead-date-label">Construction</span><span class="bead-date-value">' + t.constructionStart + '</span></div>';
+            if (t.subgrantApplicants) html += '<div class="bead-date-item"><span class="bead-date-label">Known Applicants</span><span class="bead-date-value">' + t.subgrantApplicants + '</span></div>';
+            html += '</div>';
+
+            // Notes
+            if (t.notes) html += '<p class="layer-popup-note" style="margin-top:6px">' + t.notes + '</p>';
+
+            // Director contact
+            if (director) {
+                html += '<div class="bead-timeline-director">' +
+                    '<strong>' + director.name + '</strong> · ' + director.title +
+                    (director.email ? ' · <span style="color:var(--accent-blue);font-family:var(--font-mono);font-size:0.66rem">' + director.email + '</span>' : '') +
+                '</div>';
+            }
+
+            html += '</div>';
+        });
+
+        html += '</div>';
+
+        // Bind filter buttons
+        setTimeout(function() {
+            document.querySelectorAll('.bead-filter-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    self.beadTimelineFilter = btn.dataset.beadFilter;
+                    self.render();
+                });
+            });
+        }, 0);
+
+        return html;
+    },
+
+    /* ═══════════════════════════════════════════════
+     * COMPETITIVE BID TRACKER
+     * ═══════════════════════════════════════════════ */
+
+    bidTrackerFilter: 'all',
+
+    renderBidTracker() {
+        var self = this;
+        var bids = SN.data.competitiveBids;
+        if (!bids || !bids.length) return '<div class="funding-section"><p>No competitive bid data available.</p></div>';
+
+        // Get unique states for filter
+        var statesSet = {};
+        bids.forEach(function(b) { statesSet[b.state] = true; });
+        var bidStates = Object.keys(statesSet).sort();
+
+        var filtered = self.bidTrackerFilter === 'all' ? bids : bids.filter(function(b) { return b.state === self.bidTrackerFilter; });
+
+        var lowCount = filtered.filter(function(b) { return b.competitionLevel === 'Low'; }).length;
+        var medCount = filtered.filter(function(b) { return b.competitionLevel === 'Medium'; }).length;
+        var highCount = filtered.filter(function(b) { return b.competitionLevel === 'High'; }).length;
+
+        var html = '<div class="funding-section">' +
+            '<div class="funding-hero">' +
+                '<h3>Competitive Bid Tracker</h3>' +
+                '<p>Who else is bidding? Track known BEAD subgrant applicants and competition levels by region. Low competition = higher win probability. Target regions where you can differentiate.</p>' +
+                '<div class="funding-hero-stats">' +
+                    '<div class="funding-hero-stat"><span class="fhs-val">' + filtered.length + '</span><span class="fhs-lbl">Regions Tracked</span></div>' +
+                    '<div class="funding-hero-stat"><span class="fhs-val" style="color:var(--accent)">' + lowCount + '</span><span class="fhs-lbl">Low Competition</span></div>' +
+                    '<div class="funding-hero-stat"><span class="fhs-val" style="color:var(--accent-warm)">' + medCount + '</span><span class="fhs-lbl">Medium</span></div>' +
+                    '<div class="funding-hero-stat"><span class="fhs-val" style="color:var(--accent-hot)">' + highCount + '</span><span class="fhs-lbl">High</span></div>' +
+                '</div>' +
+            '</div>';
+
+        // Legend
+        html += '<div class="bid-tracker-legend">' +
+            '<div class="bid-legend-item"><span class="bid-heat-dot bid-heat-low"></span> Low — 1-2 bidders</div>' +
+            '<div class="bid-legend-item"><span class="bid-heat-dot bid-heat-medium"></span> Medium — 3 bidders</div>' +
+            '<div class="bid-legend-item"><span class="bid-heat-dot bid-heat-high"></span> High — 4+ bidders</div>' +
+        '</div>';
+
+        // State filter
+        html += '<div class="bead-timeline-filter">' +
+            '<button class="bead-filter-btn' + (self.bidTrackerFilter === 'all' ? ' active' : '') + '" data-bid-filter="all">All States</button>';
+        bidStates.forEach(function(st) {
+            html += '<button class="bead-filter-btn' + (self.bidTrackerFilter === st ? ' active' : '') + '" data-bid-filter="' + st + '">' + st + '</button>';
+        });
+        html += '</div>';
+
+        // Bid table
+        html += '<div class="funding-table-wrap"><table class="funding-table" id="bid-tracker-table">' +
+            '<thead><tr>' +
+                '<th>State</th>' +
+                '<th>Region</th>' +
+                '<th>Program</th>' +
+                '<th>Competition</th>' +
+                '<th>Bidders</th>' +
+                '<th>Known Applicants</th>' +
+                '<th>Deadline</th>' +
+                '<th>Notes</th>' +
+            '</tr></thead><tbody>';
+
+        filtered.forEach(function(b) {
+            var heatCls = b.competitionLevel === 'Low' ? 'bid-heat-low' :
+                          b.competitionLevel === 'Medium' ? 'bid-heat-medium' : 'bid-heat-high';
+            html += '<tr>' +
+                '<td class="cell-state">' + b.state + '</td>' +
+                '<td><strong>' + b.region + '</strong></td>' +
+                '<td>' + b.program + '</td>' +
+                '<td><div class="bid-heat-indicator"><span class="bid-heat-dot ' + heatCls + '"></span> ' + b.competitionLevel + '</div></td>' +
+                '<td class="cell-num">' + b.bidCount + '</td>' +
+                '<td class="bid-applicants">' + b.knownBidders.join(', ') + '</td>' +
+                '<td class="funding-date">' + (b.deadline || 'TBD') + '</td>' +
+                '<td class="funding-reason">' + (b.notes || '') + '</td>' +
+            '</tr>';
+        });
+
+        html += '</tbody></table></div>';
+        html += '</div>';
+
+        // Bind filter
+        setTimeout(function() {
+            document.querySelectorAll('[data-bid-filter]').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    self.bidTrackerFilter = btn.dataset.bidFilter;
+                    self.render();
+                });
+            });
+        }, 0);
+
         return html;
     },
 
