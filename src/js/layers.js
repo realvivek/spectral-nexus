@@ -46,7 +46,8 @@ SN.layers = {
             layers: [
                 { id: 'munifiber',  label: 'Municipal Fiber Networks', icon: 'MF', color: '#22d3ee', defaultOn: false },
                 { id: 'cbrs',       label: 'CBRS Spectrum Zones',      icon: '5G', color: '#a78bfa', defaultOn: false },
-                { id: 'priv5g',     label: 'Private 5G Deployments',   icon: 'P5', color: '#c084fc', defaultOn: false }
+                { id: 'priv5g',     label: 'Private 5G Deployments',   icon: 'P5', color: '#c084fc', defaultOn: false },
+                { id: 'datacenters',label: 'Data Centers',             icon: 'DC', color: '#818cf8', defaultOn: false }
             ]
         }
     ],
@@ -91,6 +92,7 @@ SN.layers = {
         this.buildMuniFiberLayer();
         this.buildCBRSLayer();
         this.buildPrivate5GLayer();
+        this.buildDataCentersLayer();
         this.renderTogglePanel();
 
         // Sync integrated legend with current choropleth metric
@@ -582,6 +584,59 @@ SN.layers = {
             '</div>';
 
             marker.bindPopup(popupHtml, { className: 'sn-popup', maxWidth: 380, minWidth: 300 });
+            marker.addTo(group);
+        });
+    },
+
+    /**
+     * Build Data Center markers.
+     */
+    buildDataCentersLayer() {
+        var group = this.groups.datacenters;
+        if (!SN.data.dataCenters) return;
+
+        SN.data.dataCenters.forEach(function(dc) {
+            var color = dc.status === 'Under Construction' ? '#f59e0b' :
+                        dc.status === 'Expanding' ? '#818cf8' : '#6366f1';
+            var radius = Math.max(6, Math.min(14, Math.sqrt(dc.capacityMW) * 1.2));
+
+            var marker = L.circleMarker([dc.lat, dc.lng], {
+                radius: radius,
+                fillColor: color,
+                fillOpacity: 0.80,
+                color: '#fff',
+                weight: 2,
+                opacity: 0.9
+            });
+
+            var popupHtml = '<div class="layer-popup dc-popup">' +
+                '<div class="layer-popup-header">' +
+                    '<span class="layer-popup-icon" style="background:#818cf8">DC</span>' +
+                    '<div>' +
+                        '<h4>' + dc.name + '</h4>' +
+                        '<span class="layer-popup-tier">' + dc.operator + ' · ' + dc.status + '</span>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="layer-popup-grid">' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + dc.capacityMW + ' MW</span><span class="stat-lbl">Power Capacity</span></div>' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + (dc.totalSqFt / 1000).toFixed(0) + 'K sqft</span><span class="stat-lbl">Floor Space</span></div>' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + dc.type + '</span><span class="stat-lbl">Type</span></div>' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + (dc.cbrsOpportunity ? 'Yes' : 'No') + '</span><span class="stat-lbl">CBRS Opp.</span></div>' +
+                '</div>' +
+                '<div class="layer-popup-infra">' +
+                    '<strong>Fiber Providers:</strong> ' + dc.fiberProviders.join(', ') + '<br>' +
+                    (dc.integrators && dc.integrators.length ? '<strong>Integrators:</strong> ' + dc.integrators.join(', ') : '') +
+                '</div>' +
+                '<p class="layer-popup-note">' + dc.note + '</p>' +
+                (dc.contactName ? '<div style="margin:6px 0;padding:6px;background:var(--bg-elevated);border-radius:4px;font-size:0.7rem">' +
+                    '<strong>' + dc.contactName + '</strong>' +
+                    (dc.contactEmail ? '<br>' + dc.contactEmail : '') +
+                    (dc.contactPhone ? '<br>' + dc.contactPhone : '') +
+                '</div>' : '') +
+                '<button class="btn-add-to-report" onclick="SN.executive.addToReport(\'datacenter\', \'' + dc.name.replace(/'/g, "\\'") + '\')">+ Add to Sales Report</button>' +
+            '</div>';
+
+            marker.bindPopup(popupHtml, { className: 'sn-popup', maxWidth: 360, minWidth: 280 });
             marker.addTo(group);
         });
     },
