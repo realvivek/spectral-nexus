@@ -218,6 +218,17 @@ SN.enhancedUI = {
                         Object.keys(gaaData).forEach(function(k) {
                             if (k.toLowerCase().indexOf(city.name.toLowerCase()) !== -1) gaa = gaaData[k];
                         });
+                        // Build opportunity narrative
+                        var oppDesc = '';
+                        var beadSt = SN.config.beadStatus && SN.config.beadStatus[city.state];
+                        var beadAlloc = SN.config.beadAllocations && SN.config.beadAllocations[city.state];
+                        var beadInfo = beadSt && beadAlloc ? ' BEAD ' + beadSt.toLowerCase() + ' with ' + fmt(beadAlloc, 'currency') + ' state allocation.' : '';
+                        var darkFiberNote = hasDarkFiber ? ' Dark fiber is available via ' + hasDarkFiber.name + ' (' + hasDarkFiber.fiberMiles.toLocaleString() + ' miles).' : '';
+                        var gaaNote = gaa ? ' CBRS spectrum is only ' + gaa.avgUtilization + '% utilized — wide open for private wireless.' : '';
+                        var iotCount = (city.infrastructure && city.infrastructure.iotSensors) || 0;
+                        oppDesc = city.name + ' has an active ' + city.program + ' program (since ' + city.startYear + ') with ' + fmt(city.budget, 'currency') + ' budget and ' + iotCount.toLocaleString() + ' IoT sensors, but no private 5G network.' + darkFiberNote + gaaNote + beadInfo;
+                        if (dm) oppDesc += ' Contact ' + dm.name + ' (' + dm.title + ').';
+
                         return '<div class="home-opp-card home-opp-5g">' +
                             '<div class="home-opp-header">' +
                                 '<strong>' + city.name + ', ' + city.state + '</strong>' +
@@ -225,10 +236,11 @@ SN.enhancedUI = {
                             '</div>' +
                             '<div class="home-opp-body">' +
                                 '<span class="home-opp-name">' + city.program + '</span>' +
+                                '<p class="home-opp-desc">' + oppDesc + '</p>' +
                                 '<div class="home-opp-metrics">' +
                                     '<span>Pop: ' + (city.population / 1000).toFixed(0) + 'K</span>' +
                                     '<span>Budget: ' + fmt(city.budget, 'currency') + '</span>' +
-                                    '<span>IoT: ' + ((city.infrastructure && city.infrastructure.iotSensors) || 0).toLocaleString() + ' sensors</span>' +
+                                    '<span>IoT: ' + iotCount.toLocaleString() + ' sensors</span>' +
                                     (hasDarkFiber ? '<span class="home-tag-green">Dark Fiber Available</span>' : '') +
                                     (gaa ? '<span class="home-tag-blue">CBRS ' + gaa.avgUtilization + '% utilized</span>' : '') +
                                 '</div>' +
@@ -288,9 +300,7 @@ SN.enhancedUI = {
                 '</div>' +
             '</div>' +
 
-            // ── TWO-COLUMN GRID for remaining sections ──
-            '<div class="home-columns">' +
-            '<div class="home-col-main">' +
+            // ── Remaining sections: single-column flow, use grids within ──
 
             // ── ACTIVE BIDS & CONTRACTS ──
             '<div class="home-section">' +
@@ -319,6 +329,62 @@ SN.enhancedUI = {
                     '</table>' +
                 '</div>' +
             '</div>' +
+
+            // ── TWO-UP ROW: Top Opportunities + BEAD Pipeline ──
+            '<div class="home-two-up">' +
+
+            // ── TOP COUNTIES ──
+            '<div class="home-section">' +
+                '<h2 class="home-section-title">Top Opportunities</h2>' +
+                '<div class="home-top-list">' +
+                    topCounties.map(function(c, i) {
+                        var scoreColor = c.opportunityScore >= 70 ? '#06d6a0' :
+                                        c.opportunityScore >= 45 ? '#fbbf24' : '#ef4444';
+                        var name = c.county.replace(' County','').replace(' Parish','');
+                        return '<div class="home-top-item" data-fips="' + c.fips + '">' +
+                            '<span class="home-top-rank">' + (i + 1) + '</span>' +
+                            '<div class="home-top-info">' +
+                                '<span class="home-top-name">' + name + ', ' + c.state + '</span>' +
+                                '<span class="home-top-detail">' +
+                                    fmt(c.fundingEstimate, 'currency') + ' · ' +
+                                    (c.unservedPct * 100).toFixed(0) + '% unserved' +
+                                '</span>' +
+                            '</div>' +
+                            '<span class="home-top-score" style="background:' + scoreColor + '">' + c.opportunityScore + '</span>' +
+                            '<button class="home-rpt-btn-sm home-rpt-inline" data-rpt-type="county" data-rpt-name="' + c.fips + '">+</button>' +
+                        '</div>';
+                    }).join('') +
+                '</div>' +
+            '</div>' +
+
+            // ── BEAD PIPELINE ──
+            '<div class="home-section">' +
+                '<div class="home-section-header">' +
+                    '<h2 class="home-section-title">BEAD Pipeline — Open for Bids</h2>' +
+                    '<span class="home-section-badge home-badge-blue">' + openSubgrants.length + ' states</span>' +
+                '</div>' +
+                '<div class="home-bead-grid">' +
+                    openSubgrants.slice(0, 6).map(function(s) {
+                        return '<div class="home-bead-card">' +
+                            '<div class="home-bead-header">' +
+                                '<strong>' + s.stateCode + '</strong>' +
+                                '<span class="home-bead-alloc">' + fmt(s.allocation, 'currency') + '</span>' +
+                            '</div>' +
+                            '<div class="home-bead-details">' +
+                                '<span>Close: <strong>' + (s.subgrantClose || 'TBD') + '</strong></span>' +
+                                '<span>Applicants: <strong>' + (s.subgrantApplicants || '?') + '</strong></span>' +
+                            '</div>' +
+                            '<div class="home-bead-note">' + (s.notes || '') + '</div>' +
+                            '<button class="home-rpt-btn-sm" data-rpt-type="beadstate" data-rpt-name="' + s.stateCode + '">+ Report</button>' +
+                        '</div>';
+                    }).join('') +
+                '</div>' +
+            '</div>' +
+
+            '</div>' + // end home-two-up
+
+            // ── TWO-UP ROW: Dark Fiber + RDOF Recapture ──
+            '<div class="home-two-up">' +
 
             // ── DARK FIBER OPPORTUNITIES ──
             '<div class="home-section">' +
@@ -352,59 +418,6 @@ SN.enhancedUI = {
                 '</div>' +
             '</div>' +
 
-            // ── BEAD PIPELINE ──
-            '<div class="home-section">' +
-                '<div class="home-section-header">' +
-                    '<h2 class="home-section-title">BEAD Pipeline — Open for Bids</h2>' +
-                    '<span class="home-section-badge home-badge-blue">' + openSubgrants.length + ' states</span>' +
-                '</div>' +
-                '<div class="home-bead-grid">' +
-                    openSubgrants.slice(0, 6).map(function(s) {
-                        return '<div class="home-bead-card">' +
-                            '<div class="home-bead-header">' +
-                                '<strong>' + s.stateCode + '</strong>' +
-                                '<span class="home-bead-alloc">' + fmt(s.allocation, 'currency') + '</span>' +
-                            '</div>' +
-                            '<div class="home-bead-details">' +
-                                '<span>Close: <strong>' + (s.subgrantClose || 'TBD') + '</strong></span>' +
-                                '<span>Applicants: <strong>' + (s.subgrantApplicants || '?') + '</strong></span>' +
-                            '</div>' +
-                            '<div class="home-bead-note">' + (s.notes || '') + '</div>' +
-                            '<button class="home-rpt-btn-sm" data-rpt-type="beadstate" data-rpt-name="' + s.stateCode + '">+ Report</button>' +
-                        '</div>';
-                    }).join('') +
-                '</div>' +
-            '</div>' +
-
-            '</div>' + // end col-main
-
-            // RIGHT SIDEBAR
-            '<div class="home-col-side">' +
-
-            // ── TOP COUNTIES ──
-            '<div class="home-section">' +
-                '<h2 class="home-section-title">Top Opportunities</h2>' +
-                '<div class="home-top-list">' +
-                    topCounties.map(function(c, i) {
-                        var scoreColor = c.opportunityScore >= 70 ? '#06d6a0' :
-                                        c.opportunityScore >= 45 ? '#fbbf24' : '#ef4444';
-                        var name = c.county.replace(' County','').replace(' Parish','');
-                        return '<div class="home-top-item" data-fips="' + c.fips + '">' +
-                            '<span class="home-top-rank">' + (i + 1) + '</span>' +
-                            '<div class="home-top-info">' +
-                                '<span class="home-top-name">' + name + ', ' + c.state + '</span>' +
-                                '<span class="home-top-detail">' +
-                                    fmt(c.fundingEstimate, 'currency') + ' · ' +
-                                    (c.unservedPct * 100).toFixed(0) + '% unserved' +
-                                '</span>' +
-                            '</div>' +
-                            '<span class="home-top-score" style="background:' + scoreColor + '">' + c.opportunityScore + '</span>' +
-                            '<button class="home-rpt-btn-sm home-rpt-inline" data-rpt-type="county" data-rpt-name="' + c.fips + '">+</button>' +
-                        '</div>';
-                    }).join('') +
-                '</div>' +
-            '</div>' +
-
             // ── RDOF RECAPTURE ──
             '<div class="home-section">' +
                 '<div class="home-section-header">' +
@@ -423,6 +436,11 @@ SN.enhancedUI = {
                     }).join('') +
                 '</div>' +
             '</div>' +
+
+            '</div>' + // end home-two-up
+
+            // ── TWO-UP ROW: Open Grants + Quick Actions ──
+            '<div class="home-two-up">' +
 
             // ── OPEN GRANTS ──
             '<div class="home-section">' +
@@ -453,8 +471,7 @@ SN.enhancedUI = {
                 '</div>' +
             '</div>' +
 
-            '</div>' + // end col-side
-            '</div>' + // end home-columns
+            '</div>' + // end home-two-up
             '</div>'; // end home-full-width
 
         // Bind events
