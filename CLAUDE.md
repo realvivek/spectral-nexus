@@ -39,12 +39,13 @@ src/
     kpi.js            ← Actionable KPI bar with click-through navigation
     map.js            ← Leaflet map, county circles, popups with decision makers
     layers.js         ← All map layers: base, spectrum, infrastructure, programs
-    executive.js      ← CSV export, sales report panel
+    executive.js      ← CSV export, sales report panel (supports county, grant, decisionmaker, beadstate, competitor types)
     onboarding.js     ← Help modal with visual workflow tutorial
     table.js          ← Sortable county data table
     charts.js         ← Chart.js scatter/bar/histogram
     insights.js       ← Actionable insights: BEAD urgency, co-ops, tribal, RDOF
     funding.js        ← Funding Intel: grants, awarded table, decision makers, competitive
+    enhanced-ui.js    ← Enhanced UI: dashboard home, full-screen funding modal, pursuit builder, top targets, county deep-dive, action bar, filter lenses, rolodex
     app.js            ← Main controller, init chain, filters, tabs
 
 scripts/
@@ -68,7 +69,8 @@ Scripts in `public/index.html` load in this exact order — **order matters**:
 9. `scoring.js` — Reads `SN.data` and `SN.config`
 10. `kpi.js`, `map.js`, `layers.js`, `executive.js`, `onboarding.js`
 11. `table.js`, `charts.js`, `insights.js`, `funding.js`
-12. `app.js` — **Must be last** (orchestrates all modules)
+12. `enhanced-ui.js` — Reads `SN.data`, `SN.config`, `SN.executive`, `SN.funding`
+13. `app.js` — **Must be last** (orchestrates all modules)
 
 If you add a new module, it must be added to `index.html` in the correct position AND follow the `window.SN = window.SN || {}; SN.moduleName = { ... }` pattern.
 
@@ -112,6 +114,31 @@ The page starts invisible (`body { opacity: 0 }`) and becomes visible via:
 - **No build step** — push to the deployed branch and GitHub Pages serves it directly
 
 ## Key Patterns
+
+### Multi-Page View System (v0.7.0)
+
+The app uses a hash-based view system managed by `SN.enhancedUI`. Views are:
+- `#dashboard` (default) — Intelligence Brief landing page
+- `#main` — Map + data panels (original single-page layout)
+- `#targets` — Dedicated top targets page
+- `#rolodex` — Decision Maker contact directory
+
+Each view is a `.sn-view` div that gets `.sn-view-active` when selected. The `#main` view contains the original layout (KPI bar, map, right panel with tabs). Header navigation buttons have `data-nav` attributes.
+
+**Important**: When switching to/from `#main`, call `SN.map.leafletMap.invalidateSize()` after a short delay so Leaflet recalculates its container size.
+
+### Modal System (v0.7.0)
+
+Three modals overlay the entire viewport:
+- **Funding Fullscreen Modal** (`#funding-fullscreen-modal`) — Full-screen with sidebar nav, z-index 9500
+- **County Deep-Dive Modal** (`#county-dive-modal`) — 720px centered modal, z-index 9400
+- **Pursuit Builder Modal** (`#pursuit-modal`) — 680px centered wizard, z-index 9600
+
+All modals use the `.open` class to show, and are opened/closed via `SN.enhancedUI` methods.
+
+### Smart Filter Lenses (v0.7.0)
+
+`SN.state.filters.lensFilter` can hold a function `(county) => boolean`. When set, `getFilteredData()` applies it alongside state/score filters. Lenses are defined in `SN.enhancedUI.lenses[]`. Manual filter changes clear the active lens.
 
 ### Adding a New Module
 1. Create `src/js/my-module.js`

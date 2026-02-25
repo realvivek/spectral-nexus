@@ -7,7 +7,7 @@ window.SN = window.SN || {};
 
 SN.state = {
     selectedCounty: null,
-    filters: { state: 'all', minScore: 0 },
+    filters: { state: 'all', minScore: 0, lensFilter: null },
     choroplethMetric: 'opportunityScore',
     activeTab: 'table',
     theme: 'dark'
@@ -44,6 +44,10 @@ SN.app = {
         try { SN.insights.render(all); } catch(e) { console.error('Insights render failed:', e); }
         try { SN.insights.update(all); } catch(e) { console.error('Insights update failed:', e); }
         try { SN.funding.init(); } catch(e) { console.error('Funding init failed:', e); }
+
+        // Enhanced UI — new features (dashboard, modals, rolodex, etc.)
+        try { SN.enhancedUI.init(); } catch(e) { console.error('EnhancedUI init failed:', e); }
+
         this.bindEvents();
         this.switchTab('table');
         console.log('%c⟡ Spectral Nexus v' + SN.config.version + ' — ' + SN.data.counties.length + ' counties + ' + (SN.data.smartCities ? SN.data.smartCities.length : 0) + ' smart cities loaded', 'color:#06d6a0;font-weight:bold;font-size:14px');
@@ -65,10 +69,24 @@ SN.app = {
         var self = this;
 
         var stateSelect = document.getElementById('filter-state');
-        if (stateSelect) stateSelect.addEventListener('change', function() { self.onFilterChange(); });
+        if (stateSelect) stateSelect.addEventListener('change', function() {
+            // Clear lens when user manually changes filters
+            if (SN.enhancedUI && SN.enhancedUI.activeLens) {
+                SN.enhancedUI.activeLens = null;
+                SN.state.filters.lensFilter = null;
+                SN.enhancedUI.initFilterLenses();
+            }
+            self.onFilterChange();
+        });
 
         var scoreSlider = document.getElementById('filter-score');
         if (scoreSlider) scoreSlider.addEventListener('input', function(e) {
+            // Clear lens when user manually changes filters
+            if (SN.enhancedUI && SN.enhancedUI.activeLens) {
+                SN.enhancedUI.activeLens = null;
+                SN.state.filters.lensFilter = null;
+                SN.enhancedUI.initFilterLenses();
+            }
             self.updateScoreLabel(e.target.value);
             self.onFilterChange();
         });
@@ -110,7 +128,7 @@ SN.app = {
         SN.state.filters.minScore = scoreVal;
         var filtered = this.getFilteredData();
         SN.kpi.render(filtered);
-        SN.map.update(filtered);
+        try { SN.map.update(filtered); } catch(e) {}
         if (SN.state.activeTab === 'table') SN.table.update(filtered);
         if (SN.state.activeTab === 'charts') SN.charts.update(filtered);
         if (SN.state.activeTab === 'insights') SN.insights.update(filtered);
@@ -122,6 +140,10 @@ SN.app = {
         return SN.data.counties.filter(function(c) {
             if (f.state !== 'all' && c.state !== f.state) return false;
             if (c.opportunityScore < f.minScore) return false;
+            // Smart filter lens
+            if (f.lensFilter && typeof f.lensFilter === 'function') {
+                if (!f.lensFilter(c)) return false;
+            }
             return true;
         });
     },
@@ -149,11 +171,13 @@ SN.app = {
     resetFilters() {
         document.getElementById('filter-state').value = 'all';
         document.getElementById('filter-score').value = 0;
-        SN.state.filters = { state: 'all', minScore: 0 };
+        SN.state.filters = { state: 'all', minScore: 0, lensFilter: null };
         this.updateScoreLabel(0);
+        // Clear lens
+        try { if (SN.enhancedUI) { SN.enhancedUI.activeLens = null; SN.enhancedUI.initFilterLenses(); } } catch(e) {}
         this.onFilterChange();
-        SN.map.reset();
-        SN.map.updateChoropleth('opportunityScore');
+        try { SN.map.reset(); } catch(e) {}
+        try { SN.map.updateChoropleth('opportunityScore'); } catch(e) {}
         var metricSelect = document.getElementById('metric-select');
         if (metricSelect) metricSelect.value = 'opportunityScore';
     },
