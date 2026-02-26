@@ -166,6 +166,86 @@ SN.enhancedUI = {
         var totalFunding = 0;
         try { totalFunding = Object.values(SN.config.beadAllocations).reduce(function(s, v) { return s + v; }, 0); } catch(e) {}
 
+        // Weekly brief data
+        var brief = SN.data.weeklyBrief || null;
+        var briefBullets = brief && brief.bullets ? brief.bullets : [];
+        var briefDate = brief && brief.weekOf ? brief.weekOf : '';
+        var briefIconMap = {
+            'bead': { icon: 'B', color: '#06d6a0' },
+            '5g': { icon: '5G', color: '#a78bfa' },
+            'dc': { icon: 'DC', color: '#818cf8' },
+            'fiber': { icon: 'FB', color: '#22d3ee' },
+            'deal': { icon: '$', color: '#fbbf24' },
+            'alert': { icon: '!', color: '#ef4444' },
+            'rdof': { icon: 'RD', color: '#f97316' },
+            'policy': { icon: 'P', color: '#64748b' }
+        };
+        var briefTagMap = {
+            'urgent': { label: 'URGENT', color: '#ef4444' },
+            'new': { label: 'NEW', color: '#06d6a0' },
+            'update': { label: 'UPDATE', color: '#38bdf8' },
+            'opportunity': { label: 'OPPORTUNITY', color: '#a78bfa' }
+        };
+
+        // BEAD alert feed — upcoming deadlines within 90 days
+        var today = new Date();
+        var beadAlerts = [];
+        beadStates.forEach(function(s) {
+            if (!s.subgrantClose || s.subgrantClose.indexOf('Q') !== -1) return;
+            var close = new Date(s.subgrantClose + '-28');
+            var daysUntil = Math.ceil((close - today) / 86400000);
+            if (daysUntil >= -7 && daysUntil <= 90) {
+                s._daysUntil = daysUntil;
+                s._urgency = daysUntil <= 14 ? 'critical' : daysUntil <= 30 ? 'high' : daysUntil <= 60 ? 'medium' : 'low';
+                beadAlerts.push(s);
+            }
+        });
+        beadAlerts.sort(function(a, b) { return a._daysUntil - b._daysUntil; });
+
+        // Competitor landscape summary
+        var competitors = SN.data.competitorProfiles || [];
+        var highThreat = competitors.filter(function(c) { return c.threat === 'high'; });
+        var totalActiveBids = competitors.reduce(function(s, c) { return s + (c.beadActivity ? c.beadActivity.activeBids : 0); }, 0);
+        var rdofDefaulters = SN.data.rdofDefaults || [];
+        var rdofTotalDefault = rdofDefaulters.reduce(function(s, d) { return s + (d.award || 0); }, 0);
+
+        // Partnership suggestions — match counties with co-ops, muni fiber, smart cities
+        var partnerSuggestions = [];
+        var coops = SN.data.electricCoops || [];
+        var stateDirectors = SN.data.stateDecisionMakers || {};
+        // Find high-opp counties that have co-ops or muni fiber nearby
+        topCounties.slice(0, 12).forEach(function(county) {
+            var st = county.state;
+            var partners = [];
+            // Check for co-ops in the state
+            coops.forEach(function(coop) {
+                if (coop.state === st && coop.fiberStatus) {
+                    partners.push({ name: coop.name, type: 'Electric Co-op', detail: coop.fiberStatus + (coop.milesPlanned ? ' · ' + coop.milesPlanned + ' mi planned' : '') });
+                }
+            });
+            // Check for muni fiber in the state
+            muniNetworks.forEach(function(net) {
+                if (net.state === st && net.darkFiberAvailable) {
+                    partners.push({ name: net.name, type: 'Municipal Fiber', detail: net.fiberMiles.toLocaleString() + ' mi · Dark fiber available' });
+                }
+            });
+            // Check for state director
+            var dir = stateDirectors[st];
+            if (dir) {
+                partners.push({ name: dir.name, type: 'State Director', detail: dir.title + (dir.agency ? ' · ' + dir.agency : '') });
+            }
+            if (partners.length > 0) {
+                partnerSuggestions.push({
+                    county: county.county.replace(' County','').replace(' Parish',''),
+                    state: county.state,
+                    score: county.opportunityScore,
+                    funding: county.fundingEstimate,
+                    partners: partners.slice(0, 3)
+                });
+            }
+        });
+        partnerSuggestions = partnerSuggestions.slice(0, 4);
+
         container.innerHTML =
             // ═══ HERO ═══
             '<div class="home-hero">' +
@@ -201,6 +281,53 @@ SN.enhancedUI = {
 
             // ═══ SINGLE-COLUMN LAYOUT (no empty right panel) ═══
             '<div class="home-full-width">' +
+
+            // ── SECTION 0: WEEKLY INTELLIGENCE BRIEF ──
+            (briefBullets.length > 0 ?
+            '<div class="home-section home-section-brief">' +
+                '<div class="home-section-header">' +
+                    '<h2 class="home-section-title">This Week\'s Intelligence Brief</h2>' +
+                    '<span class="home-section-badge home-badge-green">Week of ' + briefDate + '</span>' +
+                '</div>' +
+                '<div class="home-brief-list">' +
+                    briefBullets.map(function(b) {
+                        var ic = briefIconMap[b.icon] || { icon: '?', color: '#64748b' };
+                        var tg = b.tag && briefTagMap[b.tag] ? briefTagMap[b.tag] : null;
+                        return '<div class="home-brief-item">' +
+                            '<span class="home-brief-icon" style="background:' + ic.color + '">' + ic.icon + '</span>' +
+                            '<div class="home-brief-text">' + b.text + '</div>' +
+                            (tg ? '<span class="home-brief-tag" style="background:' + tg.color + '">' + tg.label + '</span>' : '') +
+                        '</div>';
+                    }).join('') +
+                '</div>' +
+            '</div>' : '') +
+
+            // ── SECTION 0b: BEAD DEADLINE ALERTS ──
+            (beadAlerts.length > 0 ?
+            '<div class="home-section home-section-alerts">' +
+                '<div class="home-section-header">' +
+                    '<h2 class="home-section-title">BEAD Deadline Tracker</h2>' +
+                    '<span class="home-section-badge home-badge-red">' + beadAlerts.filter(function(a) { return a._urgency === 'critical' || a._urgency === 'high'; }).length + ' urgent</span>' +
+                '</div>' +
+                '<div class="home-alert-grid">' +
+                    beadAlerts.slice(0, 8).map(function(s) {
+                        var urgClass = 'home-alert-' + s._urgency;
+                        var daysText = s._daysUntil <= 0 ? 'Closing now' : s._daysUntil + ' days left';
+                        return '<div class="home-alert-card ' + urgClass + '">' +
+                            '<div class="home-alert-header">' +
+                                '<strong>' + s.stateCode + '</strong>' +
+                                '<span class="home-alert-days">' + daysText + '</span>' +
+                            '</div>' +
+                            '<div class="home-alert-details">' +
+                                '<span>Close: <strong>' + s.subgrantClose + '</strong></span>' +
+                                '<span>' + fmt(s.allocation, 'currency') + '</span>' +
+                                '<span>' + (s.subgrantApplicants || '?') + ' applicants</span>' +
+                            '</div>' +
+                            '<div class="home-alert-note">' + (s.notes || '') + '</div>' +
+                        '</div>';
+                    }).join('') +
+                '</div>' +
+            '</div>' : '') +
 
             // ── SECTION 1: PRIVATE 5G & SMART CITY OPPORTUNITIES (TOP) ──
             '<div class="home-section home-section-featured">' +
@@ -299,6 +426,36 @@ SN.enhancedUI = {
                     '</table>' +
                 '</div>' +
             '</div>' +
+
+            // ── SECTION 3: COMPETITIVE LANDSCAPE ──
+            (competitors.length > 0 ?
+            '<div class="home-section">' +
+                '<div class="home-section-header">' +
+                    '<h2 class="home-section-title">Competitive Landscape</h2>' +
+                    '<span class="home-section-badge home-badge-amber">' + highThreat.length + ' high-threat competitors</span>' +
+                '</div>' +
+                '<p class="home-section-desc">' + competitors.length + ' competitors tracked across ' + totalActiveBids + ' active BEAD bids. RDOF defaults freed <strong>' + fmt(rdofTotalDefault, 'currency') + '</strong> in recaptured territory.</p>' +
+                '<div class="home-bid-table-wrap">' +
+                    '<table class="home-bid-table">' +
+                        '<thead><tr><th>Competitor</th><th>Type</th><th>States</th><th>Active Bids</th><th>RDOF Status</th><th>Threat</th><th></th></tr></thead>' +
+                        '<tbody>' +
+                        competitors.filter(function(c) { return c.threat === 'high' || c.beadActivity.activeBids >= 3; }).slice(0, 8).map(function(c) {
+                            var threatClass = c.threat === 'high' ? 'home-comp-high' : c.threat === 'medium' ? 'home-comp-med' : 'home-comp-low';
+                            return '<tr>' +
+                                '<td><strong>' + c.name + '</strong></td>' +
+                                '<td>' + c.type + '</td>' +
+                                '<td>' + c.states.slice(0, 5).join(', ') + (c.states.length > 5 ? '...' : '') + '</td>' +
+                                '<td>' + c.beadActivity.activeBids + '</td>' +
+                                '<td>' + c.rdofStatus + '</td>' +
+                                '<td><span class="home-comp-badge ' + threatClass + '">' + c.threat.toUpperCase() + '</span></td>' +
+                                '<td><button class="home-rpt-btn-sm" data-rpt-type="competitor" data-rpt-name="' + c.name.replace(/"/g, '&quot;') + '">+ Report</button></td>' +
+                            '</tr>';
+                        }).join('') +
+                        '</tbody>' +
+                    '</table>' +
+                '</div>' +
+                '<button class="home-link-btn home-link-full" data-nav="funding">View Full Competitive Analysis</button>' +
+            '</div>' : '') +
 
             // ── Remaining sections: single-column flow, use grids within ──
 
@@ -438,6 +595,43 @@ SN.enhancedUI = {
             '</div>' +
 
             '</div>' + // end home-two-up
+
+            // ── PARTNERSHIP SUGGESTIONS ──
+            (partnerSuggestions.length > 0 ?
+            '<div class="home-section">' +
+                '<div class="home-section-header">' +
+                    '<h2 class="home-section-title">Partnership Opportunities</h2>' +
+                    '<span class="home-section-badge home-badge-teal">' + partnerSuggestions.length + ' matches</span>' +
+                '</div>' +
+                '<p class="home-section-desc">High-opportunity counties matched with potential partners — co-ops, municipal fiber operators, and state directors.</p>' +
+                '<div class="home-card-grid home-card-grid-partner">' +
+                    partnerSuggestions.map(function(ps) {
+                        var scoreColor = ps.score >= 70 ? '#06d6a0' : ps.score >= 45 ? '#fbbf24' : '#ef4444';
+                        return '<div class="home-opp-card home-opp-partner">' +
+                            '<div class="home-opp-header">' +
+                                '<strong>' + ps.county + ', ' + ps.state + '</strong>' +
+                                '<span class="home-top-score" style="background:' + scoreColor + '">' + ps.score + '</span>' +
+                            '</div>' +
+                            '<div class="home-opp-body">' +
+                                '<span style="font-size:0.72rem;color:var(--text-muted)">Funding: ' + fmt(ps.funding, 'currency') + '</span>' +
+                                '<div class="home-partner-list">' +
+                                    ps.partners.map(function(p) {
+                                        var typeColor = p.type === 'Electric Co-op' ? '#06d6a0' : p.type === 'Municipal Fiber' ? '#22d3ee' : '#fbbf24';
+                                        return '<div class="home-partner-item">' +
+                                            '<span class="home-partner-type" style="border-color:' + typeColor + '">' + p.type + '</span>' +
+                                            '<strong>' + p.name + '</strong>' +
+                                            '<span class="home-partner-detail">' + p.detail + '</span>' +
+                                        '</div>';
+                                    }).join('') +
+                                '</div>' +
+                            '</div>' +
+                            '<div class="home-opp-actions">' +
+                                '<button class="home-rpt-btn" data-rpt-type="county" data-rpt-name="' + (function() { var match = counties.find(function(c) { return c.state === ps.state && c.county.indexOf(ps.county) !== -1; }); return match ? match.fips : ps.county; })() + '">+ Sales Report</button>' +
+                            '</div>' +
+                        '</div>';
+                    }).join('') +
+                '</div>' +
+            '</div>' : '') +
 
             // ── TWO-UP ROW: Open Grants + Quick Actions ──
             '<div class="home-two-up">' +
