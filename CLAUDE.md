@@ -35,6 +35,9 @@ src/
     data-decision-makers.js ← State broadband directors, co-ops, tribal contacts
     data-municipal-fiber.js ← Municipal fiber networks, dark fiber, private 5G deployments
     data-bead-timeline.js ← BEAD per-state timelines, CBRS GAA data, competitive bids
+    data-datacenters.js ← Data center locations with CBRS opportunity flags
+    data-competitors.js ← Competitor profiles, state presence, BEAD activity
+    data-weekly-brief.js ← Weekly curated intelligence brief (manually updated)
     scoring.js        ← Opportunity score computation (0-100)
     kpi.js            ← Actionable KPI bar with click-through navigation
     map.js            ← Leaflet map, county circles, popups with decision makers
@@ -66,6 +69,9 @@ Scripts in `public/index.html` load in this exact order — **order matters**:
 6. `data-decision-makers.js` — State directors, co-ops, tribal contacts
 7. `data-municipal-fiber.js` — Municipal fiber networks, private 5G deployments
 8. `data-bead-timeline.js` — BEAD state timelines, CBRS GAA spectrum, competitive bids
+8b. `data-datacenters.js` — Data center locations
+8c. `data-competitors.js` — Competitor profiles and state lookup
+8d. `data-weekly-brief.js` — Weekly curated intelligence brief
 9. `scoring.js` — Reads `SN.data` and `SN.config`
 10. `kpi.js`, `map.js`, `layers.js`, `executive.js`, `onboarding.js`
 11. `table.js`, `charts.js`, `insights.js`, `funding.js`
@@ -151,6 +157,14 @@ All modals use the `.open` class to show, and are opened/closed via `SN.enhanced
 2. Add the script tag after the existing data scripts in `index.html`
 3. Reference `SN.data.newData` in whichever module needs it
 
+### Updating the Weekly Intelligence Brief
+The weekly brief is in `src/js/data-weekly-brief.js`. To update:
+1. Change `weekOf` to the current Monday's date (YYYY-MM-DD)
+2. Replace the 5 items in `bullets[]` with the week's top stories
+3. Each bullet needs: `icon` (bead/5g/dc/fiber/deal/alert/rdof/policy), `text` (HTML string), `tag` (urgent/new/update/opportunity or null)
+4. Move the old brief to the `archive[]` array for history
+5. Commit and push — that's it
+
 ### Adding a Map Layer
 1. Add data to `data-layers.js` (or a new data file)
 2. Add layer definition to `SN.layers.layerDefs` array in `layers.js`
@@ -177,6 +191,9 @@ All modals use the `.open` class to show, and are opened/closed via `SN.enhanced
 | BEAD timelines | NTIA tracker, state broadband office websites | `data-bead-timeline.js` |
 | CBRS GAA spectrum | SAS providers (Google, Federated Wireless, CommScope) | `data-bead-timeline.js` |
 | Competitive bids | State broadband office public filings, press releases | `data-bead-timeline.js` |
+| Data centers | Equinix, QTS, CyrusOne, CoreSite reports | `data-datacenters.js` |
+| Competitor profiles | FCC BDC, state filings, SEC filings | `data-competitors.js` |
+| Weekly brief | Manual curation from all sources | `data-weekly-brief.js` |
 
 ## Known Constraints
 
@@ -265,6 +282,31 @@ Review `app.js` `SN.app.init()` and answer these questions:
 - [ ] Is `document.body.classList.add('loaded')` still called before any module init (so page is always visible)?
 - [ ] Does the CSS `@keyframes force-visible` fallback still exist (so page appears even if JS fails entirely)?
 
+#### Step 2b: Verify BEAD/Bid Dates Are Current
+
+Before publishing, check that no expired dates are displayed to users:
+
+```bash
+# Check for BEAD states still marked 'subgrant_open' with past close dates
+node -e "
+  var today = new Date().toISOString().slice(0,7);
+  var code = require('fs').readFileSync('src/js/data-bead-timeline.js','utf8');
+  // Look for subgrantClose dates before current month in subgrant_open states
+  var matches = code.match(/phase:\s*'subgrant_open'.*?subgrantClose:\s*'(\d{4}-\d{2})'/g) || [];
+  matches.forEach(function(m) {
+    var d = m.match(/subgrantClose:\s*'(\d{4}-\d{2})'/)[1];
+    if (d < today) console.log('EXPIRED: subgrant_open state with close date ' + d);
+  });
+  if (matches.length === 0 || matches.every(function(m) { var d = m.match(/subgrantClose:\s*'(\d{4}-\d{2})'/)[1]; return d >= today; })) console.log('All BEAD dates OK');
+"
+```
+
+- [ ] No `subgrant_open` states have `subgrantClose` dates before the current month
+- [ ] Competitive bids displayed on the dashboard are filtered to only show `deadline >= current month` (this is handled in code, but verify data-bead-timeline.js doesn't have obviously wrong dates)
+- [ ] `data-weekly-brief.js` `weekOf` date is within the last 2 weeks
+
+**When updating dates**: Change `phase` from `subgrant_open` to `subgrant_closed` when a state's `subgrantClose` date has passed. Update `notes` to reflect the new status.
+
 #### Step 3: Check for Silent Failure Patterns
 
 - [ ] No new `display:none` or `opacity:0` on page-level content without a CSS-only fallback
@@ -346,8 +388,25 @@ These rules exist because of bugs that were actually shipped. Follow them exactl
 ### Responsive Breakpoint Rules
 When adding a new CSS class that uses `grid-template-columns`, `flex-wrap`, or fixed widths:
 1. Add a `@media (max-width: 900px)` rule that collapses to single column
-2. Add a `@media (max-width: 600px)` rule for mobile spacing adjustments
-3. Test that the element is visible and usable at 375px viewport width
+2. Add a `@media (max-width: 768px)` rule for iPad portrait adjustments
+3. Add a `@media (max-width: 600px)` rule for phone landscape/large phone
+4. Add a `@media (max-width: 380px)` rule for small phone (375px viewport)
+5. Verify the element is visible and usable at 375px viewport width
+
+### Mobile Responsiveness Rules (Mandatory)
+Every new feature MUST work on mobile. These rules apply to ALL new CSS:
+
+- **No fixed widths > 300px** without a `max-width: 95vw` fallback
+- **All grids** must collapse to single column at 600px or below
+- **All modals** must use `max-width: 95vw` to prevent overflow on phones
+- **Tables** must have `overflow-x: auto` on their wrapper for horizontal scroll
+- **Font sizes** at 600px should be 0.64-0.72rem for body text, 0.56-0.62rem for labels
+- **The funding modal sidebar** must collapse to horizontal scrollable nav at 600px
+- **Hide non-essential elements** on phones (version badge, secondary labels) to save space
+- **Touch targets** must be at least 36px for mobile tap accuracy
+- **Breakpoint stack**: 900px (tablet) → 768px (iPad) → 600px (phone landscape) → 380px (small phone)
+
+**Current breakpoint files**: All responsive rules are in `src/css/style.css`. Mobile-specific overrides are at the bottom of the file.
 
 ## Important: No Claude Session Links
 

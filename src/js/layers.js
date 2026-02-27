@@ -38,7 +38,8 @@ SN.layers = {
             name: 'Programs & Funding',
             layers: [
                 { id: 'smartcities',label: 'Smart City Programs',      icon: 'SC', color: '#38bdf8', defaultOn: false },
-                { id: 'rdof',       label: 'RDOF Default Zones',       icon: 'RD', color: '#f97316', defaultOn: false }
+                { id: 'rdof',       label: 'RDOF Default Zones',       icon: 'RD', color: '#f97316', defaultOn: false },
+                { id: 'competitors',label: 'BEAD Competitor Bids',     icon: 'CB', color: '#fb923c', defaultOn: false }
             ]
         },
         {
@@ -93,6 +94,7 @@ SN.layers = {
         this.buildCBRSLayer();
         this.buildPrivate5GLayer();
         this.buildDataCentersLayer();
+        this.buildCompetitorBidsLayer();
         this.renderTogglePanel();
 
         // Sync integrated legend with current choropleth metric
@@ -637,6 +639,73 @@ SN.layers = {
             '</div>';
 
             marker.bindPopup(popupHtml, { className: 'sn-popup', maxWidth: 360, minWidth: 280 });
+            marker.addTo(group);
+        });
+    },
+
+    /**
+     * Build Competitor BEAD Bids layer — shows regions where competitors are actively bidding.
+     */
+    buildCompetitorBidsLayer() {
+        var group = this.groups.competitors;
+        if (!SN.data.competitiveBids) return;
+
+        // Map state codes to approximate center coords for region placement
+        var stateCenters = {
+            TX: [31.0, -99.5], CA: [36.7, -119.4], VA: [37.5, -78.8], MS: [32.7, -89.7],
+            WV: [38.6, -80.6], MT: [47.0, -109.6], MI: [44.3, -85.0], KY: [37.8, -85.7],
+            AL: [32.7, -86.8], ID: [44.0, -114.7], GA: [32.7, -83.5], OH: [40.4, -82.7],
+            NC: [35.5, -79.8], MO: [38.5, -92.3], IN: [39.8, -86.1], TN: [35.5, -86.3],
+            MN: [46.0, -94.3], OR: [43.8, -120.6], WI: [44.5, -89.5], LA: [31.0, -91.9],
+            WA: [47.4, -120.7], IA: [42.0, -93.5], SC: [33.8, -81.2], NM: [34.5, -105.9],
+            AK: [64.0, -153.0]
+        };
+
+        var nowMonth = new Date().toISOString().slice(0, 7);
+
+        SN.data.competitiveBids.forEach(function(bid) {
+            var center = stateCenters[bid.state];
+            if (!center) return;
+
+            // Offset slightly for multiple bids in same state
+            var lat = center[0] + (Math.random() - 0.5) * 1.5;
+            var lng = center[1] + (Math.random() - 0.5) * 2.0;
+
+            var isExpired = bid.deadline && bid.deadline < nowMonth;
+            var compColor = bid.competitionLevel === 'Low' ? '#06d6a0' :
+                            bid.competitionLevel === 'Medium' ? '#fbbf24' : '#ef4444';
+            if (isExpired) compColor = '#64748b';
+
+            var marker = L.circleMarker([lat, lng], {
+                radius: 10,
+                fillColor: compColor,
+                fillOpacity: isExpired ? 0.3 : 0.7,
+                color: '#fff',
+                weight: 2,
+                opacity: 0.9
+            });
+
+            var statusText = isExpired ? '<span style="color:#64748b">Closed</span>' : '<span style="color:' + compColor + '">' + bid.competitionLevel + ' Competition</span>';
+
+            var popupHtml = '<div class="layer-popup competitor-popup">' +
+                '<div class="layer-popup-header">' +
+                    '<span class="layer-popup-icon" style="background:#fb923c">CB</span>' +
+                    '<div>' +
+                        '<h4>' + bid.state + ' — ' + bid.region + '</h4>' +
+                        '<span class="layer-popup-tier">' + bid.program + '</span>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="layer-popup-grid">' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + bid.bidCount + '</span><span class="stat-lbl">Known Bidders</span></div>' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + statusText + '</span><span class="stat-lbl">Status</span></div>' +
+                    '<div class="layer-popup-stat"><span class="stat-val">' + (bid.deadline || 'TBD') + '</span><span class="stat-lbl">Deadline</span></div>' +
+                '</div>' +
+                '<div class="layer-popup-infra"><strong>Known Bidders:</strong> ' + bid.knownBidders.join(', ') + '</div>' +
+                '<p class="layer-popup-note">' + (bid.notes || '') + '</p>' +
+                '<button class="btn-add-to-report" onclick="SN.executive.addToReport(\'competitor\', \'' + (bid.state + ' ' + bid.region).replace(/'/g, "\\'") + '\')">+ Add to Sales Report</button>' +
+            '</div>';
+
+            marker.bindPopup(popupHtml, { className: 'sn-popup', maxWidth: 360, minWidth: 260 });
             marker.addTo(group);
         });
     },
