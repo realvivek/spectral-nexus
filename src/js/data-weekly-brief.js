@@ -35,40 +35,48 @@ SN.data = SN.data || {};
 SN.data.weeklyBrief = {
 
     /* ── Date of this brief (Monday of the week) ── */
-    weekOf: '2026-02-23',
+    weekOf: '2026-06-30',
 
     /* ── 5 bullet points — the week's top stories ── */
     bullets: [
         {
             icon: 'bead',
-            text: 'Texas BEAD subgrant window closes <strong>March 2026</strong> — 22 applicants competing for $3.3B across 580K unserved locations. Last chance to submit or partner.',
-            tag: 'urgent'
-        },
-        {
-            icon: '5g',
-            text: 'Las Vegas Smart City program ($120M budget, 35K IoT sensors) still has <strong>no private 5G deployment</strong>. CBRS spectrum only 18% utilized — wide open for CBRS/private wireless.',
-            tag: 'opportunity'
-        },
-        {
-            icon: 'dc',
-            text: 'QTS Richmond data center (120 MW) <strong>under construction</strong> and flagged CBRS-ready. Contact facility team for wireless backhaul RFP timeline.',
-            tag: 'new'
+            text: 'BEAD awards now complete in <strong>20+ states</strong> — construction underway in VA, WV, WA and ramping in TX, CA, MI, WI, IN, MN, IA. Focus shifting to <strong>subcontractor opportunities</strong> for fiber builds.',
+            tag: 'update'
         },
         {
             icon: 'deal',
-            text: 'Mississippi BEAD subgrant has only <strong>10 applicants</strong> for $1.2B — lowest competition of any open state. Delta region priority areas especially underserved.',
+            text: 'Five states — <strong>LA, GA, SC, NM, AK</strong> — currently accepting BEAD subgrant applications with <strong>Q3 2026 deadlines</strong>. AK and NM have the fewest applicants — lowest competition windows.',
+            tag: 'opportunity'
+        },
+        {
+            icon: '5g',
+            text: 'Phoenix and Denver metros show <strong>&lt;30% GAA utilization</strong> with zero incumbent exclusions — greenfield for private 5G deployments. Nashville at 22% is the most untouched metro.',
             tag: 'opportunity'
         },
         {
             icon: 'fiber',
-            text: 'Cedar Falls Utilities (Iowa) has <strong>dark fiber available</strong> across 280 miles but no smart city or private 5G program — greenfield wireless opportunity.',
+            text: 'Cedar Falls (IA) and Chattanooga (TN) <strong>dark fiber assets</strong> available for wireless backhaul partnerships. Both cities have municipal fiber backbone with capacity to spare.',
             tag: 'new'
+        },
+        {
+            icon: 'alert',
+            text: 'Capital Projects Fund <strong>obligation deadline Dec 31, 2026</strong> — states accelerating disbursements. Check your state broadband office for remaining CPF subgrants before funds expire.',
+            tag: 'urgent'
         }
     ],
 
     /* ── Previous briefs (for archive / history view) ── */
     archive: [
-        // Older briefs can be moved here for reference
-        // { weekOf: '2026-02-16', bullets: [ ... ] }
+        {
+            weekOf: '2026-02-23',
+            bullets: [
+                { icon: 'bead', text: 'Texas BEAD subgrant window closes <strong>March 2026</strong> — 22 applicants competing for $3.3B across 580K unserved locations. Last chance to submit or partner.', tag: 'urgent' },
+                { icon: '5g', text: 'Las Vegas Smart City program ($120M budget, 35K IoT sensors) still has <strong>no private 5G deployment</strong>. CBRS spectrum only 18% utilized — wide open for CBRS/private wireless.', tag: 'opportunity' },
+                { icon: 'dc', text: 'QTS Richmond data center (120 MW) <strong>under construction</strong> and flagged CBRS-ready. Contact facility team for wireless backhaul RFP timeline.', tag: 'new' },
+                { icon: 'deal', text: 'Mississippi BEAD subgrant has only <strong>10 applicants</strong> for $1.2B — lowest competition of any open state. Delta region priority areas especially underserved.', tag: 'opportunity' },
+                { icon: 'fiber', text: 'Cedar Falls Utilities (Iowa) has <strong>dark fiber available</strong> across 280 miles but no smart city or private 5G program — greenfield wireless opportunity.', tag: 'new' }
+            ]
+        }
     ]
 };

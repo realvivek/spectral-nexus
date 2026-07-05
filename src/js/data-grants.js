@@ -3,7 +3,7 @@
  * Federal, state, and regional broadband funding programs.
  * 
  * STATUS CODES: open | upcoming | closed | rolling
- * UPDATED: 2026-02-20
+ * UPDATED: 2026-07-05
  * 
  * TODO v0.3.0: Add full state program details for all 10 states
  * TODO v0.3.0: Add grant stacking calculator logic
@@ -15,7 +15,7 @@ SN.data = SN.data || {};
 
 SN.data.grants = {
     federal: [
-        { id: 'bead', name: 'BEAD Program', agency: 'NTIA', totalFunding: 42450000000, type: 'Infrastructure', statusCode: 'open', status: 'Open — 50/56 states approved, subgrant apps in progress', techReq: '100/20 Mbps, fiber priority', match: '25% typical', url: 'https://broadbandusa.ntia.gov/funding-programs/bead', keyDate: '2026-Q2 construction begins', notes: 'Largest broadband program in US history. Tech-neutral since June 2025.',
+        { id: 'bead', name: 'BEAD Program', agency: 'NTIA', totalFunding: 42450000000, type: 'Infrastructure', statusCode: 'open', status: 'Active — Awards made in 20+ states, construction underway', techReq: '100/20 Mbps, fiber priority', match: '25% typical', url: 'https://broadbandusa.ntia.gov/funding-programs/bead', keyDate: '2026 — Construction underway in award states', notes: 'Largest broadband program in US history. Tech-neutral since June 2025. 5 states still accepting subgrant apps (LA, GA, SC, NM, AK).',
             applicationDeadline: 'Varies by state — check state broadband office',
             eligibility: ['ISPs with FCC registration (FRN)', 'System integrators as subcontractors to ISPs', 'Electric co-ops and municipal utilities', 'Tribal telecom entities'],
             requiredCerts: ['FCC Form 477/BDC filer', 'SAM.gov registration', 'Letter of credit or surety bond', 'EHP (Environmental/Historical) clearance'],
@@ -23,8 +23,8 @@ SN.data.grants = {
             canStackWith: ['CPF (Capital Projects Fund)', 'E-Rate (for anchor institutions)', 'State programs (varies)', 'USDA ReConnect (different areas only)'],
             costBenchmarks: { perBSL: '$3,000-$8,000', perMile: '$25,000-$60,000 aerial / $60,000-$120,000 buried' }
         },
-        { id: 'erate', name: 'E-Rate (FY2026)', agency: 'FCC/USAC', totalFunding: 4500000000, type: 'Schools & Libraries', statusCode: 'open', status: 'OPEN NOW — Form 471 due Apr 1, 2026', techReq: 'Broadband + internal connections', match: '10-80% copay', url: 'https://www.usac.org/e-rate/', keyDate: '2026-04-01', notes: '$4.5B/year in discounts. Guaranteed recurring revenue for ISPs.',
-            applicationDeadline: '2026-04-01 (Form 471)',
+        { id: 'erate', name: 'E-Rate (FY2027)', agency: 'FCC/USAC', totalFunding: 4500000000, type: 'Schools & Libraries', statusCode: 'upcoming', status: 'FY2026 closed — FY2027 Form 470 window opens Fall 2026', techReq: 'Broadband + internal connections', match: '10-80% copay', url: 'https://www.usac.org/e-rate/', keyDate: '2026-Q4 Form 470 window', notes: '$4.5B/year in discounts. Guaranteed recurring revenue for ISPs. FY2027 cycle begins Fall 2026.',
+            applicationDeadline: 'FY2027 — Form 470 window opens Fall 2026',
             eligibility: ['Any ISP or telecom carrier', 'Equipment vendors for internal connections', 'Managed service providers'],
             requiredCerts: ['USAC SPIN (Service Provider ID Number)', 'SAM.gov registration', 'FCC Form 498 (banking info)'],
             applicationSteps: ['Obtain USAC SPIN at usac.org', 'Respond to school/library Form 470 (competitive bid)', 'Win contract through competitive process', 'School files Form 471 citing your bid', 'Deliver service after funding commitment letter', 'Invoice USAC for discounted portion'],
@@ -39,8 +39,8 @@ SN.data.grants = {
             canStackWith: ['Cannot stack with BEAD on same locations'],
             costBenchmarks: null
         },
-        { id: 'reconnect', name: 'USDA ReConnect (R6)', agency: 'USDA/RUS', totalFunding: 600000000, type: 'Rural Infrastructure', statusCode: 'upcoming', status: 'Upcoming — Round 6 expected 2026', techReq: '100/20 Mbps, ≥90% unserved', match: '25% grants / 0% loans', url: 'https://www.usda.gov/reconnect', keyDate: '2026-Q2 NOFO expected', notes: 'Max $25M per project. 5 rounds totaled $3.7B.',
-            applicationDeadline: 'TBD — Round 6 NOFO expected Q2 2026',
+        { id: 'reconnect', name: 'USDA ReConnect (R6)', agency: 'USDA/RUS', totalFunding: 600000000, type: 'Rural Infrastructure', statusCode: 'open', status: 'Round 6 NOFO released — Applications accepted', techReq: '100/20 Mbps, ≥90% unserved', match: '25% grants / 0% loans', url: 'https://www.usda.gov/reconnect', keyDate: '2026 — Round 6 accepting applications', notes: 'Max $25M per project. 5 prior rounds totaled $3.7B. Round 6 now open.',
+            applicationDeadline: 'Round 6 open — check grants.gov for current deadline',
             eligibility: ['ISPs, co-ops, tribal entities, municipalities', 'Must serve area ≥90% unserved at 100/20 Mbps', 'Cannot overlap with BEAD-funded areas'],
             requiredCerts: ['SAM.gov registration', 'USDA eAuthentication ID', 'Environmental review (NEPA)', 'Financial feasibility study'],
             applicationSteps: ['Watch for NOFO announcement on grants.gov', 'Map proposed service area (must be ≥90% unserved)', 'Prepare 5-year financial pro forma', 'Complete NEPA environmental assessment', 'Submit application via RUS Online', 'Award announcement ~6 months after close'],
@@ -79,8 +79,8 @@ SN.data.grants = {
             canStackWith: ['BEAD last-mile builds along middle-mile routes'],
             costBenchmarks: { perMile: '$40,000-$80,000 long-haul fiber' }
         },
-        { id: 'tbcp', name: 'Tribal Broadband', agency: 'NTIA', totalFunding: 3000000000, type: 'Tribal', statusCode: 'upcoming', status: 'New NOFO expected Spring 2026', techReq: '100/20 Mbps for infrastructure', match: 'None', url: 'https://broadbandusa.ntia.gov/funding-programs/tribal-broadband-connectivity', keyDate: '2026-Q1 new NOFO', notes: '$1.86B awarded to 226 tribes. ~140K unserved Native households.',
-            applicationDeadline: 'TBD — new NOFO expected Q1 2026',
+        { id: 'tbcp', name: 'Tribal Broadband', agency: 'NTIA', totalFunding: 3000000000, type: 'Tribal', statusCode: 'open', status: 'New NOFO released — Applications accepted', techReq: '100/20 Mbps for infrastructure', match: 'None', url: 'https://broadbandusa.ntia.gov/funding-programs/tribal-broadband-connectivity', keyDate: '2026 — New round accepting applications', notes: '$1.86B awarded to 226 tribes. ~140K unserved Native households. New round open.',
+            applicationDeadline: 'Current round open — check grants.gov for deadline',
             eligibility: ['Federally recognized tribes', 'Tribal organizations and consortia', 'Alaska Native entities', 'ISPs partnered with tribal applicants'],
             requiredCerts: ['SAM.gov registration', 'Tribal resolution of support', 'BIA tribal verification'],
             applicationSteps: ['Partner with tribal government as primary applicant', 'Obtain tribal resolution supporting the project', 'Map unserved tribal lands', 'Submit application through grants.gov', 'No match required — 100% federal funding'],
